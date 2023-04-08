@@ -23,6 +23,10 @@ class QueryBuilder:
     def add_keyword(self, keyword):
         pass
 
+    def add_keywords(self, keywords):
+        for keyword in keywords:
+            self.add_keyword(keyword)
+
     def get_resources(self):
         """
         Sends a GET request to the database's API and returns the response.

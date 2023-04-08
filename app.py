@@ -41,19 +41,28 @@ def recommend():
     """
     req_data = request.json
 
-    resources = []
+    target_resources = []
     for target_json in req_data["targets"]:
         target_resource = recommend.Resource(
             title=target_json["title"],
-            authors=target_json["authors"],
+            authors=target_json["authors"],  # TODO: Data type conversion.
             date=target_json["date"],
             abstract=target_json["abstract"],
-            introduction=target_json["introduction"],
+            introduction=target_json["introduction"]
         )
-        resources.append(target_resource)
-    recommend.recommend(resources)  # TODO: Store output.
+        target_resources.append(target_resource)
 
-    res_data = {}
+    related_resources = recommend.recommend(target_resources)
+    res_data = {"related": []}
+    for related_resource in related_resources:
+        res_data["related"].append({
+            "title": related_resource.title,
+            "authors": related_resource.authors,  # TODO: Data type conversion.
+            "date": related_resource.date,
+            "abstract": related_resource.abstract,
+            "introduction": related_resource.introduction
+        })
+
     return jsonify(res_data)
 
 

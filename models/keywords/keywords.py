@@ -1,7 +1,6 @@
 """
 Objects and methods for ranking academic resources based on keywords.
 """
-import re
 import os
 import time
 from gensim.models.keyedvectors import load_word2vec_format

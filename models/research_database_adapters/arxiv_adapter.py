@@ -4,7 +4,7 @@ Research database adapter for the arXiv library.
 import urllib
 import xmltodict
 from models.research_database_adapters.adapter import QueryBuilder
-from models.recommend import Resource
+from models.resource import Resource
 
 
 class ArxivQueryBuilder(QueryBuilder):
