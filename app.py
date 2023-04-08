@@ -43,7 +43,7 @@ def recommend():
 
     resources = []
     for target_json in req_data["targets"]:
-        target_resource = recommend.TargetResource(
+        target_resource = recommend.Resource(
             title=target_json["title"],
             authors=target_json["authors"],
             date=target_json["date"],

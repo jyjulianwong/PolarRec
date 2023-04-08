@@ -9,21 +9,21 @@ class QueryBuilder:
     """
 
     def __init__(self):
-        pass
+        self._MAX_RES_ITEMS_COUNT = 10
 
     def set_author(self, author):
         pass
 
-    def set_start_date(self, start_date):
+    def set_min_date(self, min_date):
         pass
 
-    def set_end_date(self, end_date):
+    def set_max_date(self, max_date):
         pass
 
     def add_keyword(self, keyword):
         pass
 
-    def get_response(self):
+    def get_resources(self):
         """
         Sends a GET request to the database's API and returns the response.
 

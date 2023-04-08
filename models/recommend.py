@@ -3,12 +3,21 @@ Objects and methods for the /recommend service of the API.
 """
 
 
-class TargetResource:
+class Resource:
     """
-    A target academic resource object.
+    An academic resource object.
     """
 
-    def __init__(self, title, authors, date, abstract, introduction):
+    def __init__(
+        self,
+        title=None,
+        authors=None,
+        date=None,
+        abstract=None,
+        introduction=None,
+        doi=None,
+        url=None,
+    ):
         """
         :param title: The title of the resource.
         :type title: str
@@ -20,12 +29,18 @@ class TargetResource:
         :type abstract: str
         :param introduction: The introduction section from the resource.
         :type introduction: str
+        :param doi: The DOI number of the resource.
+        :type doi: str
+        "param url: The URL to the resource online.
+        :type url: str
         """
         self.title = title
         self.authors = authors
         self.date = date  # TODO: Convert to datetime type.
         self.abstract = abstract
         self.introduction = introduction
+        self.doi = doi
+        self.url = url
 
 
 def recommend(resources):
@@ -34,7 +49,9 @@ def recommend(resources):
     based on target resources.
 
     :param resources: The list of target resources.
-    :type resources: list[TargetResource]
+    :type resources: list[Resource]
     :return: A list of recommended academic resources.
     """
+    for resource in resources:
+        pass
     pass
