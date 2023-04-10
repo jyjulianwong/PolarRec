@@ -7,7 +7,7 @@ from models.research_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource import Resource
 
 
-def recommend(resources):
+def get_related_resources(resources):
     """
     Calls research database APIs and recommends a list of academic resources
     based on target resources.
@@ -24,9 +24,8 @@ def recommend(resources):
     target = resources[0]
     t_title = target.title if target.title is not None else ""
     t_abstract = target.abstract if target.abstract is not None else ""
-    t_introduction = target.introduction if target.introduction is not None else ""
     # TODO: Assume title always exists?
-    t_summary = f"{t_title} {t_abstract} {t_introduction}"
+    t_summary = f"{t_title} {t_abstract}"
     t_keywords = keywords.get_keywords(t_summary)
 
     candidates = []
@@ -50,8 +49,7 @@ def recommend(resources):
     for candidate in candidates:
         c_title = candidate.title if candidate.title is not None else ""
         c_abstract = candidate.abstract if candidate.abstract is not None else ""
-        c_introduction = candidate.introduction if candidate.introduction is not None else ""
-        c_summary = f"{c_title} {c_abstract} {c_introduction}"
+        c_summary = f"{c_title} {c_abstract}"
         c_keywords = keywords.get_keywords(c_summary)
 
         similarity = keywords.keywords_similarity(
@@ -67,13 +65,15 @@ def recommend(resources):
 
     sorted_candidates = [c for s, c in sorted(zip(c_scores, candidates))]
     return sorted_candidates
+    # TODO: Remove duplicates.
 
 
 if __name__ == "__main__":
     target_resource = Resource(
-        title="SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
         authors=["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
-        date="2017-01-02",
+        title="SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
+        year=2017,
+        month=None,
         abstract="""We present a novel and practical deep fully convolutional 
 neural network architecture for semantic pixel-wise segmentation termed SegNet. 
 This core trainable segmentation engine consists of an encoder network, a 
@@ -101,16 +101,18 @@ that SegNet provides good performance with competitive inference time and most
 efficient inference memory-wise as compared to other architectures. We also 
 provide a Caffe implementation of SegNet and a web demo at 
 http://mi.eng.cam.ac.uk/projects/segnet/.""",
-        introduction="",
         doi="10.1109/TPAMI.2016.2644615",
         url="https://ieeexplore.ieee.org/document/7803544"
     )
 
     t1 = time.time()
-    related_resources = recommend([target_resource])
+    related_resources = get_related_resources([target_resource])
     t2 = time.time()
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")
     print(f"recommend: related_resources: {len(related_resources)}")
     for i, related_resource in enumerate(related_resources):
         print(f"{i}: \t{related_resource.title}")
         print(f"\t{related_resource.authors}")
+        print(f"\t{related_resource.year}")
+        print(f"\t{related_resource.doi}")
+        print(f"\t{related_resource.url}")

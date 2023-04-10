@@ -60,13 +60,16 @@ class ArxivQueryBuilder(QueryBuilder):
 
         resources = []
         for resource_data in res["feed"]["entry"]:
-            resources.append(Resource(
-                title=resource_data["title"].replace("\n ", ""),
-                authors=[data["name"] for data in resource_data["author"]],
-                date=resource_data["published"],
-                abstract=resource_data["summary"],
-                url=resource_data["id"]
-            ))
+            date_components = resource_data["published"].split("-")
+            resource_args = {
+                "authors": [data["name"] for data in resource_data["author"]],
+                "title": resource_data["title"].replace("\n ", ""),
+                "year": int(date_components[0]),
+                "month": int(date_components[1]),
+                "abstract": resource_data["summary"],
+                "url": resource_data["id"]
+            }
+            resources.append(Resource(resource_args))
         return resources
 
 

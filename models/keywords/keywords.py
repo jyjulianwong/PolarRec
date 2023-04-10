@@ -10,6 +10,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 def get_model():
     return load_word2vec_format(
+        # TODO: Need to manually download Word2Vec embedding file.
         os.path.join(
             os.path.dirname(__file__),
             "GoogleNews-vectors-negative300.bin"

@@ -3,7 +3,8 @@ The entry point to the API.
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from models import recommend
+from models.recommend import get_related_resources
+from models.resource import Resource
 
 app = Flask(__name__)
 CORS(app)
@@ -23,45 +24,38 @@ def recommend():
     """
     Takes POST requests of target academic resources and related metadata, and
     returns recommendations.
-
-    POST request body parameters:
-        targets: [
-            {
-                title: "A",
-                authors: ["A", "B", "C"],
-                date: "A",
-                abstract: "A",
-                introduction: "A"
-            },
-            ...
-        ]
+    Requires ``"content-type": "application/json"`` to be set in the request
+    header.
+    See comment below for an example of a request body.
 
     :return: A list of recommended academic resources, in the form of a JSON.
     :rtype: Response
     """
+    # POST request body example:
+    # {
+    #     "targets": [
+    #         {
+    #             "authors": ["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
+    #             "title": "SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
+    #             "year": 2017,
+    #             "month": 1,
+    #             "abstract": "We present a novel and practical...",
+    #             "doi": "10.1109/TPAMI.2016.2644615",
+    #             "url": "https://ieeexplore.ieee.org/document/7803544"
+    #         }
+    #     ]
+    # }
     req_data = request.json
 
     target_resources = []
     for target_json in req_data["targets"]:
-        target_resource = recommend.Resource(
-            title=target_json["title"],
-            authors=target_json["authors"],  # TODO: Data type conversion.
-            date=target_json["date"],
-            abstract=target_json["abstract"],
-            introduction=target_json["introduction"]
-        )
-        target_resources.append(target_resource)
+        target_resources.append(Resource(target_json))
 
-    related_resources = recommend.recommend(target_resources)
+    related_resources = get_related_resources(target_resources)
+
     res_data = {"related": []}
     for related_resource in related_resources:
-        res_data["related"].append({
-            "title": related_resource.title,
-            "authors": related_resource.authors,  # TODO: Data type conversion.
-            "date": related_resource.date,
-            "abstract": related_resource.abstract,
-            "introduction": related_resource.introduction
-        })
+        res_data["related"].append(related_resource.to_dict())
 
     return jsonify(res_data)
 
