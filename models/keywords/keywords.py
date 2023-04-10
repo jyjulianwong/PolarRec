@@ -82,7 +82,7 @@ computable numbers, functions, and so forth to one another. This will include a
 development of the theory of functions of a real variable expressed in terms of 
 computable numbers. According to my definition, a number is computable if its 
 decimal can be written down by a machine."""
-    abstract2 = """We present a novel and practical deep fully convolutional 
+    abstract2 = """We present a novel and practical deep fully convolutional
 neural network architecture for semantic pixel-wise segmentation termed SegNet. 
 This core trainable segmentation engine consists of an encoder network, a 
 corresponding decoder network followed by a pixel-wise classification layer. The

@@ -1,15 +1,15 @@
 """
 Research database adapter for the IEEE Xplore library.
 """
-import os
 import requests
+from config import Config
 from models.research_database_adapters.adapter import QueryBuilder
 
 
 class IEEEXploreQueryBuilder(QueryBuilder):
     def __init__(self):
         super().__init__()
-        self._API_KEY = os.environ.get("IEEE_XPLORE_API_KEY")
+        self._API_KEY = Config.IEEE_XPLORE_API_KEY
         self._API_URL_BASE = "https://ieeexploreapi.ieee.org/api/v1/search/articles"
         self._query_args = {}
         self._keywords = []

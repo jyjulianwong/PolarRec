@@ -24,7 +24,6 @@ def get_related_resources(resources):
     target = resources[0]
     t_title = target.title if target.title is not None else ""
     t_abstract = target.abstract if target.abstract is not None else ""
-    # TODO: Assume title always exists?
     t_summary = f"{t_title} {t_abstract}"
     t_keywords = keywords.get_keywords(t_summary)
 
@@ -69,12 +68,11 @@ def get_related_resources(resources):
 
 
 if __name__ == "__main__":
-    target_resource = Resource(
-        authors=["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
-        title="SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
-        year=2017,
-        month=None,
-        abstract="""We present a novel and practical deep fully convolutional 
+    target_data = {
+        "authors": ["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
+        "title": "SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
+        "year": 2017,
+        "abstract": """We present a novel and practical deep fully convolutional 
 neural network architecture for semantic pixel-wise segmentation termed SegNet. 
 This core trainable segmentation engine consists of an encoder network, a 
 corresponding decoder network followed by a pixel-wise classification layer. The
@@ -101,9 +99,10 @@ that SegNet provides good performance with competitive inference time and most
 efficient inference memory-wise as compared to other architectures. We also 
 provide a Caffe implementation of SegNet and a web demo at 
 http://mi.eng.cam.ac.uk/projects/segnet/.""",
-        doi="10.1109/TPAMI.2016.2644615",
-        url="https://ieeexplore.ieee.org/document/7803544"
-    )
+        "doi": "10.1109/TPAMI.2016.2644615",
+        "url": "https://ieeexplore.ieee.org/document/7803544"
+    }
+    target_resource = Resource(target_data)
 
     t1 = time.time()
     related_resources = get_related_resources([target_resource])

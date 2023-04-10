@@ -35,13 +35,13 @@ def recommend():
     # {
     #     "targets": [
     #         {
-    #             "authors": ["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
-    #             "title": "SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
-    #             "year": 2017,
+    #             "authors": ["Y. Lecun", "L. Bottou", "Y. Bengio", "P. Haffner"],
+    #             "title": "Gradient-based learning applied to document recognition",
+    #             "year": 1998,
     #             "month": 1,
-    #             "abstract": "We present a novel and practical...",
-    #             "doi": "10.1109/TPAMI.2016.2644615",
-    #             "url": "https://ieeexplore.ieee.org/document/7803544"
+    #             "abstract": "Multilayer neural networks trained with...",
+    #             "doi": "10.1109/5.726791",
+    #             "url": "https://ieeexplore.ieee.org/document/726791"
     #         }
     #     ]
     # }
