@@ -3,11 +3,15 @@ The entry point to the API.
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from models.keywords import keywords
 from models.recommend import get_related_resources
 from models.resource import Resource
 
 app = Flask(__name__)
 CORS(app)
+with app.app_context():
+    keywords_model = keywords.get_model()
+    print("keywords_model successfully loaded.")
 
 
 @app.route('/', methods=['GET'])
@@ -45,13 +49,15 @@ def recommend():
     #         }
     #     ]
     # }
+    global keywords_model
+
     req_data = request.json
 
     target_resources = []
     for target_json in req_data["targets"]:
         target_resources.append(Resource(target_json))
 
-    related_resources = get_related_resources(target_resources)
+    related_resources = get_related_resources(target_resources, keywords_model)
 
     res_data = {"related": []}
     for related_resource in related_resources:
@@ -61,4 +67,8 @@ def recommend():
 
 
 if __name__ == '__main__':
+    # TODO: Remove this if redundant for deployment.
+    with app.app_context():
+        keywords_model = keywords.get_model()
+        print("keywords_model successfully loaded from __main__.")
     app.run()

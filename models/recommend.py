@@ -7,13 +7,15 @@ from models.research_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource import Resource
 
 
-def get_related_resources(resources):
+def get_related_resources(resources, keywords_model):
     """
     Calls research database APIs and recommends a list of academic resources
     based on target resources.
 
     :param resources: The list of target resources.
     :type resources: list[Resource]
+    :param keywords_model: The word embedding model to be used for keywords.
+    :type keywords_model: Word2Vec.KeyedVectors
     :return: A list of recommended academic resources.
     :rtype: list[Resource]
     """
@@ -41,8 +43,6 @@ def get_related_resources(resources):
         # TODO: Support multiple authors.
         author_biased_query_builder.set_author(target.authors[0])
         candidates += author_biased_query_builder.get_resources()
-
-    keywords_model = keywords.get_model()
 
     c_scores = []
     for candidate in candidates:
@@ -103,9 +103,10 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         "url": "https://ieeexplore.ieee.org/document/7803544"
     }
     target_resource = Resource(target_data)
+    keywords_model = keywords.get_model()
 
     t1 = time.time()
-    related_resources = get_related_resources([target_resource])
+    related_resources = get_related_resources([target_resource], keywords_model)
     t2 = time.time()
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")
     print(f"recommend: related_resources: {len(related_resources)}")
