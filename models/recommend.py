@@ -19,8 +19,13 @@ def get_related_resources(resources, keywords_model):
     :return: A list of recommended academic resources.
     :rtype: list[Resource]
     """
-    max_target_keywords_count = 3
-    max_comparison_keywords_count = 10
+    # Max. number of keywords to extract from target to generate queries.
+    max_compulsory_target_keywords_count = 3
+    max_optional_target_keywords_count = 10
+    # Max. number of keywords to extract from candidates for keyword comparison.
+    max_comparison_keywords_count = 20
+    # Max. number of candidates to be returned by each query made.
+    max_candidates_returned = 20
 
     # TODO: Support multiple resources.
     target = resources[0]
@@ -29,22 +34,39 @@ def get_related_resources(resources, keywords_model):
     t_summary = f"{t_title} {t_abstract}"
     t_keywords = keywords.get_keywords(t_summary)
 
-    candidates = []
+    candidates: list[Resource] = []
 
     # TODO: Support multiple databases.
+    # Query 1: The default and compulsory keyword-based query.
     base_query_builder = ArxivQueryBuilder()
     base_query_builder.add_keywords(t_keywords[:min(
-        len(t_keywords), max_target_keywords_count
+        len(t_keywords), max_compulsory_target_keywords_count
     )])
-    candidates += base_query_builder.get_resources()
+    candidates += base_query_builder.get_resources(max_candidates_returned)
 
+    # Query 2: The more-relaxed keyword-based query.
+    base_query_builder = ArxivQueryBuilder()
+    base_query_builder.add_keywords(t_keywords[:min(
+        len(t_keywords), max_optional_target_keywords_count
+    )])
+    candidates += base_query_builder.get_resources(
+        max_candidates_returned,
+        must_have_all_fields=False
+    )
+
+    # Query 3: The author-biased query (if applicable).
     if target.authors:
         author_biased_query_builder = ArxivQueryBuilder()
-        # TODO: Support multiple authors.
-        author_biased_query_builder.set_author(target.authors[0])
-        candidates += author_biased_query_builder.get_resources()
+        author_biased_query_builder.set_authors(target.authors)
+        candidates += author_biased_query_builder.get_resources(
+            max_candidates_returned,
+            must_have_all_fields=False
+        )
 
-    c_scores = []
+    # Remove any duplicate resources from the multiple queries.
+    candidates = list(set(candidates))
+
+    c_scores: list[float] = []
     for candidate in candidates:
         c_title = candidate.title if candidate.title is not None else ""
         c_abstract = candidate.abstract if candidate.abstract is not None else ""
@@ -64,7 +86,6 @@ def get_related_resources(resources, keywords_model):
 
     sorted_candidates = [c for s, c in sorted(zip(c_scores, candidates))]
     return sorted_candidates
-    # TODO: Remove duplicates.
 
 
 if __name__ == "__main__":

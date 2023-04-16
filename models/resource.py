@@ -67,6 +67,14 @@ class Resource:
         if "url" in args:
             self.url = args["url"]
 
+    def __eq__(self, other):
+        # The "identity" of an academic resource is defined by its full title.
+        # Low likelihood of two well-known academic resources having same title.
+        return self.title == other.title
+
+    def __hash__(self):
+        return hash(self.title)
+
     def to_dict(self):
         """
         Returns the data in the Resource instance in the form of a dict.

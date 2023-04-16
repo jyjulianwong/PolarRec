@@ -9,9 +9,9 @@ class QueryBuilder:
     """
 
     def __init__(self):
-        self._MAX_RES_ITEMS_COUNT = 10
+        pass
 
-    def set_author(self, author):
+    def set_authors(self, authors):
         pass
 
     def set_min_date(self, min_date):
@@ -27,7 +27,11 @@ class QueryBuilder:
         for keyword in keywords:
             self.add_keyword(keyword)
 
-    def get_resources(self):
+    def get_resources(
+        self,
+        max_resources_returned,
+        must_have_all_fields=True
+    ):
         """
         Sends a GET request to the database's API and returns the response.
 
