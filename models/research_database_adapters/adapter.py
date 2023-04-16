@@ -11,6 +11,22 @@ class QueryBuilder:
     def __init__(self):
         pass
 
+    def _translated_url_str(self, url_str):
+        """
+        Replaces special characters that would be unwanted in a URL string, such
+        as particular German characters that commonly appear in authors' names.
+
+        :param url_str: The original URL string
+        :return: The URL string with special characters replaced
+        """
+        german_special_char_dict = {
+            ord("ä"): "ae",
+            ord("ü"): "ue",
+            ord("ö"): "oe",
+            ord("ß"): "ss"
+        }
+        return url_str.translate(german_special_char_dict)
+
     def set_authors(self, authors):
         pass
 

@@ -54,6 +54,12 @@ class ArxivQueryBuilder(QueryBuilder):
 
         if self._keywords:
             for keyword in self._keywords:
+                try:
+                    # Only allow ASCII characters in the URL.
+                    keyword.encode("ascii")
+                except UnicodeEncodeError:
+                    continue
+
                 search_query.append(
                     f"all:%22{keyword.replace(' ', '+').lower()}%22"
                 )
@@ -68,8 +74,7 @@ class ArxivQueryBuilder(QueryBuilder):
         url = self._API_URL_BASE + "?" + "&".join(
             [f"{key}={val}" for key, val in query_args.items()]
         )
-        # TODO: Handle failure.
-        res = urllib.request.urlopen(url)
+        res = urllib.request.urlopen(self._translated_url_str(url))
         res = res.read().decode("utf-8")
         res = xmltodict.parse(res)
 
