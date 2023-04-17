@@ -10,3 +10,8 @@ venv/*
 
 # JetBrains
 .idea/*
+
+# Elastic Beanstalk
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

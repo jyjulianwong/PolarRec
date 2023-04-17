@@ -7,23 +7,23 @@ from models.keywords import keywords
 from models.recommend import get_related_resources
 from models.resource import Resource
 
-app = Flask(__name__)
-CORS(app)
-with app.app_context():
+application = Flask(__name__)
+CORS(application)
+with application.app_context():
     keywords_model = keywords.get_model()
     print("keywords_model successfully loaded.")
 
 
-@app.route('/', methods=['GET'])
+@application.route("/", methods=["GET"])
 def root():
     """
     :return: The root page of the API.
     :rtype: Response
     """
-    return ''
+    return ""
 
 
-@app.route('/recommend', methods=['POST'])
+@application.route("/recommend", methods=["POST"])
 def recommend():
     """
     Takes POST requests of target academic resources and related metadata, and
@@ -66,9 +66,9 @@ def recommend():
     return jsonify(res_data)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # TODO: Remove this if redundant for deployment.
-    with app.app_context():
+    with application.app_context():
         keywords_model = keywords.get_model()
         print("keywords_model successfully loaded from __main__.")
-    app.run()
+    application.run()
