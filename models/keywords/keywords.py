@@ -1,6 +1,7 @@
 """
 Objects and methods for ranking academic resources based on keywords.
 """
+import nltk
 import time
 from gensim import downloader
 from nltk.corpus import stopwords
@@ -14,6 +15,7 @@ def get_model():
     :return: The keywords model
     :rtype: gensim.models.KeyedVectors
     """
+    nltk.download("stopwords")
     return downloader.load("glove-wiki-gigaword-50")
 
 
