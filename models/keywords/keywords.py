@@ -1,22 +1,20 @@
 """
 Objects and methods for ranking academic resources based on keywords.
 """
-import os
 import time
-from gensim.models.keyedvectors import load_word2vec_format
+from gensim import downloader
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def get_model():
-    return load_word2vec_format(
-        # TODO: Need to manually download Word2Vec embedding file.
-        os.path.join(
-            os.path.dirname(__file__),
-            "GoogleNews-vectors-negative300.bin"
-        ),
-        binary=True
-    )
+    """
+    Loads the keywords word embedding model remotely via the Gensim API.
+
+    :return: The keywords model
+    :rtype: gensim.models.KeyedVectors
+    """
+    return downloader.load("glove-wiki-gigaword-50")
 
 
 def get_keywords(text):
@@ -44,28 +42,42 @@ def get_keywords(text):
     return keywords
 
 
-def keywords_similarity(model, l1, l2):
+def keywords_similarity(model, l1, l2, show_oovs=False):
     """
     Returns the average cosine-based similarity of two lists of keywords.
     Used as a metric for how similar two lists of keywords are.
 
-    :param model:
-    :type model: Word2Vec.model
-    :param l1:
+    :param model: The keywords word embedding model.
+    :type model: gensim.models.KeyedVectors
+    :param l1: A list of keywords.
     :type l1: list[str]
-    :param l2:
+    :param l2: A list of keywords.
     :type l2: list[str]
-    :return:
+    :param show_oovs: Prints a list of the keywords that are out-of-vocabulary.
+    :type show_oovs: bool
+    :return: The average cosine-based similarity of two lists of keywords.
     :rtype: float
     """
     if len(l1) == 0 or len(l2) == 0:
         return 0.0
 
     similarities = []
+    oovs = []
     for w1 in l1:
-        for w2 in l2:
-            if w1 in model.key_to_index and w2 in model.key_to_index:
-                similarities.append(model.similarity(w1, w2))
+        if w1 in model.key_to_index:
+            for w2 in l2:
+                if w2 in model.key_to_index:
+                    similarities.append(model.similarity(w1, w2))
+                else:
+                    oovs.append(w2)
+        else:
+            oovs.append(w1)
+
+    if show_oovs:
+        print(f"keywords: keywords_similarity: Out-of-vocabulary:")
+        for i, oov in enumerate(list(set(oovs))):
+            print(f"\t[{i}]: {oov}")
+
     return sum(similarities) / max(len(similarities), 1)
 
 
@@ -112,30 +124,45 @@ SegNet and a web demo at this http URL."""
     keywords1 = get_keywords(abstract1)
     keywords2 = get_keywords(abstract2)
     t2 = time.time()
-    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
     print(f"keywords: keywords1: {keywords1[:10]}")
     print(f"keywords: keywords2: {keywords2[:10]}")
+    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
     model = get_model()
     t2 = time.time()
-    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
     print(f"keywords: model: {model}")
+    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
-    similarity = keywords_similarity(model, keywords1[:20], keywords2[:20])
+    similarity = keywords_similarity(
+        model,
+        keywords1[:40],
+        keywords2[:40],
+        show_oovs=True
+    )
     t2 = time.time()
+    print(f"keywords: similarity: 40: {similarity}")
     print(f"keywords: Time taken to execute: {t2 - t1} seconds")
+
+    t1 = time.time()
+    similarity = keywords_similarity(
+        model,
+        keywords1[:20],
+        keywords2[:20],
+        show_oovs=True
+    )
+    t2 = time.time()
     print(f"keywords: similarity: 20: {similarity}")
+    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
-    similarity = keywords_similarity(model, keywords1[:10], keywords2[:10])
+    similarity = keywords_similarity(
+        model,
+        keywords1[:10],
+        keywords2[:10],
+        show_oovs=True
+    )
     t2 = time.time()
-    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
     print(f"keywords: similarity: 10: {similarity}")
-
-    t1 = time.time()
-    similarity = keywords_similarity(model, keywords1[:5], keywords2[:5])
-    t2 = time.time()
     print(f"keywords: Time taken to execute: {t2 - t1} seconds")
-    print(f"keywords: similarity: 5: {similarity}")
