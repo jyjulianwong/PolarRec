@@ -11,6 +11,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 def get_model():
     """
     Loads the keywords word embedding model remotely via the Gensim API.
+    This must be run before the Flask application starts. Otherwise, NLTK does
+    not know where to find the stopwords corpus.
 
     :return: The keywords model
     :rtype: gensim.models.KeyedVectors
@@ -123,17 +125,17 @@ compared to other architectures. We also provide a Caffe implementation of
 SegNet and a web demo at this http URL."""
 
     t1 = time.time()
+    model = get_model()
+    t2 = time.time()
+    print(f"keywords: model: {model}")
+    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
+
+    t1 = time.time()
     keywords1 = get_keywords(abstract1)
     keywords2 = get_keywords(abstract2)
     t2 = time.time()
     print(f"keywords: keywords1: {keywords1[:10]}")
     print(f"keywords: keywords2: {keywords2[:10]}")
-    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
-
-    t1 = time.time()
-    model = get_model()
-    t2 = time.time()
-    print(f"keywords: model: {model}")
     print(f"keywords: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
