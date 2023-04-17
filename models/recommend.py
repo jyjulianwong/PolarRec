@@ -2,7 +2,7 @@
 Objects and methods for the /recommend service of the API.
 """
 import time
-from models.keywords import keywords
+from models import keywords
 from models.research_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource import Resource
 

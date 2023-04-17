@@ -3,7 +3,7 @@ The entry point to the API.
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from models.keywords import keywords
+from models import keywords
 from models.recommend import get_related_resources
 from models.resource import Resource
 
