@@ -83,13 +83,17 @@ class ArxivQueryBuilder(QueryBuilder):
 
         resources = []
         for resource_data in res["feed"]["entry"]:
-            date_components = resource_data["published"].split("-")
             if isinstance(resource_data["author"], list):
                 authors = [data["name"] for data in resource_data["author"]]
             else:
                 # ArXiv changes the return type if there is only one author.
                 # We have to create a singleton list ourselves.
                 authors = [resource_data["author"]["name"]]
+
+            # Extract the year and month components from the date.
+            date_components = resource_data["published"].split("-")
+
+            # Set compulsory fields.
             resource_args = {
                 "authors": authors,
                 "title": resource_data["title"].replace("\n ", ""),
@@ -98,6 +102,11 @@ class ArxivQueryBuilder(QueryBuilder):
                 "abstract": resource_data["summary"],
                 "url": resource_data["id"]
             }
+
+            # Set optional fields.
+            if "arxiv:doi" in resource_data:
+                resource_args["doi"] = resource_data["arxiv:doi"]
+
             resources.append(Resource(resource_args))
         return resources
 
@@ -108,7 +117,10 @@ if __name__ == '__main__':
     sample_query_builder.add_keyword("deep learning")
     sample_query_builder.set_authors(["Vijay Badrinarayanan"])
     resources = sample_query_builder.get_resources(10)
-    resources = [resource.title for resource in resources]
     for i, resource in enumerate(resources):
-        print(f"ArxivQueryBuilder: get_resources: [{i}]: {resource}")
+        print(f"ArxivQueryBuilder: get_resources: [{i}]:")
+        print(f"\t{resource.title}")
+        print(f"\t{resource.authors}")
+        print(f"\t{resource.doi}")
+        print(f"\t{resource.url}")
     print(f"ArxivQueryBuilder: get_resources: len: {len(resources)}")

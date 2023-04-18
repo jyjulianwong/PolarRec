@@ -19,6 +19,7 @@ def get_related_resources(resources, keywords_model):
     :return: A list of recommended academic resources.
     :rtype: list[Resource]
     """
+    # TODO: Implement scoring system based on keywords, authors and citations?
     # Max. number of keywords to extract from target to generate queries.
     max_compulsory_target_keywords_count = 3
     max_optional_target_keywords_count = 10
@@ -92,7 +93,7 @@ if __name__ == "__main__":
     target_data = {
         "authors": ["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
         "title": "SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
-        "year": 2017,
+        "year": 2015,
         "abstract": """We present a novel and practical deep fully convolutional 
 neural network architecture for semantic pixel-wise segmentation termed SegNet. 
 This core trainable segmentation engine consists of an encoder network, a 

@@ -2,6 +2,7 @@
 Research database adapter for the IEEE Xplore library.
 """
 import requests
+# TODO: Handle Config variables.
 from config import Config
 from models.research_database_adapters.adapter import QueryBuilder
 
@@ -46,11 +47,4 @@ class IEEEXploreQueryBuilder(QueryBuilder):
 
 if __name__ == '__main__':
     # TODO: Test.
-    sample_query_builder = IEEEXploreQueryBuilder()
-    sample_query_builder.add_keyword("convolutional")
-    sample_query_builder.add_keyword("deep learning")
-    sample_query_builder.set_authors(["Vijay Badrinarayanan"])
-    resources = sample_query_builder.get_resources(10)
-    resources = [resource.title for resource in resources]
-    print(f"ArxivQueryBuilder: get_resources: {resources}")
-    print(f"ArxivQueryBuilder: get_resources: len: {len(resources)}")
+    pass
