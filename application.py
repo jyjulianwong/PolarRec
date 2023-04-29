@@ -1,7 +1,8 @@
 """
 The entry point to the API.
 """
-from flask import Flask, jsonify, request
+import os
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from models import keywords
 from models.recommend import get_related_resources
@@ -21,6 +22,19 @@ def root():
     :rtype: Response
     """
     return ""
+
+
+@application.route("/favicon.ico", methods=["GET"])
+def favicon():
+    """
+    :return: The application favicon.
+    :rtype: Response
+    """
+    return send_from_directory(
+        os.path.join(application.root_path, "static"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon"
+    )
 
 
 @application.route("/recommend", methods=["POST"])
