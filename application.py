@@ -81,8 +81,4 @@ def recommend():
 
 
 if __name__ == "__main__":
-    # TODO: Remove this if redundant for deployment.
-    with application.app_context():
-        keywords_model = keywords.get_model()
-        print("keywords_model successfully loaded from __main__.")
     application.run()
