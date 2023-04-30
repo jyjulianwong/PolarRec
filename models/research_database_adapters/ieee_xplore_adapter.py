@@ -40,18 +40,23 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         self._query_args["querytext"] = f"({self._query_args['querytext']})"
         self._query_args["max_records"] = max_resources_returned
         self._query_args["apikey"] = self._API_KEY
-        res = requests.get(
-            self._API_URL_BASE,
-            params=self._query_args,
-            headers={
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            timeout=10
-        )
+        try:
+            res = requests.get(
+                self._API_URL_BASE,
+                params=self._query_args,
+                headers={
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                timeout=10
+            )
+        except Exception as err:
+            print(f"IEEEXploreQueryBuilder: {err}")
+            return []
 
         if res.status_code != 200:
             # IEEE Xplore has a limit on how many API calls can be made per day.
+            print(f"IEEEXploreQueryBuilder: {res}")
             return []
 
         res = res.json()
