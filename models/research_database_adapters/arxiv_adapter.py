@@ -104,8 +104,10 @@ class ArxivQueryBuilder(QueryBuilder):
             }
 
             # Set optional fields.
-            if "arxiv:doi" in resource_data:
-                resource_args["doi"] = resource_data["arxiv:doi"]
+            if "doi" in resource_data:
+                resource_args["doi"] = resource_data["doi"]
+            elif "arxiv:doi" in resource_data:
+                resource_args["doi"] = resource_data["arxiv:doi"]["#text"]
 
             resources.append(Resource(resource_args))
         return resources
