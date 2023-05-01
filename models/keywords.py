@@ -23,14 +23,13 @@ def get_model():
 
 def get_keywords(text):
     """
-    Extracts a list of keywords from text using the TextRank algorithm.
+    Extracts a list of keywords from text using the TD-IDF algorithm.
 
     :param text: The text from which keywords are extracted.
     :type text: str
     :return: A list of keywords, sorted in order of importance.
     :rtype: list[str]
     """
-
     # Custom tokenizer used to whitelist certain characters such as hyphens.
     vectorizer = TfidfVectorizer(
         stop_words=stopwords.words("english"),
@@ -43,6 +42,20 @@ def get_keywords(text):
     tfidf_zip = zip(tdidf_coo.col, tdidf_coo.data)
     tfidf_zip = sorted(tfidf_zip, key=lambda x: (x[1], x[0]), reverse=True)
     keywords = [words[i] for i, score in tfidf_zip]
+    return keywords
+
+
+def get_keywords_from_resource(resource):
+    """
+    :param resource: The resource from which keywords are extracted.
+    :type resource: Resource
+    :return: A list of keywords, sorted in order of importance.
+    :rtype: list[str]
+    """
+    title = resource.title if resource.title is not None else ""
+    abstract = resource.abstract if resource.abstract is not None else ""
+    summary = f"{title} {abstract}"
+    keywords = get_keywords(summary)
     return keywords
 
 

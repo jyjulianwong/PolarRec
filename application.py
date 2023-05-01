@@ -44,34 +44,30 @@ def recommend():
     returns recommendations.
     Requires ``"content-type": "application/json"`` to be set in the request
     header.
-    See comment below for an example of a request body.
+    See README.md for an example of a request body.
 
     :return: A list of recommended academic resources, in the form of a JSON.
     :rtype: Response
     """
-    # POST request body example:
-    # {
-    #     "targets": [
-    #         {
-    #             "authors": ["Y. Lecun", "L. Bottou", "Y. Bengio", "P. Haffner"],
-    #             "title": "Gradient-based learning applied to document recognition",
-    #             "year": 1998,
-    #             "month": 1,
-    #             "abstract": "Multilayer neural networks trained with...",
-    #             "doi": "10.1109/5.726791",
-    #             "url": "https://ieeexplore.ieee.org/document/726791"
-    #         }
-    #     ]
-    # }
     global keywords_model
 
     req_data = request.json
 
     target_resources = []
-    for target_json in req_data["targets"]:
-        target_resources.append(Resource(target_json))
+    if "targets" in req_data:
+        for target_json in req_data["targets"]:
+            target_resources.append(Resource(target_json))
 
-    related_resources = get_related_resources(target_resources, keywords_model)
+    existing_related_resources = []
+    if "existing_related" in req_data:
+        for existing_related_json in req_data["existing_related"]:
+            existing_related_resources.append(Resource(existing_related_json))
+
+    related_resources = get_related_resources(
+        target_resources,
+        existing_related_resources,
+        keywords_model
+    )
 
     res_data = {"related": []}
     for related_resource in related_resources:

@@ -65,6 +65,17 @@ The following is an example of the body of a POST request.
             "doi": "10.1109/5.726791",
             "url": "https://ieeexplore.ieee.org/document/726791"
         }
+    ],
+    "existing_related": [
+        {
+            "authors": ["Y. Lecun", "L. Bottou", "Y. Bengio", "P. Haffner"],
+            "title": "Gradient-based learning applied to document recognition",
+            "year": 1998,
+            "month": 1,
+            "abstract": "Multilayer neural networks trained with...",
+            "doi": "10.1109/5.726791",
+            "url": "https://ieeexplore.ieee.org/document/726791"
+        }
     ]
 }
 ```

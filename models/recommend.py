@@ -6,34 +6,38 @@ from models import keywords
 from models.research_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource import Resource
 
+# Recommendation ranking-related global hyperparameters.
+# Max. number of keywords to extract from target to generate queries.
+MAX_COMPUL_T_KEYWORDS_COUNT = 3
+MAX_OPTIONAL_T_KEYWORDS_COUNT = 10
+# Max. number of keywords to extract from candidates for keyword comparison.
+MAX_COMPARISON_KEYWORDS_COUNT = 20
+# Max. number of candidates to be returned by each query made.
+MAX_CANDIDATES_RETURNED = 20
 
-def get_related_resources(resources, keywords_model):
+
+def get_related_resources(
+    target_resources,
+    existing_related_resources,
+    keywords_model
+):
     """
     Calls research database APIs and recommends a list of academic resources
     based on target resources.
 
-    :param resources: The list of target resources.
-    :type resources: list[Resource]
+    :param target_resources: The list of target resources.
+    :type target_resources: list[Resource]
+    :param existing_related_resources: The list of existing related resources.
+    :type existing_related_resources: list[Resource]
     :param keywords_model: The word embedding model to be used for keywords.
     :type keywords_model: Word2Vec.KeyedVectors
     :return: A list of recommended academic resources.
     :rtype: list[Resource]
     """
     # TODO: Implement scoring system based on keywords, authors and citations?
-    # Max. number of keywords to extract from target to generate queries.
-    max_compulsory_target_keywords_count = 3
-    max_optional_target_keywords_count = 10
-    # Max. number of keywords to extract from candidates for keyword comparison.
-    max_comparison_keywords_count = 20
-    # Max. number of candidates to be returned by each query made.
-    max_candidates_returned = 20
-
     # TODO: Support multiple resources.
-    target = resources[0]
-    t_title = target.title if target.title is not None else ""
-    t_abstract = target.abstract if target.abstract is not None else ""
-    t_summary = f"{t_title} {t_abstract}"
-    t_keywords = keywords.get_keywords(t_summary)
+    target = target_resources[0]
+    t_keywords = keywords.get_keywords_from_resource(target)
 
     candidates: list[Resource] = []
 
@@ -41,17 +45,17 @@ def get_related_resources(resources, keywords_model):
     # Query 1: The default and compulsory keyword-based query.
     base_query_builder = ArxivQueryBuilder()
     base_query_builder.add_keywords(t_keywords[:min(
-        len(t_keywords), max_compulsory_target_keywords_count
+        len(t_keywords), MAX_COMPUL_T_KEYWORDS_COUNT
     )])
-    candidates += base_query_builder.get_resources(max_candidates_returned)
+    candidates += base_query_builder.get_resources(MAX_CANDIDATES_RETURNED)
 
     # Query 2: The more-relaxed keyword-based query.
     base_query_builder = ArxivQueryBuilder()
     base_query_builder.add_keywords(t_keywords[:min(
-        len(t_keywords), max_optional_target_keywords_count
+        len(t_keywords), MAX_OPTIONAL_T_KEYWORDS_COUNT
     )])
     candidates += base_query_builder.get_resources(
-        max_candidates_returned,
+        MAX_CANDIDATES_RETURNED,
         must_have_all_fields=False
     )
 
@@ -60,7 +64,7 @@ def get_related_resources(resources, keywords_model):
         author_biased_query_builder = ArxivQueryBuilder()
         author_biased_query_builder.set_authors(target.authors)
         candidates += author_biased_query_builder.get_resources(
-            max_candidates_returned,
+            MAX_CANDIDATES_RETURNED,
             must_have_all_fields=False
         )
 
@@ -69,18 +73,14 @@ def get_related_resources(resources, keywords_model):
 
     c_scores: list[float] = []
     for candidate in candidates:
-        c_title = candidate.title if candidate.title is not None else ""
-        c_abstract = candidate.abstract if candidate.abstract is not None else ""
-        c_summary = f"{c_title} {c_abstract}"
-        c_keywords = keywords.get_keywords(c_summary)
-
+        c_keywords = keywords.get_keywords_from_resource(candidate)
         similarity = keywords.keywords_similarity(
             keywords_model,
             t_keywords[:min(
-                len(t_keywords), max_comparison_keywords_count
+                len(t_keywords), MAX_COMPARISON_KEYWORDS_COUNT
             )],
             c_keywords[:min(
-                len(t_keywords), max_comparison_keywords_count
+                len(t_keywords), MAX_COMPARISON_KEYWORDS_COUNT
             )]
         )
         c_scores.append(similarity)
@@ -128,7 +128,11 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     keywords_model = keywords.get_model()
 
     t1 = time.time()
-    related_resources = get_related_resources([target_resource], keywords_model)
+    related_resources = get_related_resources(
+        [target_resource],
+        [],
+        keywords_model
+    )
     t2 = time.time()
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")
     print(f"recommend: related_resources: {len(related_resources)}")
