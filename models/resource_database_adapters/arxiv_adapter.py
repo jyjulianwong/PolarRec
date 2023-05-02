@@ -1,9 +1,9 @@
 """
-Research database adapter for the arXiv library.
+Resource database adapter for the arXiv library.
 """
 import urllib
 import xmltodict
-from models.research_database_adapters.adapter import QueryBuilder
+from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource import Resource
 
 

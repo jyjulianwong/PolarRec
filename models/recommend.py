@@ -3,7 +3,7 @@ Objects and methods for the /recommend service of the API.
 """
 import time
 from models import keywords
-from models.research_database_adapters.arxiv_adapter import ArxivQueryBuilder
+from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource import Resource
 
 # Recommendation ranking-related global hyperparameters.

@@ -18,7 +18,8 @@ class Resource:
             ``month: int | str`` (the month of resource publication),
             ``abstract: str`` (the abstract from the resource),
             ``doi: str`` (the DOI number of the resource),
-            ``url: str`` (the URL to the resource online).
+            ``url: str`` (the URL to the resource online),
+            ``references: list[Resource]`` (the references used by resource).
         :raises ValueError: When value of arguments are invalid.
         """
         if "year" in args:
@@ -66,6 +67,9 @@ class Resource:
         self.url = None
         if "url" in args:
             self.url = args["url"]
+        self.references = None
+        if "references" in args:
+            self.references = args["references"]
 
     def __eq__(self, other):
         # The "identity" of an academic resource is defined by its full title.
@@ -97,6 +101,10 @@ class Resource:
             as_dict["doi"] = self.doi
         if self.url is not None:
             as_dict["url"] = self.url
+        if self.references is not None:
+            as_dict["references"] = []
+            for reference in self.references:
+                as_dict["references"].append(reference.to_dict())
         return as_dict
 
 

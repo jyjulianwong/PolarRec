@@ -1,11 +1,11 @@
 """
-Research database adapter interface.
+Resource database adapter interface.
 """
 
 
 class QueryBuilder:
     """
-    Builds and sends queries for a research database.
+    Builds and sends queries for a resource database.
     """
 
     def __init__(self):

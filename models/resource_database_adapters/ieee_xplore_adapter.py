@@ -1,9 +1,9 @@
 """
-Research database adapter for the IEEE Xplore library.
+Resource database adapter for the IEEE Xplore library.
 """
 import requests
 from config import Config
-from models.research_database_adapters.adapter import QueryBuilder
+from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource import Resource
 
 
