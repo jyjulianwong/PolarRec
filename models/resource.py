@@ -76,6 +76,9 @@ class Resource:
         # Low likelihood of two well-known academic resources having same title.
         return self.title == other.title
 
+    def __lt__(self, other):
+        return self.title < other.title
+
     def __hash__(self):
         return hash(self.title)
 
