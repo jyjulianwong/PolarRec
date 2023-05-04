@@ -7,6 +7,7 @@ from flask_cors import CORS
 from models import keywords
 from models.recommend import get_related_resources
 from models.resource import Resource
+from models.resource_filter import ResourceFilter
 
 application = Flask(__name__)
 CORS(application)
@@ -63,9 +64,14 @@ def recommend():
         for existing_related_json in req_data["existing_related"]:
             existing_related_resources.append(Resource(existing_related_json))
 
+    resource_filter = ResourceFilter({})
+    if "filter" in req_data:
+        resource_filter = ResourceFilter(req_data["filter"])
+
     related_resources = get_related_resources(
         target_resources,
         existing_related_resources,
+        resource_filter,
         keywords_model
     )
 

@@ -57,26 +57,34 @@ The following is an example of the body of a POST request.
 {
     "targets": [
         {
-            "authors": ["Y. Lecun", "L. Bottou", "Y. Bengio", "P. Haffner"],
-            "title": "Gradient-based learning applied to document recognition",
-            "year": 1998,
-            "month": 1,
-            "abstract": "Multilayer neural networks trained with...",
-            "doi": "10.1109/5.726791",
-            "url": "https://ieeexplore.ieee.org/document/726791"
+            "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
+            "conference_name": "2014 IEEE Conference on Computer Vision...",
+            "conference_location": "Columbus, OH, USA",
+            "title": "Rich Feature Hierarchies for Accurate Object...",
+            "year": 2014,
+            "month": 6,
+            "abstract": "Object detection performance, as measured on...",
+            "doi": "10.1109/CVPR.2014.81",
+            "url": "https://ieeexplore.ieee.org/document/6909475"
         }
     ],
     "existing_related": [
         {
-            "authors": ["Y. Lecun", "L. Bottou", "Y. Bengio", "P. Haffner"],
-            "title": "Gradient-based learning applied to document recognition",
-            "year": 1998,
-            "month": 1,
-            "abstract": "Multilayer neural networks trained with...",
-            "doi": "10.1109/5.726791",
-            "url": "https://ieeexplore.ieee.org/document/726791"
+            "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
+            "conference_name": "2014 IEEE Conference on Computer Vision...",
+            "conference_location": "Columbus, OH, USA",
+            "title": "Rich Feature Hierarchies for Accurate Object...",
+            "year": 2014,
+            "month": 6,
+            "abstract": "Object detection performance, as measured on...",
+            "doi": "10.1109/CVPR.2014.81",
+            "url": "https://ieeexplore.ieee.org/document/6909475"
         }
-    ]
+    ],
+    "filter": {
+        "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
+        "conference_name": "2014 IEEE Conference on Computer Vision..."
+    }
 }
 ```
 
@@ -85,13 +93,15 @@ The following is an example of the body of the response received from a POST req
 {
     "related": [
         {
-            "authors": ["Y. Lecun", "L. Bottou", "Y. Bengio", "P. Haffner"],
-            "title": "Gradient-based learning applied to document recognition",
-            "year": 1998,
-            "month": 1,
-            "abstract": "Multilayer neural networks trained with...",
-            "doi": "10.1109/5.726791",
-            "url": "https://ieeexplore.ieee.org/document/726791"
+            "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
+            "conference_name": "2014 IEEE Conference on Computer Vision...",
+            "conference_location": "Columbus, OH, USA",
+            "title": "Rich Feature Hierarchies for Accurate Object...",
+            "year": 2014,
+            "month": 6,
+            "abstract": "Object detection performance, as measured on...",
+            "doi": "10.1109/CVPR.2014.81",
+            "url": "https://ieeexplore.ieee.org/document/6909475"
         }
     ]
 }

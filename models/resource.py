@@ -7,12 +7,17 @@ import datetime
 class Resource:
     """
     An academic resource object, designed to be initialised from JSON data.
+    Unifies metadata to a singular representation for every type of resource.
+    Converts JSON data into Python object instance in a safe manner.
+    Finds non-existant fields in JSON data and assigns them as None in instance.
     """
 
     def __init__(self, args):
         """
         :param args: A JSON-like dictionary that contains the following fields:
             ``authors: list[str]`` (the authors of the resource),
+            ``conference_name: str`` (the name of the associated conference),
+            ``conference_location: str`` (the location of the associated conference),
             ``title: str`` (the title of the resource),
             ``year: int | str`` (the year of resource publication),
             ``month: int | str`` (the month of resource publication),
@@ -22,6 +27,7 @@ class Resource:
             ``references: list[Resource]`` (the references used by resource).
         :raises ValueError: When value of arguments are invalid.
         """
+        # Type validation and conversion for year parameter.
         if "year" in args:
             if isinstance(args["year"], str):
                 try:
@@ -34,6 +40,7 @@ class Resource:
             if args["year"] < 0 or args["year"] > datetime.date.today().year:
                 raise ValueError("Value of year is outside of valid range")
 
+        # Type validation and conversion for month parameter.
         if "month" in args:
             if isinstance(args["month"], str):
                 try:
@@ -49,6 +56,12 @@ class Resource:
         self.authors = None
         if "authors" in args:
             self.authors = args["authors"]
+        self.conference_name = None
+        if "conference_name" in args:
+            self.conference_name = args["conference_name"]
+        self.conference_location = None
+        if "conference_location" in args:
+            self.conference_location = args["conference_location"]
         self.title = None
         if "title" in args:
             self.title = args["title"]
@@ -92,6 +105,10 @@ class Resource:
         as_dict = {}
         if self.authors is not None:
             as_dict["authors"] = self.authors
+        if self.conference_name is not None:
+            as_dict["conference_name"] = self.conference_name
+        if self.conference_location is not None:
+            as_dict["conference_location"] = self.conference_location
         if self.title is not None:
             as_dict["title"] = self.title
         if self.year is not None:

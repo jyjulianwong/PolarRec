@@ -5,6 +5,7 @@ import time
 from models import keywords
 from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource import Resource
+from models.resource_filter import ResourceFilter
 
 # Recommendation ranking-related global hyperparameters.
 # Max. number of keywords to extract from target to generate queries.
@@ -19,6 +20,7 @@ MAX_CANDIDATES_RETURNED = 20
 def get_related_resources(
     target_resources,
     existing_related_resources,
+    resource_filter,
     keywords_model
 ):
     """
@@ -29,6 +31,8 @@ def get_related_resources(
     :type target_resources: list[Resource]
     :param existing_related_resources: The list of existing related resources.
     :type existing_related_resources: list[Resource]
+    :param resource_filter: The filter to be applied to the results.
+    :type resource_filter: ResourceFilter
     :param keywords_model: The word embedding model to be used for keywords.
     :type keywords_model: Word2Vec.KeyedVectors
     :return: A list of recommended academic resources.
@@ -131,6 +135,7 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     related_resources = get_related_resources(
         [target_resource],
         [],
+        ResourceFilter({}),
         keywords_model
     )
     t2 = time.time()
