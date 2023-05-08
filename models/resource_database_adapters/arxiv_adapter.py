@@ -3,8 +3,8 @@ Resource database adapter for the arXiv library.
 """
 import urllib
 import xmltodict
-from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource import Resource
+from models.resource_database_adapters.adapter import QueryBuilder
 
 
 class ArxivQueryBuilder(QueryBuilder):

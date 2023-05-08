@@ -1,0 +1,151 @@
+"""
+Objects and methods for ranking academic resources based on citations.
+"""
+import math
+import numpy as np
+import time
+from models.resource import Resource
+
+# The threshold value above which two resources have significant co-occurrence.
+CITING_RES_COOC_PROB_TS = 0.1
+
+
+def get_resource_index_dict(citing_resources):
+    """
+    Assigns a unique integer index to each citing and cited resource.
+    The indices remain the same as long as the input list is in the same order.
+    The set of indices for citing and cited resources are separate.
+
+    :param citing_resources: The list of resources to extract from.
+    :type citing_resources: list[Resource]
+    :return: The dictionary mapping from resources to unique indices.
+    :rtype: tuple[dict[Resource, int], dict[Resource, int]]
+    """
+    citing_resource_corpus = []
+    cited_resource_corpus = []
+
+    for citing_resource in citing_resources:
+        citing_resource_corpus.append(citing_resource)
+
+        if citing_resource.references is None:
+            continue
+        for cited_resource in citing_resource.references:
+            cited_resource_corpus.append(cited_resource)
+
+    citing_resource_corpus = list(dict.fromkeys(citing_resource_corpus))
+    cited_resource_corpus = list(dict.fromkeys(cited_resource_corpus))
+
+    return (
+        {r: i for i, r in enumerate(citing_resource_corpus)},
+        {r: i for i, r in enumerate(cited_resource_corpus)},
+    )
+
+
+def get_citation_relation_matrix(citing_res_idx_dict, cited_res_idx_dict):
+    """
+    https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
+
+    :param citing_res_idx_dict: The resource-to-index dict for citing resources.
+    :type citing_res_idx_dict: dict[Resource, int]
+    :param cited_res_idx_dict: The resource-to-index dict for cited resources.
+    :type cited_res_idx_dict: dict[Resource, int]
+    :return: The citation relation matrix, where C[i][j] = 1 if i cites j.
+    :rtype: np.array
+    """
+    rel_mat = np.zeros((len(citing_res_idx_dict), len(cited_res_idx_dict)))
+
+    for citing_resource, citing_res_idx in citing_res_idx_dict.items():
+        if citing_resource.references is None:
+            continue
+        for cited_resource in citing_resource.references:
+            cited_res_idx = cited_res_idx_dict[cited_resource]
+            rel_mat[citing_res_idx][cited_res_idx] = 1
+
+    return rel_mat
+
+
+def get_cooccurence_prob(rel_vec1, rel_vec2):
+    """
+    :param rel_vec1: A paper vector from the citation relation matrix.
+    :type rel_vec1: np.array
+    :param rel_vec2: A paper vector from the citation relation matrix.
+    :type rel_vec2: np.array
+    :return: The co-occurrence probability value.
+    :rtype: float
+    """
+    sum_vec = np.add(rel_vec1, rel_vec2)
+    n11 = np.shape(sum_vec[sum_vec == 2])[-1]
+    n22 = np.shape(sum_vec[sum_vec == 0])[-1]
+    sub_vec = np.subtract(rel_vec1, rel_vec2)
+    n12 = np.shape(sub_vec[sub_vec == 1])[-1]
+    n21 = np.shape(sub_vec[sub_vec == -1])[-1]
+
+    r1 = n11 + n12
+    r2 = n21 + n22
+    c1 = n11 + n21
+    c2 = n12 + n22
+    n = c1 + c2
+
+    chi_sqd = (abs(n11 * n22 - n12 * n21) - n / 2) ** 2
+    chi_sqd /= max(r1 * r2 * c1 * c2, 1)
+
+    prob = (math.e ** -0.5) * (chi_sqd ** 2)
+    prob /= 2 * ((2 * math.pi) ** 0.5)
+    return prob
+
+
+def get_association_matrix(citing_resources):
+    """
+    https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
+
+    :param citing_resources: The list of resources to extract from.
+    :type citing_resources: list[Resource]
+    :return: The association matrix, where each row is a paper vector.
+    :rtype: np.array
+    """
+    citing_res_idx_dict, cited_res_idx_dict = get_resource_index_dict(
+        citing_resources
+    )
+    rel_mat = get_citation_relation_matrix(
+        citing_res_idx_dict,
+        cited_res_idx_dict
+    )
+
+    ass_mat = np.zeros((len(citing_res_idx_dict), len(citing_res_idx_dict)))
+    for r1 in citing_resources:
+        for r2 in citing_resources:
+            i1 = citing_res_idx_dict[r1]
+            i2 = citing_res_idx_dict[r2]
+            if i1 == i2:
+                continue
+
+            rel_vec1 = rel_mat[i1]
+            rel_vec2 = rel_mat[i2]
+            cooc_prob = get_cooccurence_prob(rel_vec1, rel_vec2)
+            if cooc_prob > CITING_RES_COOC_PROB_TS:
+                ass_mat[i1][i2] = 1
+
+    return ass_mat
+
+
+if __name__ == "__main__":
+    # Recreate the example from the paper that introduced this algorithm:
+    # https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
+    i1 = Resource({"title": "i1"})
+    i2 = Resource({"title": "i2"})
+    i3 = Resource({"title": "i3"})
+    i4 = Resource({"title": "i4"})
+    i5 = Resource({"title": "i5"})
+    j1 = Resource({"title": "j1"})
+    j2 = Resource({"title": "j2"})
+    i1.references = [j1]
+    i2.references = [j1, j2]
+    i3.references = [j1, j2]
+    i4.references = [j2]
+    i5.references = [j1]
+
+    t1 = time.time()
+    ass_mat = get_association_matrix([i1, i2, i3, i4, i5])
+    t2 = time.time()
+    print(f"citations: Time taken to execute: {t2 - t1} seconds")
+    print(f"citations: Association matrix:\n{ass_mat}")
