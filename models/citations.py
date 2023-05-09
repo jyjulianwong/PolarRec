@@ -172,6 +172,8 @@ def get_similarity_matrix(ass_mat):
 
 def get_citation_score_matrix(citing_res_idx_dict, cited_res_idx_dict):
     """
+    https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
+
     :param citing_res_idx_dict: The resource-to-index dict for citing resources.
     :type citing_res_idx_dict: dict[Resource, int]
     :param cited_res_idx_dict: The resource-to-index dict for cited resources.
