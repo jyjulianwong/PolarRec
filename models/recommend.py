@@ -2,7 +2,7 @@
 Objects and methods for the /recommend service of the API.
 """
 import time
-from models import keywords
+from models import citations, keywords
 from models.resource import Resource
 from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
@@ -19,7 +19,7 @@ MAX_TARGET_KEYWORDS_COUNT = 10
 # Max. number of keywords to extract from candidates for keyword comparison.
 MAX_COMPARISON_KEYWORDS_COUNT = 20
 # Max. number of candidates to be returned by each query made.
-MAX_CANDIDATES_RETURNED = 100
+MAX_CANDIDATES_RETURNED = 50
 
 
 def get_res_db_query_builders():
@@ -30,12 +30,12 @@ def get_res_db_query_builders():
     return [ArxivQueryBuilder, IEEEXploreQueryBuilder]
 
 
-def get_cit_db_adapters():
+def get_cit_db_adapter():
     """
-    :return: The list of citation databases the recommendation algorithm calls.
-    :rtype: list[type[Adapter]]
+    :return: The citation database the recommendation algorithm calls.
+    :rtype: type[Adapter]
     """
-    return [CrossrefAdapter, S2agAdapter]
+    return S2agAdapter
 
 
 def get_candidate_resources(target_keywords, target_authors, query_builder):
@@ -74,16 +74,36 @@ def get_candidate_resources(target_keywords, target_authors, query_builder):
     return candidates
 
 
-def get_candidate_scores(candidate_resources, target_keywords):
+def set_references_for_resources(resources):
+    """
+    :param resources: The list of resources to collect references for.
+    """
+    for resource in resources:
+        cit_db_adapter = get_cit_db_adapter()
+        references = cit_db_adapter.get_references(resource)
+        if len(references) > 0:
+            resource.references = references
+
+
+def get_candidate_scores(
+    candidate_resources,
+    target_resources,
+    target_keywords,
+    keywords_model
+):
     """
     :param candidate_resources: The list of candidate resources.
     :type candidate_resources: list[Resource]
+    :param target_resources: The list of target resources.
+    :type target_resources: list[Resource]
     :param target_keywords: The list of keywords from the target resource.
     :type target_keywords: list[str]
+    :param keywords_model: The word embedding model to be used for keywords.
+    :type keywords_model: Word2Vec.KeyedVectors
     :return: The candidate resources with their recommendation scores.
     :rtype: dict[Resource, float]
     """
-    scores: dict[Resource, float] = {}
+    keywords_sims: dict[Resource, float] = {}
     for candidate_resource in candidate_resources:
         candidate_keywords = keywords.get_keywords_from_resources(
             [candidate_resource]
@@ -97,8 +117,29 @@ def get_candidate_scores(candidate_resources, target_keywords):
                 len(candidate_keywords), MAX_COMPARISON_KEYWORDS_COUNT
             )]
         )
-        scores[candidate_resource] = similarity
-    return scores
+        keywords_sims[candidate_resource] = similarity
+    cands_sorted_by_keywords = [(s, c) for c, s in keywords_sims.items()]
+    cands_sorted_by_keywords = sorted(cands_sorted_by_keywords, reverse=True)
+    cands_keywords_ranking = {
+        p[1]: i for i, p in enumerate(cands_sorted_by_keywords)
+    }
+
+    set_references_for_resources(candidate_resources + target_resources)
+    cands_sorted_by_citations = citations.get_ranked_citing_resources(
+        candidate_resources=candidate_resources,
+        target_resources=target_resources
+    )
+    cands_citations_ranking = {
+        c: i for i, c in enumerate(cands_sorted_by_citations)
+    }
+
+    mean_ranks: dict[Resource, float] = {}
+    for candidate_resource in candidate_resources:
+        key_rank = cands_keywords_ranking[candidate_resource]
+        cit_rank = cands_citations_ranking[candidate_resource]
+        score = (key_rank + cit_rank) / 2
+        mean_ranks[candidate_resource] = score
+    return mean_ranks
 
 
 def get_related_resources(
@@ -146,12 +187,14 @@ def get_related_resources(
     # Assign a recommendation score for every candidate resource.
     candidate_scores = get_candidate_scores(
         candidate_resources=candidate_resources,
-        target_keywords=target_keywords
+        target_resources=target_resources,
+        target_keywords=target_keywords,
+        keywords_model=keywords_model
     )
     candidate_scores = [(s, c) for c, s in candidate_scores.items()]
 
     # Sort the list of candidates in order of their scores.
-    candidates = [c for s, c in sorted(candidate_scores, reverse=True)]
+    candidates = [c for s, c in sorted(candidate_scores)]
     return candidates
 
 
@@ -194,6 +237,17 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     keywords_model = keywords.get_model()
 
     t1 = time.time()
+    set_references_for_resources([target_resource])
+    t2 = time.time()
+    print("recommend: target_resource.references:")
+    if target_resource.references is None:
+        print(None)
+    else:
+        for i, reference in enumerate(target_resource.references):
+            print(f"\t[{i}]: {reference.title}")
+    print(f"recommend: Time taken to execute: {t2 - t1} seconds")
+
+    t1 = time.time()
     related_resources = get_related_resources(
         [target_resource],
         [],
@@ -201,7 +255,6 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         keywords_model
     )
     t2 = time.time()
-    print(f"recommend: Time taken to execute: {t2 - t1} seconds")
     print(f"recommend: related_resources: {len(related_resources)}")
     for i, related_resource in enumerate(related_resources):
         print(f"{i}: \t{related_resource.title}")
@@ -209,3 +262,4 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         print(f"\t{related_resource.year}")
         print(f"\t{related_resource.doi}")
         print(f"\t{related_resource.url}")
+    print(f"recommend: Time taken to execute: {t2 - t1} seconds")

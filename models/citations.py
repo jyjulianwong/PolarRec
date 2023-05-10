@@ -206,22 +206,22 @@ def get_citation_score_matrix(
     return score_mat
 
 
-def get_ranked_citing_resources(cand_resources, target_resources):
+def get_ranked_citing_resources(candidate_resources, target_resources):
     """
     Ranks citing resources by comparing the similarities of the paper vectors
     from the association matrix.
     ``target_resources`` must be a subset of ``citing_resources``.
     https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
 
-    :param cand_resources: The list of candidate citing resources to rank.
-    :type cand_resources: list[Resource]
+    :param candidate_resources: The list of candidate citing resources to rank.
+    :type candidate_resources: list[Resource]
     :param target_resources: The list of target resources to base ranking on.
     :type target_resources: list[Resource]
     :return: The list of citing resources, sorted by the CCF algorithm.
     :rtype: list[Resource]
     """
     citing_res_idx_dict, cited_res_idx_dict = get_resource_index_dict(
-        cand_resources + target_resources
+        candidate_resources + target_resources
     )
     rel_mat = get_citation_relation_matrix(
         citing_res_idx_dict,
@@ -232,7 +232,7 @@ def get_ranked_citing_resources(cand_resources, target_resources):
 
     citing_list = citing_res_idx_dict.items()
     target_list = [(r0, i0) for r0, i0 in citing_list if r0 in target_resources]
-    cand_list = [(r, i) for r, i in citing_list if r in cand_resources]
+    cand_list = [(r, i) for r, i in citing_list if r in candidate_resources]
 
     # Keep track of the similarity scores obtained by each candidate.
     sim_dict = {}
