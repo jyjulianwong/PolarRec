@@ -50,7 +50,7 @@ def get_citation_relation_matrix(citing_res_idx_dict, cited_res_idx_dict):
     :param cited_res_idx_dict: The resource-to-index dict for cited resources.
     :type cited_res_idx_dict: dict[Resource, int]
     :return: The citation relation matrix, where C[i][j] = 1 if i cites j.
-    :rtype: np.array
+    :rtype: np.ndarray
     """
     rel_mat = np.zeros((len(citing_res_idx_dict), len(cited_res_idx_dict)))
 
@@ -69,9 +69,9 @@ def get_cooccurence_prob(rel_vec1, rel_vec2):
     https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
 
     :param rel_vec1: A paper vector from the citation relation matrix.
-    :type rel_vec1: np.array
+    :type rel_vec1: np.ndarray
     :param rel_vec2: A paper vector from the citation relation matrix.
-    :type rel_vec2: np.array
+    :type rel_vec2: np.ndarray
     :return: The co-occurrence probability value.
     :rtype: float
     """
@@ -96,25 +96,20 @@ def get_cooccurence_prob(rel_vec1, rel_vec2):
     return prob
 
 
-def get_association_matrix(citing_res_idx_dict, cited_res_idx_dict):
+def get_association_matrix(rel_mat, citing_res_idx_dict):
     """
     https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
 
+    :param rel_mat: The citation relation matrix.
+    :type rel_mat: np.ndarray
     :param citing_res_idx_dict: The resource-to-index dict for citing resources.
     :type citing_res_idx_dict: dict[Resource, int]
-    :param cited_res_idx_dict: The resource-to-index dict for cited resources.
-    :type cited_res_idx_dict: dict[Resource, int]
     :return: The association matrix, where each row is a paper vector.
-    :rtype: np.array
+    :rtype: np.ndarray
     """
-    rel_mat = get_citation_relation_matrix(
-        citing_res_idx_dict,
-        cited_res_idx_dict
-    )
-
     ass_mat = np.zeros((len(citing_res_idx_dict), len(citing_res_idx_dict)))
-    for r1, i1 in citing_res_idx_dict.items():
-        for r2, i2 in citing_res_idx_dict.items():
+    for _, i1 in citing_res_idx_dict.items():
+        for _, i2 in citing_res_idx_dict.items():
             if i1 == i2:
                 continue
 
@@ -133,9 +128,9 @@ def get_ass_vec_sim(ass_vec1, ass_vec2):
     https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
 
     :param ass_vec1: A paper vector from the association matrix.
-    :type ass_vec1: np.array
+    :type ass_vec1: np.ndarray
     :param ass_vec2: A paper vector from the association matrix.
-    :type ass_vec2: np.array
+    :type ass_vec2: np.ndarray
     :return: The cosine similarity between two association matrix paper vectors.
     :rtype: float
     """
@@ -149,9 +144,9 @@ def get_similarity_matrix(ass_mat):
     https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
 
     :param ass_mat: The association matrix.
-    :type ass_mat: np.array
+    :type ass_mat: np.ndarray
     :return: The similarity between every pair of citing papers.
-    :rtype: np.array
+    :rtype: np.ndarray
     """
     sim_mat = np.zeros(ass_mat.shape)
 
@@ -187,13 +182,13 @@ def get_citation_score_matrix(
     :param target_resources: The list of resources to get scores of.
     :type target_resources: list[Resource]
     :return: The citation scores between each citing and cited paper pair.
-    :rtype: np.array
+    :rtype: np.ndarray
     """
     rel_mat = get_citation_relation_matrix(
         citing_res_idx_dict,
         cited_res_idx_dict
     )
-    ass_mat = get_association_matrix(citing_res_idx_dict, cited_res_idx_dict)
+    ass_mat = get_association_matrix(rel_mat, citing_res_idx_dict)
     sim_mat = get_similarity_matrix(ass_mat)
 
     score_mat = np.zeros((len(citing_res_idx_dict), len(cited_res_idx_dict)))
@@ -209,6 +204,50 @@ def get_citation_score_matrix(
             score_mat[i0][j] = weighted_score_sum / max(sim_sum, 1e-9)
 
     return score_mat
+
+
+def get_ranked_citing_resources(cand_resources, target_resources):
+    """
+    Ranks citing resources by comparing the similarities of the paper vectors
+    from the association matrix.
+    ``target_resources`` must be a subset of ``citing_resources``.
+    https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
+
+    :param cand_resources: The list of candidate citing resources to rank.
+    :type cand_resources: list[Resource]
+    :param target_resources: The list of target resources to base ranking on.
+    :type target_resources: list[Resource]
+    :return: The list of citing resources, sorted by the CCF algorithm.
+    :rtype: list[Resource]
+    """
+    citing_res_idx_dict, cited_res_idx_dict = get_resource_index_dict(
+        cand_resources + target_resources
+    )
+    rel_mat = get_citation_relation_matrix(
+        citing_res_idx_dict,
+        cited_res_idx_dict
+    )
+    ass_mat = get_association_matrix(rel_mat, citing_res_idx_dict)
+    sim_mat = get_similarity_matrix(ass_mat)
+
+    citing_list = citing_res_idx_dict.items()
+    target_list = [(r0, i0) for r0, i0 in citing_list if r0 in target_resources]
+    cand_list = [(r, i) for r, i in citing_list if r in cand_resources]
+
+    # Keep track of the similarity scores obtained by each candidate.
+    sim_dict = {}
+    for r, i in cand_list:
+        for r0, i0 in target_list:
+            if r not in sim_dict:
+                sim_dict[r] = [sim_mat[i0][i]]
+            else:
+                sim_dict[r].append(sim_mat[i0][i])
+
+    # Calculate the mean similarity score for each candidate across the targets.
+    sim_list = [(r, sum(l) / len(l)) for r, l in sim_dict.items()]
+    # Sort the candidates by their mean similarity score.
+    sim_list = sorted(sim_list, key=lambda x: (x[1], x[0]), reverse=True)
+    return [r for r, s in sim_list]
 
 
 if __name__ == "__main__":
@@ -240,7 +279,7 @@ if __name__ == "__main__":
     print(f"citations: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
-    ass_mat = get_association_matrix(citing_res_idx_dict, cited_res_idx_dict)
+    ass_mat = get_association_matrix(rel_mat, citing_res_idx_dict)
     t2 = time.time()
     print(f"citations: Association matrix:\n{ass_mat}")
     print(f"citations: Time taken to execute: {t2 - t1} seconds")
@@ -259,4 +298,15 @@ if __name__ == "__main__":
     )
     t2 = time.time()
     print(f"citations: Citation score matrix:\n{np.transpose(score_mat)}")
+    print(f"citations: Time taken to execute: {t2 - t1} seconds")
+
+    t1 = time.time()
+    ranked_candidates = get_ranked_citing_resources(
+        [i2, i4, i5],
+        [i1, i3]
+    )
+    t2 = time.time()
+    print("citations: Ranked candidate resources:")
+    for i, ranked_candidate in enumerate(ranked_candidates):
+        print(f"\t[{i + 1}]: {ranked_candidate.title}")
     print(f"citations: Time taken to execute: {t2 - t1} seconds")
