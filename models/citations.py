@@ -170,14 +170,22 @@ def get_similarity_matrix(ass_mat):
     return sim_mat
 
 
-def get_citation_score_matrix(citing_res_idx_dict, cited_res_idx_dict):
+def get_citation_score_matrix(
+    citing_res_idx_dict,
+    cited_res_idx_dict,
+    target_resources
+):
     """
+    The resources in ``target_resources`` must be included in
+    ``citing_res_idx_dict``.
     https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
 
     :param citing_res_idx_dict: The resource-to-index dict for citing resources.
     :type citing_res_idx_dict: dict[Resource, int]
     :param cited_res_idx_dict: The resource-to-index dict for cited resources.
     :type cited_res_idx_dict: dict[Resource, int]
+    :param target_resources: The list of resources to get scores of.
+    :type target_resources: list[Resource]
     :return: The citation scores between each citing and cited paper pair.
     :rtype: np.array
     """
@@ -189,14 +197,16 @@ def get_citation_score_matrix(citing_res_idx_dict, cited_res_idx_dict):
     sim_mat = get_similarity_matrix(ass_mat)
 
     score_mat = np.zeros((len(citing_res_idx_dict), len(cited_res_idx_dict)))
-    for ri, i in citing_res_idx_dict.items():
-        for rj, j in cited_res_idx_dict.items():
+    for target_resource in target_resources:
+        i0 = citing_res_idx_dict[target_resource]
+        for _, j in cited_res_idx_dict.items():
             weighted_score_sum = 0
-            for rk, k in citing_res_idx_dict.items():
-                if i != k:
-                    weighted_score_sum += sim_mat[i][k] * rel_mat[k][j]
-            sim_sum = np.sum(sim_mat[i]) - sim_mat[i][i]
-            score_mat[i][j] = weighted_score_sum / max(sim_sum, 1e-9)
+            for _, i in citing_res_idx_dict.items():
+                if i0 != i:
+                    weighted_score_sum += sim_mat[i0][i] * rel_mat[i][j]
+            sim_sum = np.sum(sim_mat[i0]) - sim_mat[i0][i0]
+            # Set minimum denominator to avoid division-by-zero.
+            score_mat[i0][j] = weighted_score_sum / max(sim_sum, 1e-9)
 
     return score_mat
 
@@ -226,26 +236,27 @@ if __name__ == "__main__":
         cited_res_idx_dict
     )
     t2 = time.time()
-    print(f"citations: Time taken to execute: {t2 - t1} seconds")
     print(f"citations: Citation relation matrix:\n{np.transpose(rel_mat)}")
+    print(f"citations: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
     ass_mat = get_association_matrix(citing_res_idx_dict, cited_res_idx_dict)
     t2 = time.time()
-    print(f"citations: Time taken to execute: {t2 - t1} seconds")
     print(f"citations: Association matrix:\n{ass_mat}")
+    print(f"citations: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
     sim_mat = get_similarity_matrix(ass_mat)
     t2 = time.time()
-    print(f"citations: Time taken to execute: {t2 - t1} seconds")
     print(f"citations: Similarity matrix:\n{sim_mat}")
+    print(f"citations: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
     score_mat = get_citation_score_matrix(
         citing_res_idx_dict,
-        cited_res_idx_dict
+        cited_res_idx_dict,
+        [i1, i3]
     )
     t2 = time.time()
-    print(f"citations: Time taken to execute: {t2 - t1} seconds")
     print(f"citations: Citation score matrix:\n{np.transpose(score_mat)}")
+    print(f"citations: Time taken to execute: {t2 - t1} seconds")
