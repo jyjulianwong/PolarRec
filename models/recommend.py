@@ -4,17 +4,98 @@ Objects and methods for the /recommend service of the API.
 import time
 from models import keywords
 from models.resource import Resource
+from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
+from models.resource_database_adapters.ieee_xplore_adapter import \
+    IEEEXploreQueryBuilder
+from models.citation_database_adapters.adapter import Adapter
+from models.citation_database_adapters.crossref_adapter import CrossrefAdapter
+from models.citation_database_adapters.s2ag_adapter import S2agAdapter
 from models.resource_filter import ResourceFilter
 
 # Recommendation ranking-related global hyperparameters.
-# Max. number of keywords to extract from target to generate queries.
-MAX_COMPUL_T_KEYWORDS_COUNT = 3
-MAX_OPTIONAL_T_KEYWORDS_COUNT = 10
+# Max. number of keywords to extract from targets to generate queries.
+MAX_TARGET_KEYWORDS_COUNT = 10
 # Max. number of keywords to extract from candidates for keyword comparison.
 MAX_COMPARISON_KEYWORDS_COUNT = 20
 # Max. number of candidates to be returned by each query made.
-MAX_CANDIDATES_RETURNED = 20
+MAX_CANDIDATES_RETURNED = 100
+
+
+def get_res_db_query_builders():
+    """
+    :return: The list of resource databases the recommendation algorithm calls.
+    :rtype: list[type[QueryBuilder]]
+    """
+    return [ArxivQueryBuilder]
+
+
+def get_cit_db_adapters():
+    """
+    :return: The list of citation databases the recommendation algorithm calls.
+    :rtype: list[type[Adapter]]
+    """
+    return [CrossrefAdapter, S2agAdapter]
+
+
+def get_candidate_resources(target_keywords, target_authors, query_builder):
+    """
+    :param target_keywords: The list of keywords from the target resources.
+    :type target_keywords: list[str]
+    :param target_authors: The list of authors from the target resources.
+    :type target_authors: list[str]
+    :param query_builder: The resource database to call.
+    :type query_builder: type[QueryBuilder]
+    :return: A list of candidate resources based on the target resource.
+    :rtype: list[Resource]
+    """
+    candidates: list[Resource] = []
+
+    # Query 1: The keyword-based query.
+    if len(target_keywords) > 0:
+        base_query_builder = query_builder()
+        base_query_builder.add_keywords(target_keywords[:min(
+            len(target_keywords), MAX_TARGET_KEYWORDS_COUNT
+        )])
+        candidates += base_query_builder.get_resources(
+            MAX_CANDIDATES_RETURNED,
+            must_have_all_fields=False
+        )
+
+    # Query 2: The author-biased query.
+    if len(target_authors) > 0:
+        author_biased_query_builder = query_builder()
+        author_biased_query_builder.set_authors(target_authors)
+        candidates += author_biased_query_builder.get_resources(
+            MAX_CANDIDATES_RETURNED,
+            must_have_all_fields=False
+        )
+
+    return candidates
+
+
+def get_candidate_score(candidate_resource, target_keywords):
+    """
+    :param candidate_resource: The candidate resource.
+    :type candidate_resource: Resource
+    :param target_keywords: The list of keywords from the target resource.
+    :type target_keywords: list[str]
+    :return: The recommendation score for the candidate resource.
+    :rtype: float
+    """
+    candidate_keywords = keywords.get_keywords_from_resources(
+        [candidate_resource]
+    )
+    similarity = keywords.keywords_similarity(
+        keywords_model,
+        target_keywords[:min(
+            len(target_keywords), MAX_COMPARISON_KEYWORDS_COUNT
+        )],
+        candidate_keywords[:min(
+            len(candidate_keywords), MAX_COMPARISON_KEYWORDS_COUNT
+        )]
+    )
+    return similarity
 
 
 def get_related_resources(
@@ -39,58 +120,38 @@ def get_related_resources(
     :rtype: list[Resource]
     """
     # TODO: Implement scoring system based on keywords, authors and citations?
-    # TODO: Support multiple resources.
-    target = target_resources[0]
-    t_keywords = keywords.get_keywords_from_resource(target)
+    # Extract keywords from target resources.
+    target_keywords = keywords.get_keywords_from_resources(target_resources)
+    # Extract the complete list of authors from target resources.
+    target_authors = []
+    for resource in target_resources:
+        if resource.authors is not None:
+            target_authors += resource.authors
 
+    # Collect candidate resources from resource databases.
     candidates: list[Resource] = []
-
-    # TODO: Support multiple databases.
-    # Query 1: The default and compulsory keyword-based query.
-    base_query_builder = ArxivQueryBuilder()
-    base_query_builder.add_keywords(t_keywords[:min(
-        len(t_keywords), MAX_COMPUL_T_KEYWORDS_COUNT
-    )])
-    candidates += base_query_builder.get_resources(MAX_CANDIDATES_RETURNED)
-
-    # Query 2: The more-relaxed keyword-based query.
-    base_query_builder = ArxivQueryBuilder()
-    base_query_builder.add_keywords(t_keywords[:min(
-        len(t_keywords), MAX_OPTIONAL_T_KEYWORDS_COUNT
-    )])
-    candidates += base_query_builder.get_resources(
-        MAX_CANDIDATES_RETURNED,
-        must_have_all_fields=False
-    )
-
-    # Query 3: The author-biased query (if applicable).
-    if target.authors:
-        author_biased_query_builder = ArxivQueryBuilder()
-        author_biased_query_builder.set_authors(target.authors)
-        candidates += author_biased_query_builder.get_resources(
-            MAX_CANDIDATES_RETURNED,
-            must_have_all_fields=False
+    for query_builder in get_res_db_query_builders():
+        candidates += get_candidate_resources(
+            target_keywords=target_keywords,
+            target_authors=target_authors,
+            query_builder=query_builder
         )
 
     # Remove any duplicate resources from the multiple queries.
-    candidates = list(set(candidates))
+    candidates = list(dict.fromkeys(candidates))
 
-    c_scores: list[float] = []
+    # Assign a recommendation score for every candidate resource.
+    candidate_scores: list[float] = []
     for candidate in candidates:
-        c_keywords = keywords.get_keywords_from_resource(candidate)
-        similarity = keywords.keywords_similarity(
-            keywords_model,
-            t_keywords[:min(
-                len(t_keywords), MAX_COMPARISON_KEYWORDS_COUNT
-            )],
-            c_keywords[:min(
-                len(t_keywords), MAX_COMPARISON_KEYWORDS_COUNT
-            )]
+        candidate_score = get_candidate_score(
+            candidate_resource=candidate,
+            target_keywords=target_keywords
         )
-        c_scores.append(similarity)
+        candidate_scores.append(candidate_score)
 
-    sorted_candidates = [c for s, c in sorted(zip(c_scores, candidates))]
-    return sorted_candidates
+    # Sort the list of candidates in order of their scores.
+    candidates = [c for s, c in sorted(zip(candidate_scores, candidates))]
+    return candidates
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ Objects and methods for ranking academic resources based on keywords.
 import nltk
 import time
 from gensim import downloader
+from models.resource import Resource
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -45,16 +46,18 @@ def get_keywords(text):
     return keywords
 
 
-def get_keywords_from_resource(resource):
+def get_keywords_from_resources(resources):
     """
-    :param resource: The resource from which keywords are extracted.
-    :type resource: Resource
+    :param resources: The list of resources from which keywords are extracted.
+    :type resources: list[Resource]
     :return: A list of keywords, sorted in order of importance.
     :rtype: list[str]
     """
-    title = resource.title if resource.title is not None else ""
-    abstract = resource.abstract if resource.abstract is not None else ""
-    summary = f"{title} {abstract}"
+    summary = ""
+    for resource in resources:
+        title = resource.title if resource.title is not None else ""
+        abstract = resource.abstract if resource.abstract is not None else ""
+        summary += f"{title} {abstract} "
     keywords = get_keywords(summary)
     return keywords
 
@@ -149,6 +152,14 @@ SegNet and a web demo at this http URL."""
     t2 = time.time()
     print(f"keywords: keywords1: {keywords1[:10]}")
     print(f"keywords: keywords2: {keywords2[:10]}")
+    print(f"keywords: Time taken to execute: {t2 - t1} seconds")
+
+    resource1 = Resource({"title": "r1", "abstract": abstract1})
+    resource2 = Resource({"title": "r2", "abstract": abstract2})
+    t1 = time.time()
+    combined_keywords = get_keywords_from_resources([resource1, resource2])
+    t2 = time.time()
+    print(f"keywords: combined_keywords: {combined_keywords[:10]}")
     print(f"keywords: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
