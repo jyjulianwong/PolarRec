@@ -35,9 +35,10 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         max_resources_returned,
         must_have_all_fields=True
     ):
-        bool_op = " AND " if must_have_all_fields else " OR "
-        self._query_args["querytext"] = bool_op.join(self._keywords)
-        self._query_args["querytext"] = f"({self._query_args['querytext']})"
+        if len(self._keywords) > 0:
+            bool_op = " AND " if must_have_all_fields else " OR "
+            self._query_args["querytext"] = bool_op.join(self._keywords)
+            self._query_args["querytext"] = f"({self._query_args['querytext']})"
         self._query_args["max_records"] = max_resources_returned
         self._query_args["apikey"] = self._API_KEY
         try:
@@ -56,7 +57,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
 
         if res.status_code != 200:
             # IEEE Xplore has a limit on how many API calls can be made per day.
-            print(f"IEEEXploreQueryBuilder: {res}")
+            print(f"IEEEXploreQueryBuilder: {res}: {res.url}")
             return []
 
         res = res.json()
@@ -73,11 +74,12 @@ class IEEEXploreQueryBuilder(QueryBuilder):
                 "authors": authors,
                 "title": resource_data["title"],
                 "year": resource_data["publication_year"],
-                "abstract": resource_data["abstract"],
                 "url": resource_data["html_url"]
             }
 
             # Set optional fields.
+            if "abstract" in resource_data:
+                resource_args["abstract"] = resource_data["abstract"]
             if "doi" in resource_data:
                 resource_args["doi"] = resource_data["doi"]
 

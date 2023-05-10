@@ -27,7 +27,7 @@ def get_res_db_query_builders():
     :return: The list of resource databases the recommendation algorithm calls.
     :rtype: list[type[QueryBuilder]]
     """
-    return [ArxivQueryBuilder]
+    return [ArxivQueryBuilder, IEEEXploreQueryBuilder]
 
 
 def get_cit_db_adapters():
