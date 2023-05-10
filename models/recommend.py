@@ -74,28 +74,31 @@ def get_candidate_resources(target_keywords, target_authors, query_builder):
     return candidates
 
 
-def get_candidate_score(candidate_resource, target_keywords):
+def get_candidate_scores(candidate_resources, target_keywords):
     """
-    :param candidate_resource: The candidate resource.
-    :type candidate_resource: Resource
+    :param candidate_resources: The list of candidate resources.
+    :type candidate_resources: list[Resource]
     :param target_keywords: The list of keywords from the target resource.
     :type target_keywords: list[str]
-    :return: The recommendation score for the candidate resource.
-    :rtype: float
+    :return: The candidate resources with their recommendation scores.
+    :rtype: dict[Resource, float]
     """
-    candidate_keywords = keywords.get_keywords_from_resources(
-        [candidate_resource]
-    )
-    similarity = keywords.keywords_similarity(
-        keywords_model,
-        target_keywords[:min(
-            len(target_keywords), MAX_COMPARISON_KEYWORDS_COUNT
-        )],
-        candidate_keywords[:min(
-            len(candidate_keywords), MAX_COMPARISON_KEYWORDS_COUNT
-        )]
-    )
-    return similarity
+    scores: dict[Resource, float] = {}
+    for candidate_resource in candidate_resources:
+        candidate_keywords = keywords.get_keywords_from_resources(
+            [candidate_resource]
+        )
+        similarity = keywords.keywords_similarity(
+            keywords_model,
+            target_keywords[:min(
+                len(target_keywords), MAX_COMPARISON_KEYWORDS_COUNT
+            )],
+            candidate_keywords[:min(
+                len(candidate_keywords), MAX_COMPARISON_KEYWORDS_COUNT
+            )]
+        )
+        scores[candidate_resource] = similarity
+    return scores
 
 
 def get_related_resources(
@@ -129,28 +132,26 @@ def get_related_resources(
             target_authors += resource.authors
 
     # Collect candidate resources from resource databases.
-    candidates: list[Resource] = []
+    candidate_resources: list[Resource] = []
     for query_builder in get_res_db_query_builders():
-        candidates += get_candidate_resources(
+        candidate_resources += get_candidate_resources(
             target_keywords=target_keywords,
             target_authors=target_authors,
             query_builder=query_builder
         )
 
     # Remove any duplicate resources from the multiple queries.
-    candidates = list(dict.fromkeys(candidates))
+    candidate_resources = list(dict.fromkeys(candidate_resources))
 
     # Assign a recommendation score for every candidate resource.
-    candidate_scores: list[float] = []
-    for candidate in candidates:
-        candidate_score = get_candidate_score(
-            candidate_resource=candidate,
-            target_keywords=target_keywords
-        )
-        candidate_scores.append(candidate_score)
+    candidate_scores = get_candidate_scores(
+        candidate_resources=candidate_resources,
+        target_keywords=target_keywords
+    )
+    candidate_scores = [(s, c) for c, s in candidate_scores.items()]
 
     # Sort the list of candidates in order of their scores.
-    candidates = [c for s, c in sorted(zip(candidate_scores, candidates))]
+    candidates = [c for s, c in sorted(candidate_scores, reverse=True)]
     return candidates
 
 
