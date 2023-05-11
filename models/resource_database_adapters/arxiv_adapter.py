@@ -37,16 +37,8 @@ class ArxivQueryBuilder(QueryBuilder):
 
         if self._authors:
             for author in self._authors:
-                author_names = author.split(" ")
-                author_last_name = author_names[-1]
-                author_first_name = author_names[0]
-                author_formatted = f"{author_last_name}_{author_first_name}"
-                if "." in author_first_name:
-                    # Do not include first names that have been shortened.
-                    # This is not supported by ArXiv.
-                    author_formatted = author_last_name
-                author_formatted = author_formatted.lower()
-                search_query.append(f"au:{author_formatted}")
+                formatted_name = self._get_joined_author_name(author, "_", True)
+                search_query.append(f"au:{formatted_name}")
 
         if self._min_date or self._max_date:
             # TODO: Not supported by ArXiv API.
@@ -74,7 +66,7 @@ class ArxivQueryBuilder(QueryBuilder):
         url = self._API_URL_BASE + "?" + "&".join(
             [f"{key}={val}" for key, val in query_args.items()]
         )
-        res = urllib.request.urlopen(self._translated_url_str(url))
+        res = urllib.request.urlopen(self._get_translated_url_str(url))
         res = res.read().decode("utf-8")
         res = xmltodict.parse(res)
 
