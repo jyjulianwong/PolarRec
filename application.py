@@ -14,7 +14,7 @@ application = Flask(__name__)
 CORS(application)
 with application.app_context():
     keyword_model = KeywordRanker.get_model()
-    log("keyword_model successfully loaded", "application")
+    log("KeywordRanker model successfully loaded", "application")
 
 
 @application.route("/", methods=["GET"])

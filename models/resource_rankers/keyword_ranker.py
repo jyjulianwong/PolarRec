@@ -91,8 +91,15 @@ class KeywordRanker(Ranker):
         :return: The keyword model
         :rtype: gensim.models.KeyedVectors
         """
+        log("NLTK Stopwords corpus download started", "KeywordRanker")
         nltk.download("stopwords")
-        return downloader.load("glove-wiki-gigaword-50")
+        log("NLTK Stopwords corpus download completed", "KeywordRanker")
+
+        log("GloVe model download via Gensim started", "KeywordRanker")
+        model = downloader.load("glove-wiki-gigaword-50")
+        log("GloVe model download via Gensim completed", "KeywordRanker")
+
+        return model
 
     @classmethod
     def get_keywords(cls, resources):
