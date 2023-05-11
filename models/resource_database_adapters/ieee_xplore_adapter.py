@@ -3,6 +3,7 @@ Resource database adapter for the IEEE Xplore library.
 """
 import requests
 from config import Config
+from models.custom_logger import log
 from models.resource import Resource
 from models.resource_database_adapters.adapter import QueryBuilder
 
@@ -52,12 +53,12 @@ class IEEEXploreQueryBuilder(QueryBuilder):
                 timeout=10
             )
         except Exception as err:
-            print(f"IEEEXploreQueryBuilder: {err}")
+            log(str(err), "IEEEXploreQueryBuilder", "error")
             return []
 
         if res.status_code != 200:
             # IEEE Xplore has a limit on how many API calls can be made per day.
-            print(f"IEEEXploreQueryBuilder: {res}: {res.url}")
+            log(f"Got {res} from {res.url}", "IEEEXploreQueryBuilder", "error")
             return []
 
         res = res.json()

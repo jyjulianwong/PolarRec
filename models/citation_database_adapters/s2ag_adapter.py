@@ -5,6 +5,7 @@ import requests
 import string
 import time
 from models.citation_database_adapters.adapter import Adapter
+from models.custom_logger import log
 from models.resource import Resource
 
 
@@ -74,7 +75,7 @@ class S2agAdapter(Adapter):
                 timeout=10
             ).json()
         except Exception as err:
-            print(f"S2agAdapter: {err}")
+            log(str(err), "S2agAdapter", "error")
             return None
 
         if "total" not in res or res["total"] == 0:

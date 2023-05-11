@@ -4,6 +4,7 @@ Objects and methods for ranking academic resources based on keywords.
 import nltk
 import time
 from gensim import downloader
+from models.custom_logger import log, log_extended_line
 from models.resource import Resource
 from models.resource_rankers.ranker import Ranker
 from nltk.corpus import stopwords
@@ -71,9 +72,12 @@ class KeywordRanker(Ranker):
                 oovs.append(w1)
 
         if show_oovs:
-            print("keywords: keywords_similarity: Out-of-vocabulary:")
+            log(
+                "_get_keyword_list_similarity: Listing out-of-vocabulary words…",
+                "KeywordRanker"
+            )
             for i, oov in enumerate(list(set(oovs))):
-                print(f"\t[{i}]: {oov}")
+                log_extended_line(f"[{i}]: {oov}")
 
         return sum(similarities) / max(len(similarities), 1)
 

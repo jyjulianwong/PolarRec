@@ -4,6 +4,7 @@ The entry point to the API.
 import os
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+from models.custom_logger import log
 from models.recommend import get_related_resources
 from models.resource import Resource
 from models.resource_filter import ResourceFilter
@@ -13,7 +14,7 @@ application = Flask(__name__)
 CORS(application)
 with application.app_context():
     keyword_model = KeywordRanker.get_model()
-    print("application: keyword_model successfully loaded.")
+    log("keyword_model successfully loaded", "application")
 
 
 @application.route("/", methods=["GET"])
