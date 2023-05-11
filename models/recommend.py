@@ -166,7 +166,6 @@ def get_related_resources(
     :return: A list of recommended academic resources.
     :rtype: list[Resource]
     """
-    # TODO: Implement scoring system based on keywords, authors and citations?
     # Extract keywords from target resources.
     target_keywords = KeywordRanker.get_keywords(target_resources)
     # Extract the complete list of authors from target resources.
