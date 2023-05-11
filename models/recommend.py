@@ -10,6 +10,7 @@ from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource_database_adapters.ieee_xplore_adapter import \
     IEEEXploreQueryBuilder
 from models.resource_filter import ResourceFilter
+from models.resource_rankers.author_ranker import AuthorRanker
 from models.resource_rankers.citation_ranker import CitationRanker
 from models.resource_rankers.keyword_ranker import KeywordRanker
 from models.resource_rankers.ranker import Ranker
@@ -35,6 +36,14 @@ def get_cit_db_adapter():
     :rtype: type[Adapter]
     """
     return S2agAdapter
+
+
+def get_resource_rankers():
+    """
+    :return: The resource rankers used to rank candidate resources.
+    :rtype: list[type[Ranker]]
+    """
+    return [AuthorRanker, CitationRanker, KeywordRanker]
 
 
 def get_candidate_resources(target_keywords, target_authors, query_builder):
@@ -73,9 +82,13 @@ def get_candidate_resources(target_keywords, target_authors, query_builder):
     return candidates
 
 
-def set_references_for_resources(resources):
+def search_and_set_resource_refs(resources):
     """
+    Searches for and assigns references to resources using the chosen citation
+    database adapters.
+
     :param resources: The list of resources to collect references for.
+    :type resources: list[Resource]
     """
     for resource in resources:
         cit_db_adapter = get_cit_db_adapter()
@@ -91,6 +104,11 @@ def get_candidate_scores(
     keyword_model
 ):
     """
+    Ranks candidates using multiple specialised algorithms (Rankers).
+    Uses the mean ranking across all algorithms as the "recommendation score".
+    Therefore, a smaller value corresponds to a better recommendation, with the
+    best possible score being 1.
+
     :param candidate_resources: The list of candidate resources.
     :type candidate_resources: list[Resource]
     :param target_resources: The list of target resources.
@@ -102,32 +120,29 @@ def get_candidate_scores(
     :return: The candidate resources with their recommendation scores.
     :rtype: dict[Resource, float]
     """
-    cands_sorted_by_keywords = KeywordRanker.get_ranked_cand_resources(
-        candidate_resources=candidate_resources,
-        target_resources=target_resources,
-        model=keyword_model,
-        target_keywords=target_keywords
-    )
-    cands_keywords_ranking = {
-        c: i for i, c in enumerate(cands_sorted_by_keywords)
-    }
+    cand_ranking_dict: dict[Resource, list[int]] = {}
 
-    set_references_for_resources(candidate_resources + target_resources)
-    cands_sorted_by_citations = CitationRanker.get_ranked_cand_resources(
-        candidate_resources=candidate_resources,
-        target_resources=target_resources
-    )
-    cands_citations_ranking = {
-        c: i for i, c in enumerate(cands_sorted_by_citations)
-    }
+    rankers = get_resource_rankers()
+    for ranker in rankers:
+        sorted_cand_ress = ranker.get_ranked_cand_resources(
+            candidate_resources=candidate_resources,
+            target_resources=target_resources,
+            # Additional arguments for KeywordRanker.
+            model=keyword_model,
+            target_keywords=target_keywords
+        )
+        for i, c in enumerate(sorted_cand_ress):
+            if c not in cand_ranking_dict:
+                cand_ranking_dict[c] = [i]
+            else:
+                cand_ranking_dict[c].append(i)
 
-    mean_ranks: dict[Resource, float] = {}
+    cand_mean_rank_dict: dict[Resource, float] = {}
     for candidate_resource in candidate_resources:
-        key_rank = cands_keywords_ranking[candidate_resource]
-        cit_rank = cands_citations_ranking[candidate_resource]
-        score = (key_rank + cit_rank) / 2
-        mean_ranks[candidate_resource] = score
-    return mean_ranks
+        cand_rankings = cand_ranking_dict[candidate_resource]
+        mean_rank = sum(cand_rankings) / max(len(cand_rankings), 1)
+        cand_mean_rank_dict[candidate_resource] = mean_rank
+    return cand_mean_rank_dict
 
 
 def get_related_resources(
@@ -171,6 +186,10 @@ def get_related_resources(
 
     # Remove any duplicate resources from the multiple queries.
     candidate_resources = list(dict.fromkeys(candidate_resources))
+
+    # Collect references for all resources using citation database adapters.
+    # This information is not available from resource database adapters.
+    search_and_set_resource_refs(candidate_resources + target_resources)
 
     # Assign a recommendation score for every candidate resource.
     candidate_scores = get_candidate_scores(
@@ -225,7 +244,7 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     target_resource = Resource(target_data)
 
     t1 = time.time()
-    set_references_for_resources([target_resource])
+    search_and_set_resource_refs([target_resource])
     t2 = time.time()
     print("recommend: target_resource.references:")
     if target_resource.references is None:

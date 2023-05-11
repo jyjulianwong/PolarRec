@@ -35,6 +35,7 @@ class CitationRanker(Ranker):
             for cited_resource in citing_resource.references:
                 cited_resource_corpus.append(cited_resource)
 
+        # Remove any duplicates from corpora.
         citing_resource_corpus = list(dict.fromkeys(citing_resource_corpus))
         cited_resource_corpus = list(dict.fromkeys(cited_resource_corpus))
 
@@ -96,15 +97,18 @@ class CitationRanker(Ranker):
         )
         sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
 
-        citing_list = citing_res_idx_dict.items()
-        target_list = [(r0, i0) for r0, i0 in citing_list if
-                       r0 in target_resources]
-        cand_list = [(r, i) for r, i in citing_list if r in candidate_resources]
+        citing_idx_pair_list = citing_res_idx_dict.items()
+        target_idx_pair_list = [
+            (r, i) for r, i in citing_idx_pair_list if r in target_resources
+        ]
+        cand_idx_pair_list = [
+            (r, i) for r, i in citing_idx_pair_list if r in candidate_resources
+        ]
 
         # Keep track of the similarity scores obtained by each candidate.
         sim_dict: dict[Resource, [float]] = {}
-        for r, i in cand_list:
-            for r0, i0 in target_list:
+        for r, i in cand_idx_pair_list:
+            for r0, i0 in target_idx_pair_list:
                 if r not in sim_dict:
                     sim_dict[r] = [sim_mat[i0][i]]
                 else:
@@ -151,7 +155,7 @@ if __name__ == "__main__":
         [i1, i3]
     )
     t2 = time.time()
-    print("citations: Ranked candidate resources:")
+    print("citation_ranker: Ranked candidate resources:")
     for i, ranked_candidate in enumerate(ranked_candidates):
         print(f"\t[{i + 1}]: {ranked_candidate.title}")
     print(f"citation_ranker: Time taken to execute: {t2 - t1} seconds")
