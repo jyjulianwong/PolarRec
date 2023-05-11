@@ -1,6 +1,7 @@
 """
 Resource database adapter for the IEEE Xplore library.
 """
+import random
 import requests
 from config import Config
 from models.custom_logger import log
@@ -128,20 +129,35 @@ class IEEEXploreQueryBuilder(QueryBuilder):
             self._query_args["max_records"] = 100
             cand_ress += self._get_candidate_resources(self._query_args)
 
-        # Remove candidates that do not contain the desired authors.
+        # No need to remove candidates if only some of the authors are required.
+        if not must_have_all_fields:
+            # Shuffle the candidates. Otherwise,
+            # candidates of the first few authors will occupy the whole list.
+            random.shuffle(cand_ress)
+            return cand_ress[:min(len(cand_ress), max_resources_returned)]
+
+        # Remove candidates that do not contain all the desired authors.
         resources: list[Resource] = []
+
         for resource in cand_ress:
+            # NoneType check.
             if resource.authors is None:
                 continue
+
+            # Keep track of whether a required author could not be found.
             remove = False
             cand_last_names = [
                 self._get_author_last_name(a) for a in resource.authors
             ]
             for author in self._authors:
                 required_last_name = self._get_author_last_name(author)
+                # Only compare the last names of two authors.
+                # First names are sometimes abbreviated, causing false rejects.
                 if required_last_name not in cand_last_names:
+                    # A required author could not be found in this resource.
                     remove = True
             if not remove:
+                # All the required authors were found.
                 resources.append(resource)
 
         return resources[:min(len(resources), max_resources_returned)]
