@@ -186,6 +186,9 @@ def get_related_resources(
     # Remove any duplicate resources from the multiple queries.
     candidate_resources = list(dict.fromkeys(candidate_resources))
 
+    # Remove any candidates that do not match the specified filters.
+    candidate_resources = resource_filter.get_filtered(candidate_resources)
+
     # Collect references for all resources using citation database adapters.
     # This information is not available from resource database adapters.
     search_and_set_resource_refs(candidate_resources + target_resources)
@@ -257,7 +260,9 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     related_resources = get_related_resources(
         [target_resource],
         [],
-        ResourceFilter({}),
+        ResourceFilter({
+            "authors": ["Vijay Badrinarayanan"]
+        }),
         keyword_model
     )
     t2 = time.time()

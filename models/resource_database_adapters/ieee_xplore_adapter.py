@@ -146,14 +146,14 @@ class IEEEXploreQueryBuilder(QueryBuilder):
 
             # Keep track of whether a required author could not be found.
             remove = False
-            cand_last_names = [
+            resource_last_names = [
                 self._get_author_last_name(a) for a in resource.authors
             ]
             for author in self._authors:
                 required_last_name = self._get_author_last_name(author)
                 # Only compare the last names of two authors.
                 # First names are sometimes abbreviated, causing false rejects.
-                if required_last_name not in cand_last_names:
+                if required_last_name not in resource_last_names:
                     # A required author could not be found in this resource.
                     remove = True
             if not remove:
