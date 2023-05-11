@@ -1,11 +1,11 @@
 """
-Objects and methods for ranking academic resources based on citations.
+Citation database adapter interface.
 """
 
 
 class Adapter:
     """
-    Objects and methods for ranking academic resources based on citations.
+    Collects citation and reference data for academic resources.
     """
     # Used by APIs to identify the calling application as part of etiquette.
     APP_URL = "https://github.com/jyjulianwong/PolarRec"

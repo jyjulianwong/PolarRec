@@ -4,16 +4,16 @@ The entry point to the API.
 import os
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from models import keywords
 from models.recommend import get_related_resources
 from models.resource import Resource
 from models.resource_filter import ResourceFilter
+from models.resource_rankers.keyword_ranker import KeywordRanker
 
 application = Flask(__name__)
 CORS(application)
 with application.app_context():
-    keywords_model = keywords.get_model()
-    print("keywords_model successfully loaded.")
+    keyword_model = KeywordRanker.get_model()
+    print("application: keyword_model successfully loaded.")
 
 
 @application.route("/", methods=["GET"])
@@ -50,7 +50,7 @@ def recommend():
     :return: A list of recommended academic resources, in the form of a JSON.
     :rtype: Response
     """
-    global keywords_model
+    global keyword_model
 
     req_data = request.json
 
@@ -72,7 +72,7 @@ def recommend():
         target_resources,
         existing_related_resources,
         resource_filter,
-        keywords_model
+        keyword_model
     )
 
     res_data = {"related": []}

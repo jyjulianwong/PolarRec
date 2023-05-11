@@ -2,24 +2,23 @@
 Objects and methods for the /recommend service of the API.
 """
 import time
-from models import citations, keywords
+from models.citation_database_adapters.adapter import Adapter
+from models.citation_database_adapters.s2ag_adapter import S2agAdapter
 from models.resource import Resource
 from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource_database_adapters.ieee_xplore_adapter import \
     IEEEXploreQueryBuilder
-from models.citation_database_adapters.adapter import Adapter
-from models.citation_database_adapters.crossref_adapter import CrossrefAdapter
-from models.citation_database_adapters.s2ag_adapter import S2agAdapter
 from models.resource_filter import ResourceFilter
+from models.resource_rankers.citation_ranker import CitationRanker
+from models.resource_rankers.keyword_ranker import KeywordRanker
+from models.resource_rankers.ranker import Ranker
 
 # Recommendation ranking-related global hyperparameters.
 # Max. number of keywords to extract from targets to generate queries.
-MAX_TARGET_KEYWORDS_COUNT = 10
-# Max. number of keywords to extract from candidates for keyword comparison.
-MAX_COMPARISON_KEYWORDS_COUNT = 20
+MAX_QUERY_KEYWORDS_USED = 10
 # Max. number of candidates to be returned by each query made.
-MAX_CANDIDATES_RETURNED = 50
+MAX_CANDIDATES_RETURNED = 10
 
 
 def get_res_db_query_builders():
@@ -55,7 +54,7 @@ def get_candidate_resources(target_keywords, target_authors, query_builder):
     if len(target_keywords) > 0:
         base_query_builder = query_builder()
         base_query_builder.add_keywords(target_keywords[:min(
-            len(target_keywords), MAX_TARGET_KEYWORDS_COUNT
+            len(target_keywords), MAX_QUERY_KEYWORDS_USED
         )])
         candidates += base_query_builder.get_resources(
             MAX_CANDIDATES_RETURNED,
@@ -89,7 +88,7 @@ def get_candidate_scores(
     candidate_resources,
     target_resources,
     target_keywords,
-    keywords_model
+    keyword_model
 ):
     """
     :param candidate_resources: The list of candidate resources.
@@ -98,34 +97,23 @@ def get_candidate_scores(
     :type target_resources: list[Resource]
     :param target_keywords: The list of keywords from the target resource.
     :type target_keywords: list[str]
-    :param keywords_model: The word embedding model to be used for keywords.
-    :type keywords_model: Word2Vec.KeyedVectors
+    :param keyword_model: The word embedding model to be used for keywords.
+    :type keyword_model: Word2Vec.KeyedVectors
     :return: The candidate resources with their recommendation scores.
     :rtype: dict[Resource, float]
     """
-    keywords_sims: dict[Resource, float] = {}
-    for candidate_resource in candidate_resources:
-        candidate_keywords = keywords.get_keywords_from_resources(
-            [candidate_resource]
-        )
-        similarity = keywords.keywords_similarity(
-            keywords_model,
-            target_keywords[:min(
-                len(target_keywords), MAX_COMPARISON_KEYWORDS_COUNT
-            )],
-            candidate_keywords[:min(
-                len(candidate_keywords), MAX_COMPARISON_KEYWORDS_COUNT
-            )]
-        )
-        keywords_sims[candidate_resource] = similarity
-    cands_sorted_by_keywords = [(s, c) for c, s in keywords_sims.items()]
-    cands_sorted_by_keywords = sorted(cands_sorted_by_keywords, reverse=True)
+    cands_sorted_by_keywords = KeywordRanker.get_ranked_cand_resources(
+        candidate_resources=candidate_resources,
+        target_resources=target_resources,
+        model=keyword_model,
+        target_keywords=target_keywords
+    )
     cands_keywords_ranking = {
-        p[1]: i for i, p in enumerate(cands_sorted_by_keywords)
+        c: i for i, c in enumerate(cands_sorted_by_keywords)
     }
 
     set_references_for_resources(candidate_resources + target_resources)
-    cands_sorted_by_citations = citations.get_ranked_citing_resources(
+    cands_sorted_by_citations = CitationRanker.get_ranked_cand_resources(
         candidate_resources=candidate_resources,
         target_resources=target_resources
     )
@@ -146,7 +134,7 @@ def get_related_resources(
     target_resources,
     existing_related_resources,
     resource_filter,
-    keywords_model
+    keyword_model
 ):
     """
     Calls research database APIs and recommends a list of academic resources
@@ -158,14 +146,14 @@ def get_related_resources(
     :type existing_related_resources: list[Resource]
     :param resource_filter: The filter to be applied to the results.
     :type resource_filter: ResourceFilter
-    :param keywords_model: The word embedding model to be used for keywords.
-    :type keywords_model: Word2Vec.KeyedVectors
+    :param keyword_model: The word embedding model to be used for keywords.
+    :type keyword_model: Word2Vec.KeyedVectors
     :return: A list of recommended academic resources.
     :rtype: list[Resource]
     """
     # TODO: Implement scoring system based on keywords, authors and citations?
     # Extract keywords from target resources.
-    target_keywords = keywords.get_keywords_from_resources(target_resources)
+    target_keywords = KeywordRanker.get_keywords(target_resources)
     # Extract the complete list of authors from target resources.
     target_authors = []
     for resource in target_resources:
@@ -189,7 +177,7 @@ def get_related_resources(
         candidate_resources=candidate_resources,
         target_resources=target_resources,
         target_keywords=target_keywords,
-        keywords_model=keywords_model
+        keyword_model=keyword_model
     )
     candidate_scores = [(s, c) for c, s in candidate_scores.items()]
 
@@ -199,6 +187,7 @@ def get_related_resources(
 
 
 if __name__ == "__main__":
+    keyword_model = KeywordRanker.get_model()
     target_data = {
         "authors": ["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
         "title": "SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
@@ -234,7 +223,6 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         "url": "https://ieeexplore.ieee.org/document/7803544"
     }
     target_resource = Resource(target_data)
-    keywords_model = keywords.get_model()
 
     t1 = time.time()
     set_references_for_resources([target_resource])
@@ -252,7 +240,7 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         [target_resource],
         [],
         ResourceFilter({}),
-        keywords_model
+        keyword_model
     )
     t2 = time.time()
     print(f"recommend: related_resources: {len(related_resources)}")

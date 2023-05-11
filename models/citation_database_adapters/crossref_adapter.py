@@ -1,6 +1,5 @@
 """
-Objects and methods for ranking academic resources based on citations.
-This module uses the Crossref API.
+Citation database adapter for the Crossref API.
 """
 import requests
 import string

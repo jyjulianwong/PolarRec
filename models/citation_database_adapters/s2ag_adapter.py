@@ -1,6 +1,5 @@
 """
-Objects and methods for ranking academic resources based on citations.
-This module uses the Semantic Scholar Academic Graph (S2AG) API.
+Citation database adapter for the Semantic Scholar Academic Graph (S2AG) API.
 """
 import requests
 import string
