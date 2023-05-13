@@ -13,6 +13,7 @@ class S2agAdapter(Adapter):
     API_URL_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
 
     # To minimise the number of API calls per resource, cache the results.
+    # This only caches incoming data within a single API call, not across calls.
     # This is recommended for etiquette purposes in the documentation.
     request_data_cache = {}
 
@@ -76,6 +77,12 @@ class S2agAdapter(Adapter):
             ).json()
         except Exception as err:
             log(str(err), "S2agAdapter", "error")
+            return None
+
+        # Detect any errors or empty responses.
+        if res.status_code != 200:
+            # Non-partners can only send 5,000 requests per 5 minutes.
+            log(f"Got {res} from {res.url}", "S2agAdapter", "error")
             return None
 
         if "total" not in res or res["total"] == 0:
