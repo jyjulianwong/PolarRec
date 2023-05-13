@@ -1,6 +1,7 @@
 """
 Resource database adapter interface.
 """
+import unicodedata
 
 
 class QueryBuilder:
@@ -17,7 +18,9 @@ class QueryBuilder:
         as particular German characters that commonly appear in authors' names.
 
         :param url_str: The original URL string
+        :type url_str: str
         :return: The URL string with special characters replaced
+        :rtype: str
         """
         german_special_char_dict = {
             ord("ä"): "ae",
@@ -25,7 +28,13 @@ class QueryBuilder:
             ord("ö"): "oe",
             ord("ß"): "ss"
         }
-        return url_str.translate(german_special_char_dict)
+        # Replace all German-specific characters with correct translations.
+        result = url_str.translate(german_special_char_dict)
+        # Replace accented characters with non-accented equivalents.
+        # Ignore all other characters that cannot be translated, e.g. Kanji.
+        result = unicodedata.normalize("NFKD", result)
+        result = result.encode("ascii", "ignore").decode("ascii")
+        return result
 
     def _get_author_last_name(self, author_name):
         """

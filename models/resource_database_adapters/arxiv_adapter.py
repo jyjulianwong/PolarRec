@@ -3,6 +3,7 @@ Resource database adapter for the arXiv library.
 """
 import urllib
 import xmltodict
+from models.custom_logger import log
 from models.resource import Resource
 from models.resource_database_adapters.adapter import QueryBuilder
 
@@ -66,9 +67,16 @@ class ArxivQueryBuilder(QueryBuilder):
         url = self._API_URL_BASE + "?" + "&".join(
             [f"{key}={val}" for key, val in query_args.items()]
         )
-        res = urllib.request.urlopen(self._get_translated_url_str(url))
-        res = res.read().decode("utf-8")
-        res = xmltodict.parse(res)
+        url = self._get_translated_url_str(url)
+        try:
+            res = urllib.request.urlopen(url)
+            res = res.read().decode("utf-8")
+            res = xmltodict.parse(res)
+        except Exception as err:
+            log(str(err), "ArxivQueryBuilder", "error")
+            return []
+
+        log(f"Successful response from {url}", "ArxivQueryBuilder")
 
         if res["feed"]["opensearch:totalResults"]["#text"] == "0":
             return []

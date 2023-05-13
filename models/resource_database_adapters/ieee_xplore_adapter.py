@@ -46,6 +46,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
             return []
 
         log(f"Successful response from {res.url}", "IEEEXploreQueryBuilder")
+
         res = res.json()
         if res["total_records"] == 0:
             return []
