@@ -99,7 +99,8 @@ class IEEEXploreQueryBuilder(QueryBuilder):
     def get_resources(
         self,
         max_resources_returned,
-        must_have_all_fields=True
+        must_have_all_fields=True,
+        summarise_results_data=False
     ):
         # Process query parameters.
         if len(self._keywords) > 0:
@@ -109,59 +110,65 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         self._query_args["max_records"] = max_resources_returned
         self._query_args["apikey"] = self._API_KEY
 
-        # Collect candidate resources that are to be filtered later on.
+        ress: list[Resource] = []
+
         if len(self._authors) == 0:
             # The query does not contain authors.
-            return self._get_candidate_resources(self._query_args)
+            ress = self._get_candidate_resources(self._query_args)
 
         if len(self._authors) == 1:
             # The query contains 1 author.
             formatted_name = self._get_joined_author_name(self._authors[0], "+")
             self._query_args["author"] = formatted_name
-            return self._get_candidate_resources(self._query_args)
+            ress = self._get_candidate_resources(self._query_args)
 
-        # The query contains multiple authors.
-        cand_ress: list[Resource] = []
-        for author in self._authors:
-            formatted_name = self._get_joined_author_name(author, "+")
-            self._query_args["author"] = formatted_name
-            # Collect redundantly more candidates than necessary,
-            # and increase the odds of finding the desired resources.
-            self._query_args["max_records"] = 100
-            cand_ress += self._get_candidate_resources(self._query_args)
-
-        # No need to remove candidates if only some of the authors are required.
-        if not must_have_all_fields:
-            # Shuffle the candidates. Otherwise,
-            # candidates of the first few authors will occupy the whole list.
-            random.shuffle(cand_ress)
-            return cand_ress[:min(len(cand_ress), max_resources_returned)]
-
-        # Remove candidates that do not contain all the desired authors.
-        resources: list[Resource] = []
-
-        for resource in cand_ress:
-            # NoneType check.
-            if resource.authors is None:
-                continue
-
-            # Keep track of whether a required author could not be found.
-            remove = False
-            resource_last_names = [
-                self._get_author_last_name(a) for a in resource.authors
-            ]
+        if len(self._authors) >= 2:
+            # The query contains multiple authors.
+            # Collect candidate resources that are to be filtered later on.
+            cand_ress: list[Resource] = []
             for author in self._authors:
-                required_last_name = self._get_author_last_name(author)
-                # Only compare the last names of two authors.
-                # First names are sometimes abbreviated, causing false rejects.
-                if required_last_name not in resource_last_names:
-                    # A required author could not be found in this resource.
-                    remove = True
-            if not remove:
-                # All the required authors were found.
-                resources.append(resource)
+                formatted_name = self._get_joined_author_name(author, "+")
+                self._query_args["author"] = formatted_name
+                # Collect redundantly more candidates than necessary,
+                # and increase the odds of finding the desired resources.
+                self._query_args["max_records"] = 100
+                cand_ress += self._get_candidate_resources(self._query_args)
 
-        return resources[:min(len(resources), max_resources_returned)]
+            # No need to remove candidates if only some authors are required.
+            if not must_have_all_fields:
+                # Shuffle the candidates. Otherwise,
+                # the first few authors will occupy the whole list.
+                random.shuffle(cand_ress)
+                ress = cand_ress[:min(len(cand_ress), max_resources_returned)]
+            else:
+                # Remove candidates that do not contain all the desired authors.
+                for resource in cand_ress:
+                    # NoneType check.
+                    if resource.authors is None:
+                        continue
+
+                    # Keep track of whether a required author couldn't be found.
+                    remove = False
+                    resource_last_names = [
+                        self._get_author_last_name(a) for a in resource.authors
+                    ]
+                    for author in self._authors:
+                        required_last_name = self._get_author_last_name(author)
+                        # Only compare the last names of two authors.
+                        # First names can be abbreviated, causing false rejects.
+                        if required_last_name not in resource_last_names:
+                            # A required author couldn't be found in this resource.
+                            remove = True
+                    if not remove:
+                        # All the required authors were found.
+                        ress.append(resource)
+
+                ress = ress[:min(len(ress), max_resources_returned)]
+
+        if summarise_results_data:
+            self._summarise_results_data(ress)
+
+        return ress
 
 
 if __name__ == '__main__':
@@ -171,7 +178,7 @@ if __name__ == '__main__':
     sample_query_builder.add_keyword("deep learning")
     sample_query_builder.set_authors(["Vijay Badrinarayanan"])
     resources = sample_query_builder.get_resources(
-        10,
+        20,
         must_have_all_fields=False
     )
     for i, resource in enumerate(resources):
@@ -192,4 +199,13 @@ if __name__ == '__main__':
         print(f"\t{resource.authors}")
         print(f"\t{resource.doi}")
         print(f"\t{resource.url}")
+    print(f"IEEEXploreQueryBuilder: get_resources: len: {len(resources)}")
+
+    # Analyse the fields returned by a typical query.
+    sample_query_builder = IEEEXploreQueryBuilder()
+    sample_query_builder.add_keyword("convolutional")
+    resources = sample_query_builder.get_resources(
+        50,
+        summarise_results_data=True
+    )
     print(f"IEEEXploreQueryBuilder: get_resources: len: {len(resources)}")

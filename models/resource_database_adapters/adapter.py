@@ -2,6 +2,8 @@
 Resource database adapter interface.
 """
 import unicodedata
+from models.custom_logger import log, log_extended_line
+from models.resource import Resource
 
 
 class QueryBuilder:
@@ -74,6 +76,48 @@ class QueryBuilder:
         formatted_name = formatted_name.lower()
         return formatted_name
 
+    def _summarise_results_data(self, resources):
+        """
+        Prints a summary of the results returned by the query.
+        Analyses the percentage of data fields returned by the query.
+
+        :param resources: The resources returned by the query.
+        :type resources: list[Resource]
+        """
+        authors_count = 0
+        title_count = 0
+        year_count = 0
+        month_count = 0
+        abstract_count = 0
+        doi_count = 0
+        url_count = 0
+
+        for resource in resources:
+            if resource.authors is not None:
+                authors_count += 100
+            if resource.title is not None:
+                title_count += 100
+            if resource.year is not None:
+                year_count += 100
+            if resource.month is not None:
+                month_count += 100
+            if resource.abstract is not None:
+                abstract_count += 100
+            if resource.doi is not None:
+                doi_count += 100
+            if resource.url is not None:
+                url_count += 100
+
+        log("Summary of fields returned by query:", self.__class__.__name__)
+        log_extended_line(f"% with authors: {authors_count / len(resources)}")
+        log_extended_line(f"% with title: {title_count / len(resources)}")
+        log_extended_line(f"% with year: {year_count / len(resources)}")
+        log_extended_line(f"% with month: {month_count / len(resources)}")
+        log_extended_line(f"% with abstract: {abstract_count / len(resources)}")
+        log_extended_line(f"% with doi: {doi_count / len(resources)}")
+        log_extended_line(f"% with url: {url_count / len(resources)}")
+
+
     def set_authors(self, authors):
         pass
 
@@ -93,7 +137,8 @@ class QueryBuilder:
     def get_resources(
         self,
         max_resources_returned,
-        must_have_all_fields=True
+        must_have_all_fields=True,
+        summarise_results_data=False
     ):
         """
         Sends a GET request to the database's API and returns the response.

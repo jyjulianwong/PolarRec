@@ -32,7 +32,8 @@ class ArxivQueryBuilder(QueryBuilder):
     def get_resources(
         self,
         max_resources_returned,
-        must_have_all_fields=True
+        must_have_all_fields=True,
+        summarise_results_data=False
     ):
         search_query = []
 
@@ -81,7 +82,7 @@ class ArxivQueryBuilder(QueryBuilder):
         if res["feed"]["opensearch:totalResults"]["#text"] == "0":
             return []
 
-        resources = []
+        resources: list[Resource] = []
         for resource_data in res["feed"]["entry"]:
             if isinstance(resource_data["author"], list):
                 authors = [data["name"] for data in resource_data["author"]]
@@ -110,6 +111,10 @@ class ArxivQueryBuilder(QueryBuilder):
                 resource_args["doi"] = resource_data["arxiv:doi"]["#text"]
 
             resources.append(Resource(resource_args))
+
+        if summarise_results_data:
+            self._summarise_results_data(resources)
+
         return resources
 
 
@@ -118,11 +123,20 @@ if __name__ == '__main__':
     sample_query_builder.add_keyword("convolutional")
     sample_query_builder.add_keyword("deep learning")
     sample_query_builder.set_authors(["Vijay Badrinarayanan"])
-    resources = sample_query_builder.get_resources(10)
+    resources = sample_query_builder.get_resources(20)
     for i, resource in enumerate(resources):
         print(f"ArxivQueryBuilder: get_resources: [{i}]:")
         print(f"\t{resource.title}")
         print(f"\t{resource.authors}")
         print(f"\t{resource.doi}")
         print(f"\t{resource.url}")
+    print(f"ArxivQueryBuilder: get_resources: len: {len(resources)}")
+
+    # Analyse the fields returned by a typical query.
+    sample_query_builder = ArxivQueryBuilder()
+    sample_query_builder.add_keyword("convolutional")
+    resources = sample_query_builder.get_resources(
+        50,
+        summarise_results_data=True
+    )
     print(f"ArxivQueryBuilder: get_resources: len: {len(resources)}")
