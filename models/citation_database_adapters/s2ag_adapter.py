@@ -55,7 +55,7 @@ class S2agAdapter(Adapter):
         """
         param_str = cls._get_query_str(resource)
         param_str += f"&fields={cls.API_RETURNED_FIELDS}"
-        param_str += f"&limit={cls.MAX_SEARCH_RESULTS}"
+        param_str += f"&limit={cls.MAX_QUERY_RESULTS_RETD}"
         return cls.API_URL_SINGLE_BASE + param_str
 
     @classmethod

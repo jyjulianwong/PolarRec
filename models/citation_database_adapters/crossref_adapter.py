@@ -39,7 +39,8 @@ class CrossrefAdapter(Adapter):
         :rtype: str
         """
         param_str = cls._get_query_str(resource)
-        param_str += f"&rows={cls.MAX_SEARCH_RESULTS}&mailto={cls.APP_MAILTO}"
+        param_str += f"&rows={cls.MAX_QUERY_RESULTS_RETD}"
+        param_str += f"&mailto={cls.APP_MAILTO}"
         return cls.API_URL_BASE + param_str
 
     @classmethod

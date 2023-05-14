@@ -4,11 +4,9 @@ Objects and methods for ranking academic resources based on citations.
 import numpy as np
 import time
 from models import contextbased_cf as ccf
+from models.hyperparams import Hyperparams as hp
 from models.resource import Resource
 from models.resource_rankers.ranker import Ranker
-
-# The threshold value above which two resources have significant co-occurrence.
-CITING_RES_COOC_PROB_TS = 0.4
 
 
 class CitationRanker(Ranker):
@@ -93,7 +91,7 @@ class CitationRanker(Ranker):
         ass_mat = ccf.get_association_matrix(
             rel_mat=rel_mat,
             user_idxs=citing_res_idx_dict.values(),
-            cooc_prob_ts=CITING_RES_COOC_PROB_TS
+            cooc_prob_ts=hp.CITATION_COOC_PROB_TS
         )
         sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
 

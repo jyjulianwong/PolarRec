@@ -5,13 +5,11 @@ import nltk
 import time
 from gensim import downloader
 from models.custom_logger import log, log_extended_line
+from models.hyperparams import Hyperparams as hp
 from models.resource import Resource
 from models.resource_rankers.ranker import Ranker
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
-
-# Max. number of keywords to extract from candidates for keyword comparison.
-MAX_COMPARISON_KEYWORDS_COUNT = 20
 
 
 class KeywordRanker(Ranker):
@@ -156,10 +154,10 @@ class KeywordRanker(Ranker):
             similarity = cls._get_keyword_list_similarity(
                 model,
                 target_keywords[:min(
-                    len(target_keywords), MAX_COMPARISON_KEYWORDS_COUNT
+                    len(target_keywords), hp.MAX_SIM_COMPAR_KEYWORDS_USED
                 )],
                 candidate_keywords[:min(
-                    len(candidate_keywords), MAX_COMPARISON_KEYWORDS_COUNT
+                    len(candidate_keywords), hp.MAX_SIM_COMPAR_KEYWORDS_USED
                 )]
             )
             sim_dict[candidate_resource] = similarity

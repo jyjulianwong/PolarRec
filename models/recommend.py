@@ -4,6 +4,7 @@ Objects and methods for the /recommend service of the API.
 import time
 from models.citation_database_adapters.adapter import Adapter
 from models.citation_database_adapters.s2ag_adapter import S2agAdapter
+from models.hyperparams import Hyperparams as hp
 from models.resource import Resource
 from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
@@ -14,12 +15,6 @@ from models.resource_rankers.author_ranker import AuthorRanker
 from models.resource_rankers.citation_ranker import CitationRanker
 from models.resource_rankers.keyword_ranker import KeywordRanker
 from models.resource_rankers.ranker import Ranker
-
-# Recommendation ranking-related global hyperparameters.
-# Max. number of keywords to extract from targets to generate queries.
-MAX_QUERY_KEYWORDS_USED = 10
-# Max. number of candidates to be returned by each query made.
-MAX_CANDIDATES_RETURNED = 10
 
 
 def get_res_db_query_builders():
@@ -61,21 +56,21 @@ def get_candidate_resources(target_keywords, target_authors, query_builder):
 
     # Query 1: The keyword-based query.
     if len(target_keywords) > 0:
-        base_query_builder = query_builder()
-        base_query_builder.add_keywords(target_keywords[:min(
-            len(target_keywords), MAX_QUERY_KEYWORDS_USED
+        keyword_based_query_builder = query_builder()
+        keyword_based_query_builder.add_keywords(target_keywords[:min(
+            len(target_keywords), hp.MAX_RES_QUERY_KEYWORDS_USED
         )])
-        candidates += base_query_builder.get_resources(
-            MAX_CANDIDATES_RETURNED,
+        candidates += keyword_based_query_builder.get_resources(
+            hp.MAX_RES_QUERY_RESULTS_RETD,
             must_have_all_fields=False
         )
 
-    # Query 2: The author-biased query.
+    # Query 2: The author-based query.
     if len(target_authors) > 0:
-        author_biased_query_builder = query_builder()
-        author_biased_query_builder.set_authors(target_authors)
-        candidates += author_biased_query_builder.get_resources(
-            MAX_CANDIDATES_RETURNED,
+        author_based_query_builder = query_builder()
+        author_based_query_builder.set_authors(target_authors)
+        candidates += author_based_query_builder.get_resources(
+            hp.MAX_RES_QUERY_RESULTS_RETD,
             must_have_all_fields=False
         )
 

@@ -1,6 +1,7 @@
 """
 Citation database adapter interface.
 """
+from models.hyperparams import Hyperparams as hp
 from models.resource import Resource
 
 
@@ -11,7 +12,9 @@ class Adapter:
     # Used by APIs to identify the calling application as part of etiquette.
     APP_URL = "https://github.com/jyjulianwong/PolarRec"
     APP_MAILTO = "jyw19@ic.ac.uk"
-    MAX_SEARCH_RESULTS = 10
+
+    # Max. # of results to be returned by each citation query made.
+    MAX_QUERY_RESULTS_RETD = hp.MAX_CIT_QUERY_RESULTS_RETD
 
     @classmethod
     def get_citation_count(cls, resource):
