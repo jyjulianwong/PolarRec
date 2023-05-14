@@ -245,6 +245,11 @@ if __name__ == "__main__":
         print(f"S2agAdapter: len(references): {len(references)}")
         t2 = time.time()
         print(f"S2agAdapter: Time taken to execute: {t2 - t1} seconds")
+        print(f"\tFirst 3 references of {target_resource}:")
+        for reference in references[:min(len(references), 3)]:
+            print(f"\t\t{reference.title}")
+            print(f"\t\t\t{reference.authors}")
+            print(f"\t\t\t{reference.year}")
 
     print("\nS2agAdapter: Collect reference lists for a batch of resources")
 
@@ -257,3 +262,8 @@ if __name__ == "__main__":
     print(f"S2agAdapter: Time taken to execute: {t2 - t1} seconds")
     for resource, references in ref_list_dict.items():
         print(f"\t{resource}: {len(references)}")
+        print(f"\t\tFirst 3 references of {resource}:")
+        for reference in references[:min(len(references), 3)]:
+            print(f"\t\t\t{reference.title}")
+            print(f"\t\t\t\t{reference.authors}")
+            print(f"\t\t\t\t{reference.year}")
