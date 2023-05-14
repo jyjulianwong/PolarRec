@@ -82,7 +82,7 @@ def get_candidate_resources(target_keywords, target_authors, query_builder):
     return candidates
 
 
-def search_and_set_resource_refs(resources):
+def set_resource_references(resources):
     """
     Searches for and assigns references to resources using the chosen citation
     database adapters.
@@ -90,9 +90,9 @@ def search_and_set_resource_refs(resources):
     :param resources: The list of resources to collect references for.
     :type resources: list[Resource]
     """
-    for resource in resources:
-        cit_db_adapter = get_cit_db_adapter()
-        references = cit_db_adapter.get_references(resource)
+    cit_db_adapter = get_cit_db_adapter()
+    reference_dict = cit_db_adapter.get_references_in_batches(resources)
+    for resource, references in reference_dict.items():
         if len(references) > 0:
             resource.references = references
 
@@ -191,7 +191,7 @@ def get_related_resources(
 
     # Collect references for all resources using citation database adapters.
     # This information is not available from resource database adapters.
-    search_and_set_resource_refs(candidate_resources + target_resources)
+    set_resource_references(candidate_resources + target_resources)
 
     # Assign a recommendation score for every candidate resource.
     candidate_scores = get_candidate_scores(
@@ -245,8 +245,10 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     }
     target_resource = Resource(target_data)
 
+    print("\nrecommend: Search and set the reference list for a resource")
+
     t1 = time.time()
-    search_and_set_resource_refs([target_resource])
+    set_resource_references([target_resource])
     t2 = time.time()
     print("recommend: target_resource.references:")
     if target_resource.references is None:
@@ -256,12 +258,14 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
             print(f"\t[{i}]: {reference.title}")
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")
 
+    print("\nrecommend: Generate a recommendation list for a resource")
+
     t1 = time.time()
     related_resources = get_related_resources(
         [target_resource],
         [],
         ResourceFilter({
-            "authors": ["Vijay Badrinarayanan"]
+            # "authors": ["Vijay Badrinarayanan"]
         }),
         keyword_model
     )

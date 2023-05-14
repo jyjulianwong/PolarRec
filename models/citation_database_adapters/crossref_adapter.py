@@ -68,6 +68,16 @@ class CrossrefAdapter(Adapter):
         # TODO: Not supported by the Crossref API.
         return []
 
+    @classmethod
+    def get_references_in_batches(cls, resources):
+        # TODO: Not supported by the Crossref API.
+        ref_list_dict = {}
+
+        for resource in resources:
+            ref_list_dict[resource] = []
+
+        return ref_list_dict
+
 
 if __name__ == "__main__":
     target_data1 = {
@@ -86,19 +96,23 @@ if __name__ == "__main__":
     }
 
     for target_data in [target_data1, target_data2]:
+        print("\nCrossrefAdapter: Collect citation count for a single resource")
+
         target_resource = Resource(target_data)
 
         request_url_str = CrossrefAdapter._get_request_url_str(target_resource)
-        print(f"citation_counts: request_url_str: {request_url_str}")
+        print(f"CrossrefAdapter: request_url_str: {request_url_str}")
 
         t1 = time.time()
         citation_count = CrossrefAdapter.get_citation_count(target_resource)
-        print(f"citation_counts: citation_count: {citation_count}")
+        print(f"CrossrefAdapter: citation_count: {citation_count}")
         t2 = time.time()
-        print(f"citation_counts: Time taken to execute: {t2 - t1} seconds")
+        print(f"CrossrefAdapter: Time taken to execute: {t2 - t1} seconds")
+
+        print("\nCrossrefAdapter: Collect reference list for a single resource")
 
         t1 = time.time()
         references = CrossrefAdapter.get_references(target_resource)
-        print(f"citation_counts: len(references): {len(references)}")
+        print(f"CrossrefAdapter: len(references): {len(references)}")
         t2 = time.time()
-        print(f"citation_counts: Time taken to execute: {t2 - t1} seconds")
+        print(f"CrossrefAdapter: Time taken to execute: {t2 - t1} seconds")

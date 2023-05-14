@@ -1,6 +1,7 @@
 """
 Citation database adapter interface.
 """
+from models.resource import Resource
 
 
 class Adapter:
@@ -29,5 +30,21 @@ class Adapter:
         :type resource: Resource
         :return: The reference resources that the target resource has used.
         :rtype: list[Resource]
+        """
+        pass
+
+    @classmethod
+    def get_references_in_batches(cls, resources):
+        """
+        Searches for references for each resource in batches for better
+        efficiency.
+        Groups resources that have DOIs together, and searches for their
+        references in a single API call.
+        Resources that do not have DOIs have to be searched independently.
+
+        :param resources: The list of target resources.
+        :type resources: list[Resource]
+        :return: The reference resources that each target resource has used.
+        :rtype: dict[Resource, list[Resource]]
         """
         pass
