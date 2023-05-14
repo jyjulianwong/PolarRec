@@ -91,6 +91,7 @@ The following is an example of the body of a POST request.
 The following is an example of the body of the response received from a POST request.
 ```json
 {
+    "proc_time": 2.56,
     "related": [
         {
             "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
