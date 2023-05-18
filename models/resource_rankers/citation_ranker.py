@@ -3,7 +3,8 @@ Objects and methods for ranking academic resources based on citations.
 """
 import numpy as np
 import time
-from models import contextbased_cf as ccf
+from models.citation_database_adapters.s2ag_adapter import S2agAdapter
+from models.collab_filtering import contextbased_cf as ccf, userbased_cf as ucf
 from models.hyperparams import Hyperparams as hp
 from models.resource import RankableResource, Resource
 from models.resource_rankers.ranker import Ranker
@@ -22,8 +23,8 @@ class CitationRanker(Ranker):
         :return: The dictionary mapping from resources to unique indices.
         :rtype: tuple[dict[Resource, int], dict[Resource, int]]
         """
-        citing_resource_corpus = []
-        cited_resource_corpus = []
+        citing_resource_corpus: list[Resource] = []
+        cited_resource_corpus: list[Resource] = []
 
         for citing_resource in citing_resources:
             citing_resource_corpus.append(citing_resource)
@@ -74,24 +75,35 @@ class CitationRanker(Ranker):
     ):
         """
         Ranks citing resources by comparing the similarities of the paper
-        vectors from the association matrix.
+        vectors from the association matrix (if using CCF).
         See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
+        This function requires 1 additional keyword argument:
+            ``cf_method: str``.
 
         :param rankable_resources: The list of resources to rank.
         :type rankable_resources: list[RankableResource]
         :param target_resources: The list of target resources to base ranking on.
         :type target_resources: list[Resource]
         """
+        # Extract additional required keyword arguments.
+        cf_method = kwargs.get("cf_method", "userbased")
+
         citing_res_idx_dict, cited_res_idx_dict = cls._get_res_idx_dict(
             rankable_resources + target_resources
         )
         rel_mat = cls._get_rel_mat(citing_res_idx_dict, cited_res_idx_dict)
-        ass_mat = ccf.get_association_matrix(
-            rel_mat=rel_mat,
-            user_idxs=citing_res_idx_dict.values(),
-            cooc_prob_ts=hp.CITATION_COOC_PROB_TS
-        )
-        sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
+
+        if cf_method == "userbased":
+            # Use user-based collaborative filtering (UCF).
+            sim_mat = ucf.get_similarity_matrix(rel_mat=rel_mat)
+        if cf_method == "contextbased":
+            # Use context-based collaborative filtering (CCF).
+            ass_mat = ccf.get_association_matrix(
+                rel_mat=rel_mat,
+                user_idxs=citing_res_idx_dict.values(),
+                cooc_prob_ts=hp.CITATION_COOC_PROB_TS
+            )
+            sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
 
         citing_idx_pair_list = citing_res_idx_dict.items()
         target_idx_pair_list = [
@@ -122,15 +134,17 @@ class CitationRanker(Ranker):
 
 
 if __name__ == "__main__":
+    print("\ncitation_ranker: Rank resources from abstract example")
+
     # Recreate the example from the paper that introduced this algorithm:
     # https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
-    i1 = Resource({"title": "i1"})
-    i2 = Resource({"title": "i2"})
-    i3 = Resource({"title": "i3"})
-    i4 = Resource({"title": "i4"})
-    i5 = Resource({"title": "i5"})
-    j1 = Resource({"title": "j1"})
-    j2 = Resource({"title": "j2"})
+    i1 = RankableResource({"title": "i1"})
+    i2 = RankableResource({"title": "i2"})
+    i3 = RankableResource({"title": "i3"})
+    i4 = RankableResource({"title": "i4"})
+    i5 = RankableResource({"title": "i5"})
+    j1 = RankableResource({"title": "j1"})
+    j2 = RankableResource({"title": "j2"})
     i1.references = [j1]
     i2.references = [j1, j2]
     i3.references = [j1, j2]
@@ -150,12 +164,58 @@ if __name__ == "__main__":
     print(f"citation_ranker: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
-    ranked_candidates = CitationRanker.set_ranking_for_resources(
+    CitationRanker.set_ranking_for_resources(
         [i2, i4, i5],
         [i1, i3]
     )
     t2 = time.time()
     print("citation_ranker: Ranked candidate resources:")
-    for i, ranked_candidate in enumerate(ranked_candidates):
-        print(f"\t[{i + 1}]: {ranked_candidate.title}")
+    for i in [i2, i4, i5]:
+        print(f"\t[{i.citation_based_ranking}]: {i.title}")
     print(f"citation_ranker: Time taken to execute: {t2 - t1} seconds")
+
+    print("\ncitation_ranker: Similarity matrix for real example with CCF...")
+    print("... where the SegNet paper is the only common cited paper")
+
+    target_data1 = {
+        "authors": [],
+        "title": "Texture-aware Network for Smoke Density Estimation",
+        "year": 2022,
+        "doi": "10.1109/VCIP56404.2022.10008826",
+        "url": "https://ieeexplore.ieee.org/document/10008826"
+    }
+    target_resource1 = Resource(target_data1)
+    target_data2 = {
+        "authors": [],
+        "title": "A Review on Early Diagnosis of Skin Cancer Detection Using Deep Learning Techniques",
+        "year": 2022,
+        "doi": "10.1109/ICCPC55978.2022.10072274",
+        "url": "https://ieeexplore.ieee.org/document/10072274"
+    }
+    target_resource2 = Resource(target_data2)
+
+    reference_dict = S2agAdapter.get_references_in_batches(
+        [target_resource1, target_resource2]
+    )
+    for resource, references in reference_dict.items():
+        resource.references = references
+        print(f"citation_ranker: len(references): {len(resource.references)}")
+
+    citing_res_idx_dict, cited_res_idx_dict = CitationRanker._get_res_idx_dict(
+        [target_resource1, target_resource2]
+    )
+    print(f"citation_ranker: len(Citing resources): {len(citing_res_idx_dict)}")
+    print(f"citation_ranker: len(Cited resources):  {len(cited_res_idx_dict)}")
+    rel_mat = CitationRanker._get_rel_mat(
+        citing_res_idx_dict,
+        cited_res_idx_dict
+    )
+    print(f"citation_ranker: Relation matrix:\n{rel_mat}")
+    ass_mat = ccf.get_association_matrix(
+        rel_mat=rel_mat,
+        user_idxs=citing_res_idx_dict.values(),
+        cooc_prob_ts=hp.CITATION_COOC_PROB_TS
+    )
+    print(f"citation_ranker: Association matrix:\n{ass_mat}")
+    sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
+    print(f"citation_ranker: Similarity matrix:\n{sim_mat}")

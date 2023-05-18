@@ -5,7 +5,7 @@ import requests
 import string
 import time
 from models.citation_database_adapters.adapter import Adapter
-from models.custom_logger import log
+from models.custom_logger import log, log_extended_line
 from models.resource import Resource
 
 
@@ -91,6 +91,7 @@ class S2agAdapter(Adapter):
         if res.status_code != 200:
             # Non-partners can only send 5,000 requests per 5 minutes.
             log(f"Got {res} from {res.url}", "S2agAdapter", "error")
+            log_extended_line(f"Response.text: {res.text}")
             return None
 
         res = res.json()
@@ -100,7 +101,7 @@ class S2agAdapter(Adapter):
             return None
 
         for cand_data in res["data"]:
-            if cand_data["title"] == resource.title:
+            if cand_data["title"].lower() == resource.title.lower():
                 # When the target resource has been found.
                 cls._add_request_data_cache_entry(resource, cand_data)
                 return cand_data
@@ -143,6 +144,7 @@ class S2agAdapter(Adapter):
         if res.status_code != 200:
             # Non-partners can only send 5,000 requests per 5 minutes.
             log(f"Got {res} from {res.url}", "S2agAdapter", "error")
+            log_extended_line(f"Response.text: {res.text}")
             for resource in ress_with_dois:
                 result[resource] = None
 

@@ -6,7 +6,7 @@ import time
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from models.custom_logger import log
-from models.recommend import get_ranked_resources
+from models.recommend import get_ranked_database_resources
 from models.resource import Resource
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
@@ -78,7 +78,7 @@ def recommend():
         resource_filter = ResourceFilter(req_data["filter"])
 
     # Retrieve the lists of ranked resources via the recommendation algorithm.
-    ranked_resources = get_ranked_resources(
+    ranked_resources = get_ranked_database_resources(
         target_resources,
         existing_resources,
         resource_filter,

@@ -87,10 +87,16 @@ class Resource:
     def __eq__(self, other):
         # The "identity" of an academic resource is defined by its full title.
         # Low likelihood of two well-known academic resources having same title.
-        return self.title == other.title
+        if isinstance(self.title, str) and isinstance(other.title, str):
+            return self.title.lower() == other.title.lower()
+        else:
+            return False
 
     def __lt__(self, other):
-        return self.title < other.title
+        if isinstance(self.title, str) and isinstance(other.title, str):
+            return self.title < other.title
+        else:
+            return False
 
     def __hash__(self):
         return hash(self.title)
@@ -173,3 +179,13 @@ if __name__ == "__main__":
     resource = Resource(resource_dict1)
     resource_dict2 = resource.to_dict()
     print(f"dict1 == dict2: {resource_dict1 == resource_dict2}")
+
+    res_obj1 = Resource(resource_dict1)
+    res_obj2 = Resource(resource_dict1)
+    print(f"res_obj1 == res_obj1: {res_obj1 == res_obj1}")
+    print(f"res_obj1 == res_obj2: {res_obj1 == res_obj2}")
+
+    some_dict = {}
+    some_dict[res_obj1] = 1
+    some_dict[res_obj2] = 2
+    print(f"some_dict: {some_dict}")

@@ -114,6 +114,8 @@ def _get_candidate_mean_rank_dict(
         ranker.set_ranking_for_resources(
             rankable_resources=rankable_cand_ress,
             target_resources=target_resources,
+            # Additional arguments for AuthorRanker and CitationRanker.
+            cf_method="userbased",
             # Additional arguments for KeywordRanker.
             model=keyword_model,
             target_keywords=target_keywords
@@ -131,7 +133,7 @@ def _get_candidate_mean_rank_dict(
     return cand_mean_rank_dict
 
 
-def get_ranked_resources(
+def get_ranked_database_resources(
     target_resources,
     existing_resources,
     resource_filter,
@@ -250,7 +252,7 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     print("\nrecommend: Generate a recommendation list for a resource")
 
     t1 = time.time()
-    ranked_resources = get_ranked_resources(
+    ranked_resources = get_ranked_database_resources(
         [target_resource],
         [],
         ResourceFilter({
@@ -260,10 +262,13 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     )
     t2 = time.time()
     print(f"recommend: ranked_resources: {len(ranked_resources)}")
-    for i, related_resource in enumerate(ranked_resources):
-        print(f"{i}: \t{related_resource.title}")
-        print(f"\t{related_resource.authors}")
-        print(f"\t{related_resource.year}")
-        print(f"\t{related_resource.doi}")
-        print(f"\t{related_resource.url}")
+    for i, ranked_res in enumerate(ranked_resources):
+        print(f"{i}: {ranked_res.title}")
+        print(f"\t{ranked_res.authors}")
+        print(f"\t{ranked_res.year}")
+        print(f"\t{ranked_res.doi}")
+        print(f"\t{ranked_res.url}")
+        print(f"\tAuthor-based ranking:   {ranked_res.author_based_ranking}")
+        print(f"\tCitation-based ranking: {ranked_res.citation_based_ranking}")
+        print(f"\tKeyword-based ranking:  {ranked_res.keyword_based_ranking}")
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")

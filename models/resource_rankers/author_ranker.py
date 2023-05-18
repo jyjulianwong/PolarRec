@@ -3,7 +3,7 @@ Objects and methods for ranking academic resources based on authors.
 """
 import numpy as np
 import time
-from models import contextbased_cf as ccf
+from models.collab_filtering import contextbased_cf as ccf, userbased_cf as ucf
 from models.hyperparams import Hyperparams as hp
 from models.resource import RankableResource, Resource
 from models.resource_rankers.ranker import Ranker
@@ -74,24 +74,35 @@ class AuthorRanker(Ranker):
     ):
         """
         Ranks candidate resources from best to worst according to how similar
-        their association matrix paper vectors are to the targets.
+        their association matrix paper vectors are to targets (if using CCF).
         See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
+        This function requires 1 additional keyword argument:
+            ``cf_method: str``.
 
         :param rankable_resources: The list of resources to rank.
         :type rankable_resources: list[RankableResource]
         :param target_resources: The list of target resources to base ranking on.
         :type target_resources: list[Resource]
         """
+        # Extract additional required keyword arguments.
+        cf_method = kwargs.get("cf_method", "userbased")
+
         resource_idx_dict, author_idx_dict = cls._get_res_idx_dict(
             rankable_resources + target_resources
         )
         rel_mat = cls._get_rel_mat(resource_idx_dict, author_idx_dict)
-        ass_mat = ccf.get_association_matrix(
-            rel_mat=rel_mat,
-            user_idxs=resource_idx_dict.values(),
-            cooc_prob_ts=hp.AUTHOR_COOC_PROB_TS
-        )
-        sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
+
+        if cf_method == "userbased":
+            # Use user-based collaborative filtering (UCF).
+            sim_mat = ucf.get_similarity_matrix(rel_mat=rel_mat)
+        if cf_method == "contextbased":
+            # Use context-based collaborative filtering (CCF).
+            ass_mat = ccf.get_association_matrix(
+                rel_mat=rel_mat,
+                user_idxs=resource_idx_dict.values(),
+                cooc_prob_ts=hp.AUTHOR_COOC_PROB_TS
+            )
+            sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
 
         res_idx_pair_list = resource_idx_dict.items()
         target_idx_pair_list = [
@@ -122,11 +133,11 @@ class AuthorRanker(Ranker):
 
 
 if __name__ == "__main__":
-    i1 = Resource({"title": "i1"})
-    i2 = Resource({"title": "i2"})
-    i3 = Resource({"title": "i3"})
-    i4 = Resource({"title": "i4"})
-    i5 = Resource({"title": "i5"})
+    i1 = RankableResource({"title": "i1"})
+    i2 = RankableResource({"title": "i2"})
+    i3 = RankableResource({"title": "i3"})
+    i4 = RankableResource({"title": "i4"})
+    i5 = RankableResource({"title": "i5"})
     i1.authors = ["j1"]
     i2.authors = ["j1", "j2"]
     i3.authors = ["j1", "j2"]
@@ -146,12 +157,12 @@ if __name__ == "__main__":
     print(f"author_ranker: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
-    ranked_candidates = AuthorRanker.set_ranking_for_resources(
+    AuthorRanker.set_ranking_for_resources(
         [i2, i4, i5],
         [i1, i3]
     )
     t2 = time.time()
     print("author_ranker: Ranked candidate resources:")
-    for i, ranked_candidate in enumerate(ranked_candidates):
-        print(f"\t[{i + 1}]: {ranked_candidate.title}")
+    for i in [i2, i4, i5]:
+        print(f"\t[{i.author_based_ranking}]: {i.title}")
     print(f"author_ranker: Time taken to execute: {t2 - t1} seconds")
