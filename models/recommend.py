@@ -5,7 +5,7 @@ import time
 from models.citation_database_adapters.adapter import Adapter
 from models.citation_database_adapters.s2ag_adapter import S2agAdapter
 from models.hyperparams import Hyperparams as hp
-from models.resource import Resource
+from models.resource import RankableResource, Resource
 from models.resource_database_adapters.adapter import QueryBuilder
 from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
 from models.resource_database_adapters.ieee_xplore_adapter import \
@@ -14,7 +14,6 @@ from models.resource_filter import ResourceFilter
 from models.resource_rankers.author_ranker import AuthorRanker
 from models.resource_rankers.citation_ranker import CitationRanker
 from models.resource_rankers.keyword_ranker import KeywordRanker
-from models.resource_rankers.ranker import Ranker
 
 
 def _get_res_db_query_builders():
@@ -31,14 +30,6 @@ def _get_cit_db_adapter():
     :rtype: type[Adapter]
     """
     return S2agAdapter
-
-
-def _get_resource_rankers():
-    """
-    :return: The resource rankers used to rank candidate resources.
-    :rtype: list[type[Ranker]]
-    """
-    return [AuthorRanker, CitationRanker, KeywordRanker]
 
 
 def _get_candidate_resources(target_keywords, target_authors, query_builder):
@@ -92,7 +83,7 @@ def _set_resource_references(resources):
             resource.references = references
 
 
-def _get_candidate_scores(
+def _get_candidate_mean_rank_dict(
     candidate_resources,
     target_resources,
     target_keywords,
@@ -112,31 +103,31 @@ def _get_candidate_scores(
     :type target_keywords: list[str]
     :param keyword_model: The word embedding model to be used for keywords.
     :type keyword_model: Word2Vec.KeyedVectors
-    :return: The candidate resources with their recommendation scores.
-    :rtype: dict[Resource, float]
+    :return: The ranked candidate resources with their mean rankings.
+    :rtype: dict[RankableResource, float]
     """
-    cand_ranking_dict: dict[Resource, list[int]] = {}
-
-    rankers = _get_resource_rankers()
+    # Convert Resource objects to RankableResource objects.
+    rankable_cand_ress = [c.to_rankable_resource() for c in candidate_resources]
+    rankers = [AuthorRanker, CitationRanker, KeywordRanker]
     for ranker in rankers:
-        sorted_cand_ress = ranker.get_ranked_cand_resources(
-            candidate_resources=candidate_resources,
+        # Assign rankings for each type of Ranker.
+        ranker.set_ranking_for_resources(
+            rankable_resources=rankable_cand_ress,
             target_resources=target_resources,
             # Additional arguments for KeywordRanker.
             model=keyword_model,
             target_keywords=target_keywords
         )
-        for i, c in enumerate(sorted_cand_ress):
-            if c not in cand_ranking_dict:
-                cand_ranking_dict[c] = [i]
-            else:
-                cand_ranking_dict[c].append(i)
 
-    cand_mean_rank_dict: dict[Resource, float] = {}
-    for candidate_resource in candidate_resources:
-        cand_rankings = cand_ranking_dict[candidate_resource]
-        mean_rank = sum(cand_rankings) / max(len(cand_rankings), 1)
-        cand_mean_rank_dict[candidate_resource] = mean_rank
+    cand_mean_rank_dict: dict[RankableResource, float] = {}
+    for ranked_cand_res in rankable_cand_ress:
+        # Retrieve rankings set by rankers.
+        # Calculate the mean ranking across all rankers.
+        mean_rank = ranked_cand_res.author_based_ranking
+        mean_rank += ranked_cand_res.citation_based_ranking
+        mean_rank += ranked_cand_res.keyword_based_ranking
+        mean_rank /= 3
+        cand_mean_rank_dict[ranked_cand_res] = mean_rank
     return cand_mean_rank_dict
 
 
@@ -159,7 +150,7 @@ def get_ranked_resources(
     :param keyword_model: The word embedding model to be used for keywords.
     :type keyword_model: Word2Vec.KeyedVectors
     :return: A list of ranked recommended academic resources.
-    :rtype: list[Resource]
+    :rtype: list[RankableResource]
     """
     # Extract keywords from target resources.
     target_keywords = KeywordRanker.get_keywords(target_resources)
@@ -189,17 +180,20 @@ def get_ranked_resources(
     _set_resource_references(candidate_resources + target_resources)
 
     # Assign a recommendation score for every candidate resource.
-    candidate_scores = _get_candidate_scores(
+    candidate_mean_rank_dict = _get_candidate_mean_rank_dict(
         candidate_resources=candidate_resources,
         target_resources=target_resources,
         target_keywords=target_keywords,
         keyword_model=keyword_model
     )
-    candidate_scores = [(s, c) for c, s in candidate_scores.items()]
-
+    # Make the mean rank the primary key used for sorting.
+    candidate_mean_rank_dict = [
+        (s, c) for c, s in candidate_mean_rank_dict.items()
+    ]
     # Sort the list of candidates in order of their scores.
-    candidates = [c for s, c in sorted(candidate_scores)]
-    return candidates
+    ranked_resources = [c for s, c in sorted(candidate_mean_rank_dict)]
+
+    return ranked_resources
 
 
 if __name__ == "__main__":

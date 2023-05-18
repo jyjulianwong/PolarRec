@@ -127,6 +127,39 @@ class Resource:
                 as_dict["references"].append(reference.to_dict())
         return as_dict
 
+    def to_rankable_resource(self):
+        """
+        Initialises a RankedResource object from a Resource object.
+
+        :return: The resultant RankedResource from the parent.
+        :rtype: RankableResource
+        """
+        args = self.to_dict()
+        # TODO: References are ignored due to dictionary type conversion.
+        if "references" in args:
+            args.pop("references")
+        return RankableResource(args)
+
+
+class RankableResource(Resource):
+    """
+    An academic resource object with ranking information from the recommendation
+    algorithm.
+    """
+
+    def __init__(self, args):
+        super().__init__(args)
+        self.author_based_ranking = -1
+        self.citation_based_ranking = -1
+        self.keyword_based_ranking = -1
+
+    def to_dict(self):
+        as_dict = super().to_dict()
+        as_dict["author_based_ranking"] = self.author_based_ranking
+        as_dict["citation_based_ranking"] = self.citation_based_ranking
+        as_dict["keyword_based_ranking"] = self.keyword_based_ranking
+        return as_dict
+
 
 if __name__ == "__main__":
     resource_dict1 = {

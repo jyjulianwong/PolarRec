@@ -6,7 +6,7 @@ import time
 from gensim import downloader
 from models.custom_logger import log, log_extended_line
 from models.hyperparams import Hyperparams as hp
-from models.resource import Resource
+from models.resource import RankableResource, Resource
 from models.resource_rankers.ranker import Ranker
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -116,9 +116,9 @@ class KeywordRanker(Ranker):
         return keywords
 
     @classmethod
-    def get_ranked_cand_resources(
+    def set_ranking_for_resources(
         cls,
-        candidate_resources,
+        rankable_resources,
         target_resources,
         **kwargs
     ):
@@ -129,12 +129,10 @@ class KeywordRanker(Ranker):
             ``model: gensim.models.KeyedVectors``,
             ``target_keywords: list[str]``.
 
-        :param candidate_resources: The list of candidate resources to rank.
-        :type candidate_resources: list[Resource]
+        :param rankable_resources: The list of resources to rank.
+        :type rankable_resources: list[RankableResource]
         :param target_resources: The list of target resources to base ranking on.
         :type target_resources: list[Resource]
-        :return: The list of citing resources, sorted by the CCF algorithm.
-        :rtype: list[Resource]
         """
         # Extract additional required keyword arguments.
         if "model" in kwargs:
@@ -146,8 +144,8 @@ class KeywordRanker(Ranker):
         else:
             target_keywords = cls.get_keywords(target_resources)
 
-        sim_dict: dict[Resource, float] = {}
-        for candidate_resource in candidate_resources:
+        sim_dict: dict[RankableResource, float] = {}
+        for candidate_resource in rankable_resources:
             candidate_keywords = cls.get_keywords(
                 [candidate_resource]
             )
@@ -162,10 +160,13 @@ class KeywordRanker(Ranker):
             )
             sim_dict[candidate_resource] = similarity
 
-        sorted_cands = [(s, c) for c, s in sim_dict.items()]
-        sorted_cands = sorted(sorted_cands, reverse=True)
-        sorted_cands = [c for s, c in sorted_cands]
-        return sorted_cands
+        sorted_ress = [(s, c) for c, s in sim_dict.items()]
+        sorted_ress = sorted(sorted_ress, reverse=True)
+        sorted_ress = [c for s, c in sorted_ress]
+
+        # Assign the ranking position for each Resource object.
+        for i, res in enumerate(sorted_ress):
+            res.keyword_based_ranking = i + 1
 
 
 if __name__ == '__main__':

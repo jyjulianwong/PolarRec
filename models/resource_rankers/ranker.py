@@ -1,6 +1,7 @@
 """
 Resource ranker interface.
 """
+from models.resource import RankableResource, Resource
 
 
 class Ranker:
@@ -9,9 +10,9 @@ class Ranker:
     """
 
     @classmethod
-    def get_ranked_cand_resources(
+    def set_ranking_for_resources(
         cls,
-        candidate_resources,
+        rankable_resources,
         target_resources,
         **kwargs
     ):
@@ -19,11 +20,9 @@ class Ranker:
         Ranks candidate resources from best to worst with some specialised
         algorithm, and returns them as a sorted list.
 
-        :param candidate_resources: The list of candidate resources to rank.
-        :type candidate_resources: list[Resource]
+        :param rankable_resources: The list of resources to rank.
+        :type rankable_resources: list[RankableResource]
         :param target_resources: The list of target resources to base ranking on.
         :type target_resources: list[Resource]
-        :return: The list of candidate resources, sorted by ranking algorithm.
-        :rtype: list[Resource]
         """
         pass

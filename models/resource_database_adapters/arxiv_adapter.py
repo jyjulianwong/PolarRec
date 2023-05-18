@@ -84,6 +84,14 @@ class ArxivQueryBuilder(QueryBuilder):
 
         resources: list[Resource] = []
         for resource_data in res["feed"]["entry"]:
+            if not isinstance(resource_data, dict):
+                log(
+                    f"Expected type 'dict' from result returned, got '{type(resource_data)}' instead: {resource_data}",
+                    "ArxivQueryBuilder",
+                    "error"
+                )
+                continue
+
             if isinstance(resource_data["author"], list):
                 authors = [data["name"] for data in resource_data["author"]]
             else:

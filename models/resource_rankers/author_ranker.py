@@ -5,7 +5,7 @@ import numpy as np
 import time
 from models import contextbased_cf as ccf
 from models.hyperparams import Hyperparams as hp
-from models.resource import Resource
+from models.resource import RankableResource, Resource
 from models.resource_rankers.ranker import Ranker
 
 
@@ -66,9 +66,9 @@ class AuthorRanker(Ranker):
         return rel_mat
 
     @classmethod
-    def get_ranked_cand_resources(
+    def set_ranking_for_resources(
         cls,
-        candidate_resources,
+        rankable_resources,
         target_resources,
         **kwargs
     ):
@@ -77,15 +77,13 @@ class AuthorRanker(Ranker):
         their association matrix paper vectors are to the targets.
         See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
 
-        :param candidate_resources: The list of candidate resources to rank.
-        :type candidate_resources: list[Resource]
+        :param rankable_resources: The list of resources to rank.
+        :type rankable_resources: list[RankableResource]
         :param target_resources: The list of target resources to base ranking on.
         :type target_resources: list[Resource]
-        :return: The list of citing resources, sorted by the CCF algorithm.
-        :rtype: list[Resource]
         """
         resource_idx_dict, author_idx_dict = cls._get_res_idx_dict(
-            candidate_resources + target_resources
+            rankable_resources + target_resources
         )
         rel_mat = cls._get_rel_mat(resource_idx_dict, author_idx_dict)
         ass_mat = ccf.get_association_matrix(
@@ -100,11 +98,11 @@ class AuthorRanker(Ranker):
             (r, i) for r, i in res_idx_pair_list if r in target_resources
         ]
         cand_idx_pair_list = [
-            (r, i) for r, i in res_idx_pair_list if r in candidate_resources
+            (r, i) for r, i in res_idx_pair_list if r in rankable_resources
         ]
 
         # Keep track of the similarity scores obtained by each candidate.
-        sim_dict: dict[Resource, [float]] = {}
+        sim_dict: dict[RankableResource, [float]] = {}
         for r, i in cand_idx_pair_list:
             for r0, i0 in target_idx_pair_list:
                 if r not in sim_dict:
@@ -116,7 +114,11 @@ class AuthorRanker(Ranker):
         sim_list = [(r, sum(l) / len(l)) for r, l in sim_dict.items()]
         # Sort the candidates by their mean similarity score.
         sim_list = sorted(sim_list, key=lambda x: (x[1], x[0]), reverse=True)
-        return [r for r, s in sim_list]
+        sorted_ress = [r for r, s in sim_list]
+
+        # Assign the ranking position for each Resource object.
+        for i, res in enumerate(sorted_ress):
+            res.author_based_ranking = i + 1
 
 
 if __name__ == "__main__":
@@ -144,7 +146,7 @@ if __name__ == "__main__":
     print(f"author_ranker: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
-    ranked_candidates = AuthorRanker.get_ranked_cand_resources(
+    ranked_candidates = AuthorRanker.set_ranking_for_resources(
         [i2, i4, i5],
         [i1, i3]
     )

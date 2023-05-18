@@ -102,7 +102,10 @@ The following is an example of the body of the response received from a POST req
             "month": 6,
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
-            "url": "https://ieeexplore.ieee.org/document/6909475"
+            "url": "https://ieeexplore.ieee.org/document/6909475",
+            "author_based_ranking": 1,
+            "citation_based_ranking": 3,
+            "keyword_based_ranking": 2
         }
     ],
     "ranked_database_resources": [
@@ -115,7 +118,10 @@ The following is an example of the body of the response received from a POST req
             "month": 6,
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
-            "url": "https://ieeexplore.ieee.org/document/6909475"
+            "url": "https://ieeexplore.ieee.org/document/6909475",
+            "author_based_ranking": 1,
+            "citation_based_ranking": 3,
+            "keyword_based_ranking": 2
         }
     ],
     "ranked_citation_resources": [
@@ -128,7 +134,10 @@ The following is an example of the body of the response received from a POST req
             "month": 6,
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
-            "url": "https://ieeexplore.ieee.org/document/6909475"
+            "url": "https://ieeexplore.ieee.org/document/6909475",
+            "author_based_ranking": 1,
+            "citation_based_ranking": 3,
+            "keyword_based_ranking": 2
         }
     ]
 }
