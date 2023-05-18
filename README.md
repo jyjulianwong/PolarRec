@@ -55,7 +55,7 @@ The headers of the POST request should be set as follows.
 The following is an example of the body of a POST request.
 ```json
 {
-    "targets": [
+    "target_resources": [
         {
             "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
             "conference_name": "2014 IEEE Conference on Computer Vision...",
@@ -68,7 +68,7 @@ The following is an example of the body of a POST request.
             "url": "https://ieeexplore.ieee.org/document/6909475"
         }
     ],
-    "existing_related": [
+    "existing_resources": [
         {
             "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
             "conference_name": "2014 IEEE Conference on Computer Vision...",
@@ -91,8 +91,34 @@ The following is an example of the body of a POST request.
 The following is an example of the body of the response received from a POST request.
 ```json
 {
-    "proc_time": 2.56,
-    "related": [
+    "processing_time": 2.56,
+    "ranked_existing_resources": [
+        {
+            "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
+            "conference_name": "2014 IEEE Conference on Computer Vision...",
+            "conference_location": "Columbus, OH, USA",
+            "title": "Rich Feature Hierarchies for Accurate Object...",
+            "year": 2014,
+            "month": 6,
+            "abstract": "Object detection performance, as measured on...",
+            "doi": "10.1109/CVPR.2014.81",
+            "url": "https://ieeexplore.ieee.org/document/6909475"
+        }
+    ],
+    "ranked_database_resources": [
+        {
+            "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
+            "conference_name": "2014 IEEE Conference on Computer Vision...",
+            "conference_location": "Columbus, OH, USA",
+            "title": "Rich Feature Hierarchies for Accurate Object...",
+            "year": 2014,
+            "month": 6,
+            "abstract": "Object detection performance, as measured on...",
+            "doi": "10.1109/CVPR.2014.81",
+            "url": "https://ieeexplore.ieee.org/document/6909475"
+        }
+    ],
+    "ranked_citation_resources": [
         {
             "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
             "conference_name": "2014 IEEE Conference on Computer Vision...",

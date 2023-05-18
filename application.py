@@ -6,7 +6,7 @@ import time
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from models.custom_logger import log
-from models.recommend import get_related_resources
+from models.recommend import get_ranked_resources
 from models.resource import Resource
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
@@ -62,39 +62,43 @@ def recommend():
 
     # Process all the target resources into Resource objects.
     target_resources = []
-    if "targets" in req_data:
-        for target_json in req_data["targets"]:
+    if "target_resources" in req_data:
+        for target_json in req_data["target_resources"]:
             target_resources.append(Resource(target_json))
 
-    # Process all the existing related resources into Resource objects.
-    existing_related_resources = []
-    if "existing_related" in req_data:
-        for existing_related_json in req_data["existing_related"]:
-            existing_related_resources.append(Resource(existing_related_json))
+    # Process all the existing resources into Resource objects.
+    existing_resources = []
+    if "existing_resources" in req_data:
+        for existing_json in req_data["existing_resources"]:
+            existing_resources.append(Resource(existing_json))
 
     # Process all the user-specified filters into a ResourceFilter object.
     resource_filter = ResourceFilter({})
     if "filter" in req_data:
         resource_filter = ResourceFilter(req_data["filter"])
 
-    # Retrieve the list of related resources via the recommendation algorithm.
-    related_resources = get_related_resources(
+    # Retrieve the lists of ranked resources via the recommendation algorithm.
+    ranked_resources = get_ranked_resources(
         target_resources,
-        existing_related_resources,
+        existing_resources,
         resource_filter,
         keyword_model
     )
 
-    # Convert each related resource into JSON-like data.
-    res_data = {"related": []}
-    for related_resource in related_resources:
-        res_data["related"].append(related_resource.to_dict())
+    # Convert each ranked resource into JSON-like data.
+    res_data = {
+        "ranked_existing_resources": [], # TODO: Populate.
+        "ranked_database_resources": [],
+        "ranked_citation_resources": []  # TODO: Populate.
+    }
+    for ranked_resource in ranked_resources:
+        res_data["ranked_database_resources"].append(ranked_resource.to_dict())
 
     # The end time of processing the request.
     t2 = time.time()
 
     # Add the processing time to the data returned by the API.
-    res_data["proc_time"] = t2 - t1
+    res_data["processing_time"] = t2 - t1
 
     return jsonify(res_data)
 

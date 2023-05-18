@@ -17,7 +17,7 @@ from models.resource_rankers.keyword_ranker import KeywordRanker
 from models.resource_rankers.ranker import Ranker
 
 
-def get_res_db_query_builders():
+def _get_res_db_query_builders():
     """
     :return: The list of resource databases the recommendation algorithm calls.
     :rtype: list[type[QueryBuilder]]
@@ -25,7 +25,7 @@ def get_res_db_query_builders():
     return [ArxivQueryBuilder, IEEEXploreQueryBuilder]
 
 
-def get_cit_db_adapter():
+def _get_cit_db_adapter():
     """
     :return: The citation database the recommendation algorithm calls.
     :rtype: type[Adapter]
@@ -33,7 +33,7 @@ def get_cit_db_adapter():
     return S2agAdapter
 
 
-def get_resource_rankers():
+def _get_resource_rankers():
     """
     :return: The resource rankers used to rank candidate resources.
     :rtype: list[type[Ranker]]
@@ -41,7 +41,7 @@ def get_resource_rankers():
     return [AuthorRanker, CitationRanker, KeywordRanker]
 
 
-def get_candidate_resources(target_keywords, target_authors, query_builder):
+def _get_candidate_resources(target_keywords, target_authors, query_builder):
     """
     :param target_keywords: The list of keywords from the target resources.
     :type target_keywords: list[str]
@@ -77,7 +77,7 @@ def get_candidate_resources(target_keywords, target_authors, query_builder):
     return candidates
 
 
-def set_resource_references(resources):
+def _set_resource_references(resources):
     """
     Searches for and assigns references to resources using the chosen citation
     database adapters.
@@ -85,14 +85,14 @@ def set_resource_references(resources):
     :param resources: The list of resources to collect references for.
     :type resources: list[Resource]
     """
-    cit_db_adapter = get_cit_db_adapter()
+    cit_db_adapter = _get_cit_db_adapter()
     reference_dict = cit_db_adapter.get_references_in_batches(resources)
     for resource, references in reference_dict.items():
         if len(references) > 0:
             resource.references = references
 
 
-def get_candidate_scores(
+def _get_candidate_scores(
     candidate_resources,
     target_resources,
     target_keywords,
@@ -117,7 +117,7 @@ def get_candidate_scores(
     """
     cand_ranking_dict: dict[Resource, list[int]] = {}
 
-    rankers = get_resource_rankers()
+    rankers = _get_resource_rankers()
     for ranker in rankers:
         sorted_cand_ress = ranker.get_ranked_cand_resources(
             candidate_resources=candidate_resources,
@@ -140,25 +140,25 @@ def get_candidate_scores(
     return cand_mean_rank_dict
 
 
-def get_related_resources(
+def get_ranked_resources(
     target_resources,
-    existing_related_resources,
+    existing_resources,
     resource_filter,
     keyword_model
 ):
     """
-    Calls research database APIs and recommends a list of academic resources
-    based on target resources.
+    Calls research database APIs and recommends lists of academic resources
+    based on target resources, sorted according to their scores.
 
     :param target_resources: The list of target resources.
     :type target_resources: list[Resource]
-    :param existing_related_resources: The list of existing related resources.
-    :type existing_related_resources: list[Resource]
+    :param existing_resources: The list of existing resources.
+    :type existing_resources: list[Resource]
     :param resource_filter: The filter to be applied to the results.
     :type resource_filter: ResourceFilter
     :param keyword_model: The word embedding model to be used for keywords.
     :type keyword_model: Word2Vec.KeyedVectors
-    :return: A list of recommended academic resources.
+    :return: A list of ranked recommended academic resources.
     :rtype: list[Resource]
     """
     # Extract keywords from target resources.
@@ -171,8 +171,8 @@ def get_related_resources(
 
     # Collect candidate resources from resource databases.
     candidate_resources: list[Resource] = []
-    for query_builder in get_res_db_query_builders():
-        candidate_resources += get_candidate_resources(
+    for query_builder in _get_res_db_query_builders():
+        candidate_resources += _get_candidate_resources(
             target_keywords=target_keywords,
             target_authors=target_authors,
             query_builder=query_builder
@@ -186,10 +186,10 @@ def get_related_resources(
 
     # Collect references for all resources using citation database adapters.
     # This information is not available from resource database adapters.
-    set_resource_references(candidate_resources + target_resources)
+    _set_resource_references(candidate_resources + target_resources)
 
     # Assign a recommendation score for every candidate resource.
-    candidate_scores = get_candidate_scores(
+    candidate_scores = _get_candidate_scores(
         candidate_resources=candidate_resources,
         target_resources=target_resources,
         target_keywords=target_keywords,
@@ -243,7 +243,7 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     print("\nrecommend: Search and set the reference list for a resource")
 
     t1 = time.time()
-    set_resource_references([target_resource])
+    _set_resource_references([target_resource])
     t2 = time.time()
     print("recommend: target_resource.references:")
     if target_resource.references is None:
@@ -256,7 +256,7 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     print("\nrecommend: Generate a recommendation list for a resource")
 
     t1 = time.time()
-    related_resources = get_related_resources(
+    ranked_resources = get_ranked_resources(
         [target_resource],
         [],
         ResourceFilter({
@@ -265,8 +265,8 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         keyword_model
     )
     t2 = time.time()
-    print(f"recommend: related_resources: {len(related_resources)}")
-    for i, related_resource in enumerate(related_resources):
+    print(f"recommend: ranked_resources: {len(ranked_resources)}")
+    for i, related_resource in enumerate(ranked_resources):
         print(f"{i}: \t{related_resource.title}")
         print(f"\t{related_resource.authors}")
         print(f"\t{related_resource.year}")
