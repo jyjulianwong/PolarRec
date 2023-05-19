@@ -14,6 +14,8 @@ class Hyperparams:
     # Max. # of results to be returned by each citation query made.
     MAX_CIT_QUERY_RESULTS_RETD = 10
 
+    # The collaborative filtering method used for both author- and citation-based ranking.
+    UNIVERSAL_CF_METHOD = "userbased"  # "userbased", "contextbased"
     # The threshold value above which two resources have significant author co-occurrence.
     # See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
     AUTHOR_COOC_PROB_TS = 0.4

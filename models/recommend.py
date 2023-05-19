@@ -115,7 +115,7 @@ def _get_candidate_mean_rank_dict(
             rankable_resources=rankable_cand_ress,
             target_resources=target_resources,
             # Additional arguments for AuthorRanker and CitationRanker.
-            cf_method="userbased",
+            cf_method=hp.UNIVERSAL_CF_METHOD,
             # Additional arguments for KeywordRanker.
             model=keyword_model,
             target_keywords=target_keywords
