@@ -1,7 +1,10 @@
 """
 Objects and methods for ranking academic resources based on keywords.
 """
+import math
 import nltk
+import numpy as np
+import pandas as pd
 import time
 from gensim import downloader
 from models.custom_logger import log, log_extended_line
@@ -14,7 +17,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class KeywordRanker(Ranker):
     @classmethod
-    def _get_keywords(cls, text):
+    def _get_keywords_from_text(cls, text):
         """
         Extracts a list of keywords from text using the TD-IDF algorithm.
 
@@ -27,6 +30,7 @@ class KeywordRanker(Ranker):
         vectorizer = TfidfVectorizer(
             stop_words=stopwords.words("english"),
             token_pattern=r"(?u)\b\w[\w-]*\w\b",
+            ngram_range=(1, 3),
             smooth_idf=False
         )
         tfidf_mat = vectorizer.fit_transform([text])
@@ -38,38 +42,147 @@ class KeywordRanker(Ranker):
         return keywords
 
     @classmethod
-    def _get_keyword_list_similarity(cls, model, l1, l2, show_oovs=False):
+    def _get_phrase_embedding_vector(cls, model, phrase):
         """
-        Returns the average cosine-based similarity of two lists of keywords.
+        :param model: The keywords word embedding model.
+        :type model: gensim.models.KeyedVectors
+        :param phrase: The phrase or n-gram.
+        :type phrase: str
+        :param show_oovs: Print list of the keywords that are out-of-vocabulary.
+        :type show_oovs: bool
+        :return: The embedding vector for a phrase, calculated with vector mean.
+        :rtype: tuple[(None | np.ndarray), list[str]]
+        """
+        word_vecs = []
+        oovs = []
+        for word in phrase.split(" "):
+            if word in model.key_to_index:
+                word_vecs.append(model.get_vector(word))
+            else:
+                oovs.append(word)
+
+        if len(oovs) == 0:
+            word_vecs = np.array(word_vecs)
+            phrase_vector = np.mean(word_vecs, axis=0)
+            return phrase_vector, list(set(oovs))
+        else:
+            # It is not a representative embedding if some words not present.
+            return None, list(set(oovs))
+
+    @classmethod
+    def _get_phrase_similarity(cls, model, p1, p2):
+        """
+        :param model: The keywords word embedding model.
+        :type model: gensim.models.KeyedVectors
+        :param p1: The phrase or n-gram.
+        :type p1: str
+        :param p2: The phrase or n-gram.
+        :type p2: str
+        :param show_oovs: Print list of the keywords that are out-of-vocabulary.
+        :type show_oovs: bool
+        :return: The cosine-based similarity of two phrases or n-grams.
+        :rtype: tuple[(None | float), list[str]]
+        """
+        vec1, oovs1 = cls._get_phrase_embedding_vector(model, p1)
+        vec2, oovs2 = cls._get_phrase_embedding_vector(model, p2)
+        if vec1 is None or vec2 is None:
+            return None, list(set(oovs1 + oovs2))
+
+        num = np.dot(vec1, vec2)
+        den = np.linalg.norm(vec1) * np.linalg.norm(vec2)
+        # Set minimum denominator to avoid division-by-zero.
+        return num / max(den, 1e-9), list(set(oovs1 + oovs2))
+
+    @classmethod
+    def _get_keyword_list_similarity(
+        cls,
+        model,
+        l1,
+        l2,
+        show_oovs=False,
+        show_kw_sim_mat=False
+    ):
+        """
+        Returns the average pair-wise cosine-based similarity of two lists of
+        keywords.
         Used as a metric for how similar two lists of keywords are.
+        Assumes that l1 and l2 are ranked lists of keywords, with keywords that
+        are more important appearing first in the list.
+        This comparison algorithm is mono-directional. It calculates how well
+        the keywords in l2 match those in l1.
 
         :param model: The keywords word embedding model.
         :type model: gensim.models.KeyedVectors
-        :param l1: A list of keywords.
+        :param l1: The target list of keywords.
         :type l1: list[str]
-        :param l2: A list of keywords.
+        :param l2: The candidate list of keywords.
         :type l2: list[str]
-        :param show_oovs: Prints a list of the keywords that are out-of-vocabulary.
+        :param show_oovs: Print list of the keywords that are out-of-vocabulary.
         :type show_oovs: bool
+        :param show_kw_sim_mat: Print the pair-wise keyword similarity matrix.
+        :type show_kw_sim_mat: bool
         :return: The average cosine-based similarity of two lists of keywords.
         :rtype: float
         """
         if len(l1) == 0 or len(l2) == 0:
             return 0.0
 
-        similarities = []
+        p1s = []
+        p2s = []
+        weights = []
+        psims = []
+        wsims = []
         oovs = []
-        for w1 in l1:
-            if w1 in model.key_to_index:
-                for w2 in l2:
-                    if w2 in model.key_to_index:
-                        similarities.append(model.similarity(w1, w2))
-                    else:
-                        oovs.append(w2)
-            else:
-                oovs.append(w1)
+        for i1, p1 in enumerate(l1):
+            if p1 in l2:
+                # Both lists contain this exact phrase. The similarity is 1.0.
+                i2 = l2.index(p1)
+                p1s.append(p1)
+                p2s.append(p1)
+                # TODO: Remove hard-coded lambda parameter.
+                # Calculate weight using the negative exponential distribution.
+                w1 = 0.2 * math.e ** (-0.2 * i1)
+                w2 = 0.2 * math.e ** (-0.2 * i2)
+                weights.append(w1 * w2)
+                psims.append(1.0)
+                continue
 
-        if show_oovs:
+            p2_i2_dict: dict[str, int] = {}
+            p2_psim_dict: dict[str, float] = {}
+            for i2, p2 in enumerate(l2):
+                # Collect similarity scores for every p1-p2 pair.
+                psim, some_oovs = cls._get_phrase_similarity(model, p1, p2)
+                if psim is not None:
+                    p2_i2_dict[p2] = i2
+                    p2_psim_dict[p2] = psim
+                oovs += some_oovs
+
+            if len(p2_psim_dict) == 0:
+                # This should not happen in normal circumstances.
+                continue
+
+            # Find the phrase from l2 that is most similar to p1.
+            p2_psim_list = [(s, p) for p, s in p2_psim_dict.items()]
+            p2_psim_list = sorted(p2_psim_list, reverse=True)
+            p2 = p2_psim_list[0][1]
+            i2 = p2_i2_dict[p2]
+            psim = p2_psim_list[0][0]
+
+            # TODO: Remove hard-coded lambda parameter.
+            # Calculate weight using the negative exponential distribution.
+            w1 = 0.2 * math.e ** (-0.2 * i1)
+            w2 = 0.2 * math.e ** (-0.2 * i2)
+            p1s.append(p1)
+            p2s.append(p2)
+            weights.append(w1 * w2)
+            psims.append(psim)
+
+        # The sum of all the weights should be 1.
+        weights = [w / max(sum(weights), 1e-9) for w in weights]
+        # Add weighting to each similarity score to indicate their "importance".
+        wsims = [weights[i] * psims[i] for i in range(len(psims))]
+
+        if show_oovs and len(oovs) > 0:
             log(
                 "_get_keyword_list_similarity: Listing out-of-vocabulary words…",
                 "KeywordRanker"
@@ -77,7 +190,23 @@ class KeywordRanker(Ranker):
             for i, oov in enumerate(list(set(oovs))):
                 log_extended_line(f"[{i}]: {oov}")
 
-        return sum(similarities) / max(len(similarities), 1)
+        if show_kw_sim_mat:
+            log(
+                "_get_keyword_list_similarity: Showing pair-wise keyword similarity matrix…",
+                "KeywordRanker"
+            )
+            pd.set_option("display.min_rows", 20)
+            pd.set_option("display.max_columns", None)
+            pd.set_option("expand_frame_repr", False)
+            kw_sim_df = pd.DataFrame()
+            kw_sim_df["p1"] = p1s
+            kw_sim_df["p2"] = p2s
+            kw_sim_df["weight"] = weights
+            kw_sim_df["psim"] = psims
+            kw_sim_df["wsim"] = wsims
+            print(kw_sim_df)
+
+        return sum(wsims)
 
     @classmethod
     def get_model(cls):
@@ -107,12 +236,15 @@ class KeywordRanker(Ranker):
         :return: A list of keywords, sorted in order of importance.
         :rtype: list[str]
         """
+        # Summarise all the target resources in a singular piece of text.
         summary = ""
         for res in resources:
             title = res.title if res.title is not None else ""
             abstract = res.abstract if res.abstract is not None else ""
             summary += f"{title} {abstract} "
-        keywords = cls._get_keywords(summary)
+
+        # Extract a list of ranked keywords from the summary text.
+        keywords = cls._get_keywords_from_text(summary)
         return keywords
 
     @classmethod
@@ -208,20 +340,27 @@ with competitive inference time and more efficient inference memory-wise as
 compared to other architectures. We also provide a Caffe implementation of 
 SegNet and a web demo at this http URL."""
 
+    print("\nkeyword_ranker: Load the word embedding model")
     t1 = time.time()
     model = KeywordRanker.get_model()
     t2 = time.time()
     print(f"keyword_ranker: model: {model}")
     print(f"keyword_ranker: Time taken to execute: {t2 - t1} seconds")
 
+    print("\nkeyword_ranker: Extract keywords from an abstract")
     t1 = time.time()
-    keywords1 = KeywordRanker._get_keywords(abstract1)
-    keywords2 = KeywordRanker._get_keywords(abstract2)
+    keywords1 = KeywordRanker._get_keywords_from_text(abstract1)
+    keywords2 = KeywordRanker._get_keywords_from_text(abstract2)
     t2 = time.time()
-    print(f"keyword_ranker: keywords1: {keywords1[:10]}")
-    print(f"keyword_ranker: keywords2: {keywords2[:10]}")
+    print(f"keyword_ranker: keywords1:")
+    for i, keyword in enumerate(keywords1[:20]):
+        print(f"\t[{i}]: {keyword}")
+    print(f"keyword_ranker: keywords2:")
+    for i, keyword in enumerate(keywords2[:20]):
+        print(f"\t[{i}]: {keyword}")
     print(f"keyword_ranker: Time taken to execute: {t2 - t1} seconds")
 
+    print("\nkeyword_ranker: Extract keywords from two abstracts together")
     resource1 = Resource({"title": "r1", "abstract": abstract1})
     resource2 = Resource({"title": "r2", "abstract": abstract2})
     t1 = time.time()
@@ -229,38 +368,76 @@ SegNet and a web demo at this http URL."""
         [resource1, resource2]
     )
     t2 = time.time()
-    print(f"keyword_ranker: combined_keywords: {combined_keywords[:10]}")
+    print(f"keyword_ranker: combined_keywords:")
+    for i, keyword in enumerate(combined_keywords[:20]):
+        print(f"\t[{i}]: {keyword}")
     print(f"keyword_ranker: Time taken to execute: {t2 - t1} seconds")
 
+    print("\nkeyword_ranker: Compare keyword lists of length 40")
     t1 = time.time()
     similarity = KeywordRanker._get_keyword_list_similarity(
         model,
         keywords1[:40],
         keywords2[:40],
-        show_oovs=True
+        show_oovs=True,
+        show_kw_sim_mat=True
     )
     t2 = time.time()
     print(f"keyword_ranker: similarity: 40: {similarity}")
     print(f"keyword_ranker: Time taken to execute: {t2 - t1} seconds")
 
+    print("\nkeyword_ranker: Compare keyword lists of length 20")
     t1 = time.time()
     similarity = KeywordRanker._get_keyword_list_similarity(
         model,
         keywords1[:20],
         keywords2[:20],
-        show_oovs=True
+        show_oovs=True,
+        show_kw_sim_mat=True
     )
     t2 = time.time()
     print(f"keyword_ranker: similarity: 20: {similarity}")
     print(f"keyword_ranker: Time taken to execute: {t2 - t1} seconds")
 
+    print("\nkeyword_ranker: Compare keyword lists of length 10")
     t1 = time.time()
     similarity = KeywordRanker._get_keyword_list_similarity(
         model,
         keywords1[:10],
         keywords2[:10],
-        show_oovs=True
+        show_oovs=True,
+        show_kw_sim_mat=True
     )
     t2 = time.time()
     print(f"keyword_ranker: similarity: 10: {similarity}")
     print(f"keyword_ranker: Time taken to execute: {t2 - t1} seconds")
+
+    print("\nkeyword_ranker: Compare keyword lists that are identical")
+    similarity = KeywordRanker._get_keyword_list_similarity(
+        model,
+        keywords1[:20],
+        keywords1[:20],
+        show_oovs=True,
+        show_kw_sim_mat=True
+    )
+    print(f"keyword_ranker: similarity: Identical: {similarity}")
+
+    print("\nkeyword_ranker: Compare keyword lists that are near-identical")
+    similarity = KeywordRanker._get_keyword_list_similarity(
+        model,
+        ["python", "jumble", "easy", "difficult", "answer", "xylophone"],
+        ["python", "jumble", "easy", "difficult", "answer", "piano"],
+        show_oovs=True,
+        show_kw_sim_mat=True
+    )
+    print(f"keyword_ranker: similarity: Near-identical: {similarity}")
+
+    print("\nkeyword_ranker: Compare keyword lists that are similar")
+    similarity = KeywordRanker._get_keyword_list_similarity(
+        model,
+        ["python", "jumble", "easy", "difficult", "answer", "xylophone"],
+        ["java", "scramble", "simple", "hard", "response", "piano"],
+        show_oovs=True,
+        show_kw_sim_mat=True
+    )
+    print(f"keyword_ranker: similarity: Similar: {similarity}")
