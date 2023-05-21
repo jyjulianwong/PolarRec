@@ -195,12 +195,7 @@ class S2agAdapter(Adapter):
         return data["citationCount"]
 
     @classmethod
-    def get_references(cls, resource):
-        data = cls._get_request_data(resource)
-        return cls._get_req_ref_data_as_ress(data)
-
-    @classmethod
-    def get_references_in_batches(cls, resources):
+    def get_references(cls, resources):
         data_dict = cls._get_req_data_in_batches(resources)
 
         ref_list_dict: dict[Resource, list[Resource]] = {}
@@ -243,7 +238,7 @@ if __name__ == "__main__":
         print("\nS2agAdapter: Collect reference list for a single resource")
 
         t1 = time.time()
-        references = S2agAdapter.get_references(target_resource)
+        references = S2agAdapter.get_references([target_resource])
         print(f"S2agAdapter: len(references): {len(references)}")
         t2 = time.time()
         print(f"S2agAdapter: Time taken to execute: {t2 - t1} seconds")
@@ -256,7 +251,7 @@ if __name__ == "__main__":
     print("\nS2agAdapter: Collect reference lists for a batch of resources")
 
     t1 = time.time()
-    ref_list_dict = S2agAdapter.get_references_in_batches(
+    ref_list_dict = S2agAdapter.get_references(
         [Resource(target_data1), Resource(target_data2)]
     )
     print(f"S2agAdapter: len(ref_list_dict): {len(ref_list_dict)}")

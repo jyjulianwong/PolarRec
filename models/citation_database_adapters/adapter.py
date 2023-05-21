@@ -27,17 +27,7 @@ class Adapter:
         pass
 
     @classmethod
-    def get_references(cls, resource):
-        """
-        :param resource: The target resource.
-        :type resource: Resource
-        :return: The reference resources that the target resource has used.
-        :rtype: list[Resource]
-        """
-        pass
-
-    @classmethod
-    def get_references_in_batches(cls, resources):
+    def get_references(cls, resources):
         """
         Searches for references for each resource in batches for better
         efficiency.

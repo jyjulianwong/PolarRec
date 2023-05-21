@@ -77,7 +77,7 @@ def _set_resource_references(resources):
     :type resources: list[Resource]
     """
     cit_db_adapter = _get_cit_db_adapter()
-    reference_dict = cit_db_adapter.get_references_in_batches(resources)
+    reference_dict = cit_db_adapter.get_references(resources)
     for resource, references in reference_dict.items():
         if len(references) > 0:
             resource.references = references

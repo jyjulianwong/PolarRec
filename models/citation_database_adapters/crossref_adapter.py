@@ -65,12 +65,7 @@ class CrossrefAdapter(Adapter):
         return res["message"]["items"][0]["is-referenced-by-count"]
 
     @classmethod
-    def get_references(cls, resource):
-        # TODO: Not supported by the Crossref API.
-        return []
-
-    @classmethod
-    def get_references_in_batches(cls, resources):
+    def get_references(cls, resources):
         # TODO: Not supported by the Crossref API.
         ref_list_dict = {}
 

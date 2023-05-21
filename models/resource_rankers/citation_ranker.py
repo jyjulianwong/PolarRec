@@ -194,7 +194,7 @@ if __name__ == "__main__":
     }
     target_resource2 = Resource(target_data2)
 
-    reference_dict = S2agAdapter.get_references_in_batches(
+    reference_dict = S2agAdapter.get_references(
         [target_resource1, target_resource2]
     )
     for resource, references in reference_dict.items():
