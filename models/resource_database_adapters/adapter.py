@@ -117,8 +117,10 @@ class QueryBuilder:
         log_extended_line(f"% with doi: {doi_count / len(resources)}")
         log_extended_line(f"% with url: {url_count / len(resources)}")
 
-
     def set_authors(self, authors):
+        pass
+
+    def set_title(self, title):
         pass
 
     def set_min_date(self, min_date):

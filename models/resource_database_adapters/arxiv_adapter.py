@@ -13,12 +13,16 @@ class ArxivQueryBuilder(QueryBuilder):
         super().__init__()
         self._API_URL_BASE = "http://export.arxiv.org/api/query"
         self._authors = None
+        self._title = None
         self._min_date = None
         self._max_date = None
         self._keywords = []
 
     def set_authors(self, authors):
         self._authors = authors
+
+    def set_title(self, title):
+        self._title = title
 
     def set_min_date(self, min_date):
         self._min_date = min_date
@@ -41,6 +45,9 @@ class ArxivQueryBuilder(QueryBuilder):
             for author in self._authors:
                 formatted_name = self._get_joined_author_name(author, "_", True)
                 search_query.append(f"au:{formatted_name}")
+
+        if self._title:
+            search_query.append(f"ti:{self._title}")
 
         if self._min_date or self._max_date:
             # TODO: Not supported by ArXiv API.
@@ -117,6 +124,7 @@ class ArxivQueryBuilder(QueryBuilder):
                 resource_args["doi"] = resource_data["doi"]
             elif "arxiv:doi" in resource_data:
                 resource_args["doi"] = resource_data["arxiv:doi"]["#text"]
+            # TODO: Set predef_keywords.
 
             resources.append(Resource(resource_args))
 

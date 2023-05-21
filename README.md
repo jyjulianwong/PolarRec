@@ -65,7 +65,9 @@ The following is an example of the body of a POST request.
             "month": 6,
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
-            "url": "https://ieeexplore.ieee.org/document/6909475"
+            "url": "https://ieeexplore.ieee.org/document/6909475",
+            "references": [{...}, {...}, ...],
+            "predef_keywords": ["Proposals","Feature extraction","..."]
         }
     ],
     "existing_resources": [
@@ -78,7 +80,9 @@ The following is an example of the body of a POST request.
             "month": 6,
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
-            "url": "https://ieeexplore.ieee.org/document/6909475"
+            "url": "https://ieeexplore.ieee.org/document/6909475",
+            "references": [{...}, {...}, ...],
+            "predef_keywords": ["Proposals","Feature extraction","..."]
         }
     ],
     "filter": {
@@ -103,6 +107,8 @@ The following is an example of the body of the response received from a POST req
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
             "url": "https://ieeexplore.ieee.org/document/6909475",
+            "references": [{...}, {...}, ...],
+            "predef_keywords": ["Proposals","Feature extraction","..."],
             "author_based_ranking": 1,
             "citation_based_ranking": 3,
             "keyword_based_ranking": 2
@@ -119,6 +125,8 @@ The following is an example of the body of the response received from a POST req
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
             "url": "https://ieeexplore.ieee.org/document/6909475",
+            "references": [{...}, {...}, ...],
+            "predef_keywords": ["Proposals","Feature extraction","..."],
             "author_based_ranking": 1,
             "citation_based_ranking": 3,
             "keyword_based_ranking": 2
@@ -135,6 +143,8 @@ The following is an example of the body of the response received from a POST req
             "abstract": "Object detection performance, as measured on...",
             "doi": "10.1109/CVPR.2014.81",
             "url": "https://ieeexplore.ieee.org/document/6909475",
+            "references": [{...}, {...}, ...],
+            "predef_keywords": ["Proposals","Feature extraction","..."],
             "author_based_ranking": 1,
             "citation_based_ranking": 3,
             "keyword_based_ranking": 2

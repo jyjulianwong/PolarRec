@@ -24,7 +24,8 @@ class Resource:
             ``abstract: str`` (the abstract from the resource),
             ``doi: str`` (the DOI number of the resource),
             ``url: str`` (the URL to the resource online),
-            ``references: list[Resource]`` (the references used by resource).
+            ``references: list[Resource]`` (the references used by resource),
+            ``predef_keywords: list[str]`` (the list of pre-defined keywords).
         :raises ValueError: When value of arguments are invalid.
         """
         # Type validation and conversion for year parameter.
@@ -83,6 +84,9 @@ class Resource:
         self.references = None
         if "references" in args:
             self.references = args["references"]
+        self.predef_keywords = None
+        if "predef_keywords" in args:
+            self.predef_keywords = args["predef_keywords"]
 
     def __eq__(self, other):
         # The "identity" of an academic resource is defined by its full title.
@@ -131,6 +135,8 @@ class Resource:
             as_dict["references"] = []
             for reference in self.references:
                 as_dict["references"].append(reference.to_dict())
+        if self.predef_keywords is not None:
+            as_dict["predef_keywords"] = self.predef_keywords
         return as_dict
 
     def to_rankable_resource(self):

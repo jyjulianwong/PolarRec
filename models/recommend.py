@@ -173,6 +173,9 @@ def get_ranked_resources(
 
     # Remove any duplicate resources from the multiple queries.
     candidate_resources = list(dict.fromkeys(candidate_resources))
+    # Remove any occurrences of target resources themselves from the candidates.
+    for target_resource in target_resources:
+        candidate_resources.remove(target_resource)
 
     # Remove any candidates that do not match the specified filters.
     candidate_resources = resource_filter.get_filtered(candidate_resources)

@@ -16,6 +16,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         self._API_URL_BASE = "https://ieeexploreapi.ieee.org/api/v1/search/articles"
         self._query_args = {}
         self._authors = []
+        self._title = ""
         self._keywords = []
 
     def _get_candidate_resources(self, query_args):
@@ -66,10 +67,27 @@ class IEEEXploreQueryBuilder(QueryBuilder):
             }
 
             # Set optional fields.
+            if "content_type" in resource_data:
+                if resource_data["content_type"] == "Conferences":
+                    if "publication_title" in resource_data:
+                        resource_args["conference_name"] = resource_data[
+                            "publication_title"
+                        ]
+            if "conference_location" in resource_data:
+                resource_args["conference_location"] = resource_data[
+                    "conference_location"
+                ]
             if "abstract" in resource_data:
                 resource_args["abstract"] = resource_data["abstract"]
             if "doi" in resource_data:
                 resource_args["doi"] = resource_data["doi"]
+            if "index_terms" in resource_data:
+                predef_keywords = []
+                for kw_type, kw_data in resource_data["index_terms"].items():
+                    predef_keywords += kw_data["terms"]
+                # Remove duplicates but preserve ordering.
+                predef_keywords = list(dict.fromkeys(predef_keywords))
+                resource_args["predef_keywords"] = predef_keywords
 
             resources.append(Resource(resource_args))
         return resources
@@ -84,6 +102,9 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         """
         max_author_count = 3
         self._authors = authors[:min(len(authors), max_author_count)]
+
+    def set_title(self, title):
+        self._title = title
 
     def set_min_date(self, min_date):
         self._query_args["min_date"] = min_date
@@ -107,7 +128,10 @@ class IEEEXploreQueryBuilder(QueryBuilder):
             bool_op = " AND " if must_have_all_fields else " OR "
             self._query_args["querytext"] = bool_op.join(self._keywords)
             self._query_args["querytext"] = f"({self._query_args['querytext']})"
-        self._query_args["max_records"] = max_resources_returned
+        if len(self._title) > 0:
+            self._query_args["article_title"] = self._title
+        # The add-one is necessary due to an IEEE Xplore API indexing issue.
+        self._query_args["max_records"] = max_resources_returned + 1
         self._query_args["apikey"] = self._API_KEY
 
         ress: list[Resource] = []
