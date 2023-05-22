@@ -5,8 +5,8 @@ import os
 import requests
 import string
 import time
+from config import Config
 from models.dev_cache import DevCache
-from models.hyperparams import Hyperparams as hp
 from models.citation_database_adapters.adapter import Adapter
 from models.custom_logger import log, log_extended_line
 from models.resource import Resource
@@ -21,7 +21,7 @@ class S2agAdapter(Adapter):
     # This only caches incoming data within a single API call, not across calls.
     # This is recommended for etiquette purposes in the documentation.
     REQUEST_DATA_CACHE_FILEPATH = os.path.join(
-        hp.APP_ROOT_DIR,
+        Config.APP_ROOT_DIR,
         "s2ag-adapter-cache.json"
     )
     request_data_cache = {}

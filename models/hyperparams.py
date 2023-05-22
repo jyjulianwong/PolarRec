@@ -1,15 +1,12 @@
 """
 The list of hyperparameter values for the whole recommendation algorithm.
 """
-import os
 
 
 class Hyperparams:
     """
     The list of hyperparameter values for the whole recommendation algorithm.
     """
-    APP_ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-
     # Whether resource and citation data should be retrieved from cache or not.
     DISABLE_CACHED_DATA = False
 
