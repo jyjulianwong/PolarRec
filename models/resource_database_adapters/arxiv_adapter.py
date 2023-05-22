@@ -18,6 +18,29 @@ class ArxivQueryBuilder(QueryBuilder):
         self._max_date = None
         self._keywords = []
 
+    def _get_request_data(self, query_args):
+        """
+        :param query_args: The query parameters passed on to the API.
+        :type query_args: dict[str, str]
+        :return: The JSON data returned by the API request.
+        :rtype: None | dict
+        """
+        url = self._API_URL_BASE + "?" + "&".join(
+            [f"{key}={val}" for key, val in query_args.items()]
+        )
+        url = self._get_translated_url_str(url)
+        try:
+            res = urllib.request.urlopen(url)
+            res = res.read().decode("utf-8")
+            res = xmltodict.parse(res)
+        except Exception as err:
+            log(str(err), "ArxivQueryBuilder", "error")
+            return None
+
+        log(f"Successful response from {url}", "ArxivQueryBuilder")
+
+        return res
+
     def set_authors(self, authors):
         self._authors = authors
 
@@ -47,7 +70,7 @@ class ArxivQueryBuilder(QueryBuilder):
                 search_query.append(f"au:{formatted_name}")
 
         if self._title:
-            search_query.append(f"ti:{self._title}")
+            search_query.append(f"ti:{self._title.replace(' ', '+').lower()}")
 
         if self._min_date or self._max_date:
             # TODO: Not supported by ArXiv API.
@@ -72,25 +95,19 @@ class ArxivQueryBuilder(QueryBuilder):
             "max_results": max_resources_returned
         }
 
-        url = self._API_URL_BASE + "?" + "&".join(
-            [f"{key}={val}" for key, val in query_args.items()]
-        )
-        url = self._get_translated_url_str(url)
-        try:
-            res = urllib.request.urlopen(url)
-            res = res.read().decode("utf-8")
-            res = xmltodict.parse(res)
-        except Exception as err:
-            log(str(err), "ArxivQueryBuilder", "error")
+        res = self._get_request_data(query_args)
+        if res is None:
             return []
-
-        log(f"Successful response from {url}", "ArxivQueryBuilder")
-
         if res["feed"]["opensearch:totalResults"]["#text"] == "0":
             return []
 
+        resource_data_list = res["feed"]["entry"]
+        if not isinstance(res["feed"]["entry"], list):
+            # ArXiv changes the return type if there is only one entry.
+            resource_data_list = [res["feed"]["entry"]]
+
         resources: list[Resource] = []
-        for resource_data in res["feed"]["entry"]:
+        for resource_data in resource_data_list:
             if not isinstance(resource_data, dict):
                 log(
                     f"Expected type 'dict' from result returned, got '{type(resource_data)}' instead: {resource_data}",
@@ -124,7 +141,6 @@ class ArxivQueryBuilder(QueryBuilder):
                 resource_args["doi"] = resource_data["doi"]
             elif "arxiv:doi" in resource_data:
                 resource_args["doi"] = resource_data["arxiv:doi"]["#text"]
-            # TODO: Set predef_keywords.
 
             resources.append(Resource(resource_args))
 

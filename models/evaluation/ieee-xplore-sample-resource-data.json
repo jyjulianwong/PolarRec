@@ -1,0 +1,748 @@
+[
+    {
+        "authors": [
+            "Danny Plass-Oude Bos",
+            "Boris Reuderink",
+            "Bram van de Laar",
+            "Hayrettin G\u00fcrk\u00f6k",
+            "Christian M\u00fchl",
+            "Mannes Poel",
+            "Dirk Heylen",
+            "Anton Nijholt"
+        ],
+        "conference_name": "2010 International Conference on Cyberworlds",
+        "conference_location": "Singapore",
+        "title": "Human-Computer Interaction for BCI Games: Usability and User Experience",
+        "year": 2010,
+        "abstract": "Brain-computer interfaces (BCI) come with a lot of issues, such as delays, bad recognition, long training times, and cumbersome hardware. Gamers are a large potential target group for this new interaction modality, but why would healthy subjects want to use it? BCI provides a combination of information and features that no other input modality can offer. But for general acceptance of this technology, usability and user experience will need to be taken into account when designing such systems. This paper discusses the consequences of applying knowledge from Human-Computer Interaction (HCI) to the design of BCI for games. The integration of HCI with BCI is illustrated by research examples and showcases, intended to take this promising technology out of the lab. Future research needs to move beyond feasibility tests, to prove that BCI is also applicable in realistic, real-world settings.",
+        "doi": "10.1109/CW.2010.22",
+        "url": "https://ieeexplore.ieee.org/document/5656328/",
+        "references": [
+            {
+                "title": "Brain-computer interfaces for communication and control"
+            },
+            {
+                "title": "Wearable Electroencephalography"
+            },
+            {
+                "title": "Bacteria Hunt"
+            },
+            {
+                "title": "Affective Pacman: A Frustrating Game for Brain-Computer Interface Experiments"
+            },
+            {
+                "title": "Neurofeedback-based motor imagery training for brain\u2013computer interface (BCI)"
+            },
+            {
+                "title": "Turning Shortcomings into Challenges: Brain-Computer Interfaces for Games"
+            },
+            {
+                "title": "IEEE Engineering in Medicine and Biology Magazine"
+            },
+            {
+                "title": "Games and Brain-Computer Interfaces: The State of the Art"
+            },
+            {
+                "title": "Playing with your brain: brain-computer interfaces and games"
+            },
+            {
+                "title": "Online Artifact Removal for Brain-Computer Interfaces Using Support Vector Machines and Blind Source Separation"
+            },
+            {
+                "title": "EEG alpha power and intelligence"
+            },
+            {
+                "title": "Interaction design: beyond human-computer interaction"
+            },
+            {
+                "title": "Interaction Design: Beyond Human-Computer Interaction"
+            },
+            {
+                "title": "Usability engineering"
+            },
+            {
+                "title": "Task-related stress and EEG alpha biofeedback"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Satyam Saxena",
+            "Piyush Saxena",
+            "Sanjay Kumar Dubey"
+        ],
+        "conference_name": "2013 International Conference on Human Computer Interactions (ICHCI)",
+        "conference_location": "Chennai, India",
+        "title": "Various levels of human stress & their impact on human computer interaction",
+        "year": 2013,
+        "abstract": "Stress is defined as organism's total response to environmental conditions or stimuli. It actually defines the condition that has an impact on the individual's mental and physical health. Crossing a stress level (threshold) is responsible for the changes. In this paper we discuss how stress plays an important role in human computer interaction (HCI) and how a human interacts with any problem domain. We will discuss human approach on stand-alone systems and certain devices on which user's final outcome will be fixed and well defined. This study is based upon study on two different age group students (16 to 23 and 21 to 28 age group). We find there is unique similarity in behavior of all people towards computer system. As per study we classify human stress in six categories. The stress is changes from one form to other form as per the task. Human stress affects problem solution, solution time and system usability. Human generate various path towards the solution as well as creates various path towards solution to problem statement and this process is discussed in detail in this paper.",
+        "doi": "10.1109/ICHCI-IEEE.2013.6887808",
+        "url": "https://ieeexplore.ieee.org/document/6887808/",
+        "references": [
+            {
+                "title": "Brain's Problem-Solving Function at Work When We Daydream"
+            },
+            {
+                "title": "Research methods for HCI"
+            },
+            {
+                "title": "Handbook of Usability Testing; 2 nd Edition"
+            },
+            {
+                "title": "Handbook of Usability Testing; 2 Edition, Wiley"
+            },
+            {
+                "title": "Using brain MERMER testing to detect knowledge despite efforts to conceal."
+            },
+            {
+                "title": "Using Brain MERMER Testing to Detect Concealed Knowledge Despite Efforts to Conceal"
+            },
+            {
+                "title": "The think aloud method"
+            },
+            {
+                "title": "Method and Apparatus for Multifaceted Electroencephalographic Response Analysis (MERA)"
+            },
+            {
+                "title": "Method and Apparatus for Multifaceted Electroencephalographic Response Analysis (MERA),\" U.S"
+            },
+            {
+                "title": "Protocol Analysis: Verbal Reports as Data"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Min Kyung Lee",
+            "Karen P. Tang",
+            "Jodi Forlizzi",
+            "Sara Kiesler"
+        ],
+        "conference_name": "2011 6th ACM/IEEE International Conference on Human-Robot Interaction (HRI)",
+        "conference_location": "Lausanne, Switzerland",
+        "title": "Understanding users! Perception of privacy in human-robot interaction",
+        "year": 2011,
+        "abstract": "Previous research has shown that design features that support privacy are essential for new technologies looking to gain widespread adoption. As such, privacy-sensitive design will be important for the adoption of social robots, as they could introduce new types of privacy risks to users. In this paper, we report findings from our preliminary study on users' perceptions and attitudes toward privacy in human-robot interaction, based on interviews that we conducted about a workplace social robot.",
+        "url": "https://ieeexplore.ieee.org/document/6281285/",
+        "references": [
+            {
+                "title": "A spotlight on security and privacy risks with future household robots: attacks and lessons"
+            },
+            {
+                "title": "The Snackbot: Documenting the design of a robot for long-term Human-Robot Interaction"
+            },
+            {
+                "title": "End-User Privacy in Human \u2013 Computer Interaction"
+            },
+            {
+                "title": "The Digital Person: Technology and Privacy in the Information Age"
+            },
+            {
+                "title": "End-User Privacy in Human-Computer Interaction"
+            },
+            {
+                "title": "Design for Privacy in Ubiquitous Computing Environments"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Ning Li",
+            "Li Zhao",
+            "Ai-Xia Chen",
+            "Qing-Wu Meng",
+            "Guo-Fang Zhang"
+        ],
+        "conference_name": "2009 International Conference on Machine Learning and Cybernetics",
+        "conference_location": "Hebei",
+        "title": "A new heuristic of the decision tree induction",
+        "year": 2009,
+        "abstract": "Decision tree induction is one of the useful approaches for extracting classification knowledge from a set of feature-based instances. The most popular heuristic information used in the decision tree generation is the minimum entropy. This heuristic information has a serious disadvantage-the poor generalization capability [3]. Support vector machine (SVM) is a classification technique of machine learning based on statistical learning theory. It has good generalization. Considering the relationship between the classification margin of support vector machine(SVM) and the generalization capability, the large margin of SVM can be used as the heuristic information of decision tree, in order to improve its generalization capability. This paper proposes a decision tree induction algorithm based on large margin heuristic. Comparing with the binary decision tree using the minimum entropy as the heuristic information, the experiments show that the generalization capability has been improved by using the new heuristic.",
+        "doi": "10.1109/ICMLC.2009.5212227",
+        "url": "https://ieeexplore.ieee.org/document/5212227/",
+        "references": [
+            {
+                "title": "A genetic algorithm for solving the inverse problem of support vector machines"
+            },
+            {
+                "title": "On Upper Bound of VC Dimension of Binary Decision Tree Algorithms"
+            },
+            {
+                "title": "The Nature of Statistical Learning Theory"
+            },
+            {
+                "title": "An overview of statistical learning theory"
+            },
+            {
+                "title": "Sequential Minimal Optimization : A Fast Algorithm for Training Support Vector Machines"
+            },
+            {
+                "title": "Statistical learning theory"
+            },
+            {
+                "title": "Machine learning"
+            },
+            {
+                "title": "Induction of decision tree"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Mohamed Cherif Nait-Hamoud",
+            "Abdelouaheb Moussaoui"
+        ],
+        "conference_name": "2010 International Conference on Machine and Web Intelligence",
+        "conference_location": "Algiers, Algeria",
+        "title": "Two novel methods for multiclass ECG arrhythmias classification based on PCA, fuzzy support vector machine and unbalanced clustering",
+        "year": 2010,
+        "abstract": "In this paper we propose two novel methods of ECG classification to discriminate five heart beat types. The first approach combines principal component analysis (PCA) and modified fuzzy one-against-one (MFOAO) method for multiclass categorization. The fuzzy one-against-one method (FOAO) converts the n-class problem of classification to n(n-1)/2 two-class problems, and performs the binary classification with SVM. It was introduced to solve the problem of the unclassified regions induced by the classical pairwise classification one-against-one. Our novel modified algorithm of FOAO uses fuzzy support vector machine (FSVM) for the binary classification in order to discard outliers. The second approach integrates PCA, unbalanced clustering (UC) and FOAO algorithms. PCA is used to extract the principal characteristics of the signal and reduce its dimension. UC algorithm is used to discard outliers, and reduce the training set by replacing samples with prototypes. The first goal of this work is to compare the ability of the two novel methods to discard outliers and enhance the performance of the classification with PCA and FOAO; the second one is to highlight the efficiency of the combined method PCA-UC-FOAO in the classification of long term ECG records.",
+        "doi": "10.1109/ICMWI.2010.5647931",
+        "url": "https://ieeexplore.ieee.org/document/5647931/",
+        "references": [
+            {
+                "title": "A qualitative comparison of Artificial Neural Networks and Support Vector Machines in ECG arrhythmias classification"
+            },
+            {
+                "title": "Fast SVM incremental learning based on clustering algorithm"
+            },
+            {
+                "title": "Support vector machine based on half-suppressed fuzzy c-means clustering"
+            },
+            {
+                "title": "World Health Organization, cardiovascular diseases fact sheet 317"
+            },
+            {
+                "title": "Detection of ECG Arrhythmia using a differential expert system approach based on principal component analysis and least square support vector machine"
+            },
+            {
+                "title": "Support Vector Machine Classification Based on Fuzzy Clustering for Large Data Sets"
+            },
+            {
+                "title": "Fuzzy SVM with a new fuzzy membership function"
+            },
+            {
+                "title": "Support vector machine based on fuzzy clustering for large data sets'', in: MICAI 2006: Advances in Artificial Intelligence"
+            },
+            {
+                "title": "Increasing Efficiency of SVM by Adaptively Penalizing Outliers"
+            },
+            {
+                "title": "ECG analysis based on PCA and Support Vector Machines"
+            },
+            {
+                "title": "SVM training time reduction using vector quantization"
+            },
+            {
+                "title": "Incremental learning from unbalanced data"
+            },
+            {
+                "title": "Support-Vector Networks"
+            },
+            {
+                "title": "Training algorithms for fuzzy support vector machines with noisy data"
+            },
+            {
+                "title": "Fuzzy support vector machines"
+            },
+            {
+                "title": "Fuzzy support vector machines for multiclass problems"
+            },
+            {
+                "title": "The Nature of Statistical Learning Theory"
+            },
+            {
+                "title": "Machine learning"
+            },
+            {
+                "title": "MIT-BIH database www.physion net.org/physiobank/database/mitdb"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Mei Lu",
+            "Fanzhang Li"
+        ],
+        "title": "Survey on lie group machine learning",
+        "year": 2020,
+        "abstract": "Lie group machine learning is recognized as the theoretical basis of brain intelligence, brain learning, higher machine learning, and higher artificial intelligence. Sample sets of Lie group matrices are widely available in practical applications. Lie group learning is a vibrant field of increasing importance and extraordinary potential and thus needs to be developed further. This study aims to provide a comprehensive survey on recent advances in Lie group machine learning. We introduce Lie group machine learning techniques in three major categories: supervised Lie group machine learning, semisupervised Lie group machine learning, and unsupervised Lie group machine learning. In addition, we introduce the special application of Lie group machine learning in image processing. This work covers the following techniques: Lie group machine learning model, Lie group subspace orbit generation learning, symplectic group learning, quantum group learning, Lie group fiber bundle learning, Lie group cover learning, Lie group deep structure learning, Lie group semisupervised learning, Lie group kernel learning, tensor learning, frame bundle connection learning, spectral estimation learning, Finsler geometric learning, homology boundary learning, category representation learning, and neuromorphic synergy learning. Overall, this survey aims to provide an insightful overview of state-of-the-art development in the field of Lie group machine learning. It will enable researchers to comprehensively understand the state of the field, identify the most appropriate tools for particular applications, and identify directions for future research.",
+        "doi": "10.26599/BDMA.2020.9020011",
+        "url": "https://ieeexplore.ieee.org/document/9259191/",
+        "references": [
+            {
+                "title": "The diffusion geometry of fibre bundles: Horizontal diffusion maps"
+            },
+            {
+                "title": "SO(3)-invariance of informed-graph-based deep neural network for anisotropic elastoplastic materials"
+            },
+            {
+                "title": "Image representation of pose-transition feature for 3D skeleton-based action recognition"
+            },
+            {
+                "title": "Image computing for fibre-bundle endomicroscopy: A review"
+            },
+            {
+                "title": "3D Nose shape net for human gender and ethnicity classification"
+            },
+            {
+                "title": "Covariance matrix based fall detection from multiple wearable sensors"
+            },
+            {
+                "title": "Social Anchor-Unit Graph Regularized Tensor Completion for Large-Scale Image Retagging"
+            },
+            {
+                "title": "Lie Group Machine Learning"
+            },
+            {
+                "title": "Locally adaptive sparse representation on Riemannian manifolds for robust classification"
+            },
+            {
+                "title": "Deformation Based Curved Shape Representation"
+            },
+            {
+                "title": "Convolutional Neural Networks and Long Short-Term Memory for skeleton-based human activity and hand gesture recognition"
+            },
+            {
+                "title": "Video feature descriptor combining motion and appearance cues with length-invariant characteristics"
+            },
+            {
+                "title": "Spectral Learning for Supervised Topic Models"
+            },
+            {
+                "title": "An efficient Riemannian statistical shape model using differential coordinates: With application to the classification of data from the Osteoarthritis Initiative"
+            },
+            {
+                "title": "Basic Concepts of Category Theory and Its Applications"
+            },
+            {
+                "title": "The Category Representation of Machine Learning Algorithm"
+            },
+            {
+                "title": "Lie group impression for deep learning"
+            },
+            {
+                "title": "Combining depth-skeleton feature with sparse coding for action recognition"
+            },
+            {
+                "title": "Semi-Supervised Tensor-Based Graph Embedding Learning and Its Application to Visual Discriminant Tracking"
+            },
+            {
+                "title": "Research on tensor learning algorithm and its application on disease prediction"
+            },
+            {
+                "title": "3D-based Deep Convolutional Neural Network for action recognition with depth sequences"
+            },
+            {
+                "title": "Nonlinear 2D shape registration via thin-plate spline and Lie group representation"
+            },
+            {
+                "title": "Constrained neighborhood preserving concept factorization for data representation"
+            },
+            {
+                "title": "An RGB-D based image set classification for robust face recognition from Kinect data"
+            },
+            {
+                "title": "Now she is an associate professor and master supervisor at Jiangsu Normal University. Her main research interests include machine learning, data mining, big data science and engineering"
+            },
+            {
+                "title": "Attribute Mining for Scalable 3D Human Action Recognition"
+            },
+            {
+                "title": "Facial Analysis With a Lie Group Kernel"
+            },
+            {
+                "title": "A Low-Rank Approximation-Based Transductive Support Tensor Machine for Semisupervised Classification"
+            },
+            {
+                "title": "Path Optimization Algorithms for Covering Learning"
+            },
+            {
+                "title": "Advances in the Study of Lie Group Machine Learning in Recent Ten Years"
+            },
+            {
+                "title": "LieTrICP: An improvement of trimmed iterative closest point algorithm"
+            },
+            {
+                "title": "Human Action Recognition by Representing 3D Skeletons as Points in a Lie Group"
+            },
+            {
+                "title": "Neighborhood homology learning algorithm"
+            },
+            {
+                "title": "Isospectral Manifold Learning Algorithm"
+            },
+            {
+                "title": "Advances in matrix manifolds for computer vision"
+            },
+            {
+                "title": "Image Segmentation Algorithm Based on Affine Connection"
+            },
+            {
+                "title": "Spectral estimation of image features manifold learning method"
+            },
+            {
+                "title": "Research on the covering algorithm of machine 258 Big Data Mining and Analytics"
+            },
+            {
+                "title": "Symplectic Geometric Algorithms for Hamiltonian Systems"
+            },
+            {
+                "title": "Research on Mapping Mechanism of Learning Expression"
+            },
+            {
+                "title": "Shape Analysis of Planar Objects with Arbitrary Topologies Using Conformal Geometry"
+            },
+            {
+                "title": "Research on Lie Group Deep Structure Learning Algorithm"
+            },
+            {
+                "title": "Survey on Lie Group Machine Learning"
+            },
+            {
+                "title": "Tensor-Based Transductive Learning for Multimodality Video Semantic Concept Detection"
+            },
+            {
+                "title": "A Lie Group Machine Learning Algorithm for Linear Classification"
+            },
+            {
+                "title": "Research and application on a data reduction method based on tensor field"
+            },
+            {
+                "title": "Lie group distance based generic 3-d vehicle classification"
+            },
+            {
+                "title": "Learning algorithm based on homology boundary"
+            },
+            {
+                "title": "A molecular docking drug design algorithm based on quantum group"
+            },
+            {
+                "title": "Higher Order Orthogonal Iteration of Tensors (HOOI) and its Relation to PCA and GLRAM"
+            },
+            {
+                "title": "The Neural Network Approach to Automatic Construction of Adaptive Meshes on Multiply-connected Domains"
+            },
+            {
+                "title": "Research of the Symplectic Group Classifier Based on Lie Group Machine Learning"
+            },
+            {
+                "title": "Kernel-based classification using quantum mechanics"
+            },
+            {
+                "title": "Orbits generated lattice algorithm of learning subspace in Lie-group Machine Learning(LML)"
+            },
+            {
+                "title": "Algorithms of Dynkin diagrams in Lie group machine learning"
+            },
+            {
+                "title": "Learning Deep Architectures for AI"
+            },
+            {
+                "title": "Research and application on orbits generated algorithm of learning subspace in Lie"
+            },
+            {
+                "title": "A Fast Learning Algorithm for Deep Belief Nets"
+            },
+            {
+                "title": "Nonlinear Mean Shift for Clustering over Analytic Manifolds"
+            },
+            {
+                "title": "Lie group machine learning's axiom hypothesizes"
+            },
+            {
+                "title": "Metric learning for text documents"
+            },
+            {
+                "title": "Numerical Method Based on Hamilton System and Symplectic Algorithm to Differential Games"
+            },
+            {
+                "title": "Geometry Algorisms of Dynkin Diagrams in Lie Group Machine Learning"
+            },
+            {
+                "title": "and Z"
+            },
+            {
+                "title": "Tensor Subspace Analysis"
+            },
+            {
+                "title": "Simultaneous multiple 3D motion estimation via mode finding on Lie groups"
+            },
+            {
+                "title": "CubeSVD: a novel approach to personalized Web search"
+            },
+            {
+                "title": "Supervised tensor learning"
+            },
+            {
+                "title": "Texture classification using kernel independent component analysis"
+            },
+            {
+                "title": "A fibre bundle model of surfaces and its generalization"
+            },
+            {
+                "title": "Lie-algebraic averaging for globally consistent motion estimation"
+            },
+            {
+                "title": "Generalized Low Rank Approximations of Matrices"
+            },
+            {
+                "title": "Twodimensional PCA: A new approach to appearance-based face representation and recognition"
+            },
+            {
+                "title": "Matrix Groups: An Introduction to Lie Group Theory"
+            },
+            {
+                "title": "Do singular values contain adequate information for face recognition?"
+            },
+            {
+                "title": "A re-weighting strategy for improving margins"
+            },
+            {
+                "title": "Lie Groups: An Introduction through Linear Groups"
+            },
+            {
+                "title": "Means and Averaging in the Group of Rotations"
+            },
+            {
+                "title": "Means and averaging in the group of Mei Lu et al.: Survey on Lie Group Machine Learning 257 rotations"
+            },
+            {
+                "title": "Symplectic integrators of the equations of multibody system dynamics on manifolds"
+            },
+            {
+                "title": "Fisher discriminant analysis with kernels"
+            },
+            {
+                "title": "Nonlinear Component Analysis as a Kernel Eigenvalue Problem"
+            },
+            {
+                "title": "A general framework for low level vision"
+            },
+            {
+                "title": "Approximating vertical vector fields for feedforward neural networks"
+            },
+            {
+                "title": "Representation Theory: A First Course"
+            },
+            {
+                "title": "Algebraic feature extraction of image for recognition"
+            },
+            {
+                "title": "Categories, types and structures - an introduction to category theory for the working computer scientist"
+            },
+            {
+                "title": "A Computational Approach to Edge Detection"
+            },
+            {
+                "title": "An Application of the Lie Group Theory of Continuous Point Transformations to the Vlasov-Maxwell Equations (Plasma Physics)"
+            },
+            {
+                "title": "Theoretical Foundations of the Potential Function Method in Pattern Recognition Learning"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Sarah Caudill"
+        ],
+        "conference_name": "2016 Conference on Lasers and Electro-Optics (CLEO)",
+        "conference_location": "San Jose, CA, USA",
+        "title": "A walk on the warped side: Astrophysics with gravitational waves",
+        "year": 2016,
+        "abstract": "With the discovery of gravitational waves from the binary black hole merger GW150914, the Laser Interferometer Gravitational-wave Observatory entered a new era in observational astrophysics. In this talk, I will discuss the astrophysical implications of this discovery as well as the status of searches for other promising sources of gravitational waves.",
+        "url": "https://ieeexplore.ieee.org/document/7788986/"
+    },
+    {
+        "authors": [
+            "T. I. Madura",
+            "N. Clementel",
+            "T. R. Gull",
+            "C. J. H. Kruip",
+            "J.-P. Paardekooper"
+        ],
+        "title": "3D printing meets computational astrophysics: deciphering the structure of \u03b7 Carinae's inner colliding winds",
+        "year": 2015,
+        "abstract": "We present the first 3D prints of output from a supercomputer simulation of a complex astrophysical system, the colliding stellar winds in the massive (\u2273120\u00a0M\u2299), highly eccentric (e\u00a0\u223c\u00a00.9) binary star system \u03b7 Carinae. We demonstrate the methodology used to incorporate 3D interactive figures into a PDF (Portable Document Format) journal publication and the benefits of using 3D visualization and 3D printing as tools to analyse data from multidimensional numerical simulations. Using a consumer-grade 3D printer (MakerBot Replicator 2X), we successfully printed 3D smoothed particle hydrodynamics simulations of \u03b7 Carinae's inner (r\u00a0\u223c\u00a0110 au) wind\u2013wind collision interface at multiple orbital phases. The 3D prints and visualizations reveal important, previously unknown \u2018finger-like\u2019 structures at orbital phases shortly after periastron (\u03d5\u00a0\u223c\u00a01.045) that protrude radially outwards from the spiral wind\u2013wind collision region. We speculate that these fingers are related to instabilities (e.g. thin-shell, Rayleigh\u2013Taylor) that arise at the interface between the radiatively cooled layer of dense post-shock primary-star wind and the fast (3000\u00a0km\u2009s\u22121), adiabatic post-shock companion-star wind. The success of our work and easy identification of previously unrecognized physical features highlight the important role 3D printing and interactive graphics can play in the visualization and understanding of complex 3D time-dependent numerical simulations of astrophysical phenomena.",
+        "doi": "10.1093/mnras/stv422",
+        "url": "https://ieeexplore.ieee.org/document/8208849/",
+        "references": [
+            {
+                "title": "3D radiative transfer simulations of Eta Carinae's inner colliding winds \u2013 I. Ionization structure of helium at apastron"
+            },
+            {
+                "title": "The Three-dimensional Structure of the Eta Carinae Homunculus"
+            },
+            {
+                "title": "3D radiative transfer in \u03b7 Carinae: application of the SIMPLEX algorithm to 3D SPH simulations of binary colliding winds"
+            },
+            {
+                "title": "GALAXY EMISSION LINE CLASSIFICATION USING THREE-DIMENSIONAL LINE RATIO DIAGRAMS"
+            },
+            {
+                "title": "X-RAY EMISSION FROM ETA CARINAE NEAR PERIASTRON IN 2009. I. A TWO-STATE SOLUTION"
+            },
+            {
+                "title": "2010b, A&A, 517"
+            },
+            {
+                "title": "Constraints on decreases in \u03b7 Carinae's mass-loss from 3D hydrodynamic simulations of its binary colliding winds"
+            },
+            {
+                "title": "Augmented Reality in astrophysics"
+            },
+            {
+                "title": "Delaunay Mesh Generation"
+            },
+            {
+                "title": "SmoothViz : An Interactive Visual Analysis System for SPH Data"
+            },
+            {
+                "title": "A COMPANION AS THE CAUSE OF LATITUDE-DEPENDENT EFFECTS IN THE WIND OF ETA CARINAE"
+            },
+            {
+                "title": "Multi-dimensional models of circumstellar shells around evolved massive stars"
+            },
+            {
+                "title": "On the influence of the companion star in Eta Carinae: 2D radiative transfer modeling of the ultraviolet and optical spectra"
+            },
+            {
+                "title": "A LIGHTHOUSE EFFECT IN ETA CARINAE"
+            },
+            {
+                "title": "Constraining the absolute orientation of \u03b7 Carinae\u2019s binary orbit: a 3D dynamical model for the broad [Fe iii] emission"
+            },
+            {
+                "title": "SmoothViz: Visualization of Smoothed Particles Hydrodynamics Data"
+            },
+            {
+                "title": "He\u2009ii \u03bb4686 IN \u03b7 CARINAE: COLLAPSE OF THE WIND\u2013WIND COLLISION REGION DURING PERIASTRON PASSAGE"
+            },
+            {
+                "title": "SPIRALING OUT OF CONTROL: THREE-DIMENSIONAL HYDRODYNAMICAL MODELING OF THE COLLIDING WINDS IN \u03b7\u2009CARINAE"
+            },
+            {
+                "title": "RECENT X-RAY VARIABILITY OF \u03b7 CARINAE: THE QUICK ROAD TO RECOVERY"
+            },
+            {
+                "title": "IS ETA CARINAE A FAST ROTATOR, AND HOW MUCH DOES THE COMPANION INFLUENCE THE INNER WIND STRUCTURE?"
+            },
+            {
+                "title": "RADIATION-HYDRODYNAMIC MODELS OF THE EVOLVING CIRCUMSTELLAR MEDIUM AROUND MASSIVE STARS"
+            },
+            {
+                "title": "Detection of high-velocity material from the wind-wind collision zone of Eta Carinae across the 2009.0 periastron passage"
+            },
+            {
+                "title": "Submillimetre variability of Eta Carinae: cool dust within the outer ejecta"
+            },
+            {
+                "title": "The extended interacting wind structure of Eta Carinae"
+            },
+            {
+                "title": "3D models of radiatively driven colliding winds in massive O+O star binaries \u2013 I. Hydrodynamics"
+            },
+            {
+                "title": "3D modelling of the colliding winds in \u03b7 Carinae \u2013 evidence for radiative inhibition"
+            },
+            {
+                "title": "Modelling the RXTE light curve of \u03b7 Carinae from a 3D SPH simulation of its binary wind collision"
+            },
+            {
+                "title": "A multispectral view of the periodic events in \u03b7 Carinae"
+            },
+            {
+                "title": "Modelling discontinuities and Kelvin-Helmholtz instabilities in SPH"
+            },
+            {
+                "title": "Incorporating interactive three-dimensional graphics in astronomy research papers"
+            },
+            {
+                "title": "The periodicity of the \u03b7 Carinae events"
+            },
+            {
+                "title": "SPLASH: An Interactive Visualisation Tool for Smoothed Particle Hydrodynamics Simulations"
+            },
+            {
+                "title": "Effect of the Coriolis Force on the Hydrodynamics of Colliding-Wind Binaries"
+            },
+            {
+                "title": "X-Ray Spectral Variation of \u03b7 Carinae through the 2003 X-Ray Minimum"
+            },
+            {
+                "title": "Recent progress in robust and quality Delaunay mesh generation"
+            },
+            {
+                "title": "Fundamental differences between SPH and grid methods"
+            },
+            {
+                "title": "The UV Scattering Halo of the Central Source Associated with \u03b7 Carinae"
+            },
+            {
+                "title": "The 2003 shell event in \u03b7 Carinae"
+            },
+            {
+                "title": "Mass and Kinetic Energy of the Homunculus Nebula around \u03b7 Carinae"
+            },
+            {
+                "title": "In hot pursuit of the hidden companion of \u03b7 Carinae: an X-ray determination of the wind parameters"
+            },
+            {
+                "title": "On the miscible Rayleigh\u2013Taylor instability: two and three dimensions"
+            },
+            {
+                "title": "On the Nature of the Central Source in \u03b7 Carinae"
+            },
+            {
+                "title": "Eta Carinae: a long period binary?"
+            },
+            {
+                "title": "Eta carinae and its environment"
+            },
+            {
+                "title": "NONLINEAR INSTABILITIES IN SHOCK-BOUNDED SLABS"
+            },
+            {
+                "title": "Smoothed particle hydrodynamics"
+            },
+            {
+                "title": "The dynamic and gravitational instabilities of spherical shocks"
+            },
+            {
+                "title": "Comments: To view 3D interactive figures and movie, use Adobe PDF viewer"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "S.X. Yang",
+            "J.K. Lee",
+            "S.P. Narayana",
+            "D. Gannon"
+        ],
+        "conference_name": "Proceedings Scalable High Performance Computing Conference SHPCC-92.",
+        "conference_location": "Williamsburg, VA, USA",
+        "title": "Programming an astrophysics application in an object-oriented parallel language",
+        "year": 1992,
+        "abstract": "A three-dimensional hydrodynamic code is used to test a newly developed parallel C++ (pC++) language and compiler. The original code is written in FORTRAN77 and is designed to model self-gravitating compressible gas flows. The code is rewritten in pC++ and is tested on a BBN GP1000 and an Alliant FX/2800. Nearly linear speed-up is achieved on both machines. On the Alliant comparison between the pC++ code and the original FORTRAN77 code is conducted. For processor numbers >or=6, the pC++ code outperforms the FORTRAN77 code which is automatically vectorized and parallelized by the Alliant FORTRAN compiler.<>",
+        "doi": "10.1109/SHPCC.1992.232637",
+        "url": "https://ieeexplore.ieee.org/document/232637/",
+        "references": [
+            {
+                "title": "Object oriented parallel programming: experiments and results"
+            },
+            {
+                "title": "2-D Eulerian Hydrodynamics with Fluid Interfaces, Self-Gravity and Rotation"
+            },
+            {
+                "title": "A comparative study of computational methods in cosmic gas dynamics"
+            },
+            {
+                "title": "Towards the ultimate conservative difference scheme V. A second-order sequel to Godunov's method"
+            },
+            {
+                "title": "Towards the ultimate conservative difference scheme. IV. A new approach to numerical convection"
+            }
+        ]
+    }
+]

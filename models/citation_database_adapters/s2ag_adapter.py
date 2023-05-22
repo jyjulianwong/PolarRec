@@ -1,9 +1,12 @@
 """
 Citation database adapter for the Semantic Scholar Academic Graph (S2AG) API.
 """
+import os
 import requests
 import string
 import time
+from models.dev_cache import DevCache
+from models.hyperparams import Hyperparams as hp
 from models.citation_database_adapters.adapter import Adapter
 from models.custom_logger import log, log_extended_line
 from models.resource import Resource
@@ -17,6 +20,10 @@ class S2agAdapter(Adapter):
     # To minimise the number of API calls per resource, cache the results.
     # This only caches incoming data within a single API call, not across calls.
     # This is recommended for etiquette purposes in the documentation.
+    REQUEST_DATA_CACHE_FILEPATH = os.path.join(
+        hp.APP_ROOT_DIR,
+        "s2ag-adapter-cache.json"
+    )
     request_data_cache = {}
 
     @classmethod
@@ -94,6 +101,8 @@ class S2agAdapter(Adapter):
             log_extended_line(f"Response.text: {res.text}")
             return None
 
+        log(f"Successful response from {res.url}", "S2agAdapter")
+
         res = res.json()
         if "total" not in res or res["total"] == 0:
             # When the target resource cannot be found.
@@ -117,41 +126,46 @@ class S2agAdapter(Adapter):
         :return: The JSON data returned by the API request.
         :rtype: dict[Resource, None | dict]
         """
+        result = {}
+
         # Sort target resources into those that can be queried in batches,
         # and those that cannot.
         ress_with_dois: list[Resource] = []
         ress_with_no_dois: list[Resource] = []
         for resource in resources:
-            if resource.doi is None:
+            if resource.title in cls.request_data_cache:
+                result[resource] = cls.request_data_cache[resource.title]
+            elif resource.doi is None:
                 ress_with_no_dois.append(resource)
             else:
                 ress_with_dois.append(resource)
 
-        result = {}
+        if len(ress_with_dois) > 0:
+            try:
+                res = requests.post(
+                    cls.API_URL_BATCH,
+                    params={"fields": cls.API_RETURNED_FIELDS},
+                    json={"ids": [res.doi for res in ress_with_dois]}
+                )
+            except Exception as err:
+                log(str(err), "S2agAdapter", "error")
+                for resource in ress_with_dois:
+                    result[resource] = None
 
-        try:
-            res = requests.post(
-                cls.API_URL_BATCH,
-                params={"fields": cls.API_RETURNED_FIELDS},
-                json={"ids": [res.doi for res in ress_with_dois]}
-            )
-        except Exception as err:
-            log(str(err), "S2agAdapter", "error")
-            for resource in ress_with_dois:
-                result[resource] = None
+            # Detect any errors or empty responses.
+            if res.status_code != 200:
+                # Non-partners can only send 5,000 requests per 5 minutes.
+                log(f"Got {res} from {res.url}", "S2agAdapter", "error")
+                log_extended_line(f"Response.text: {res.text}")
+                for resource in ress_with_dois:
+                    result[resource] = None
+            else:
+                log(f"Successful response from {res.url}", "S2agAdapter")
 
-        # Detect any errors or empty responses.
-        if res.status_code != 200:
-            # Non-partners can only send 5,000 requests per 5 minutes.
-            log(f"Got {res} from {res.url}", "S2agAdapter", "error")
-            log_extended_line(f"Response.text: {res.text}")
-            for resource in ress_with_dois:
-                result[resource] = None
-
-        res = res.json()
-        for i in range(len(ress_with_dois)):
-            cls._add_request_data_cache_entry(ress_with_dois[i], res[i])
-            result[ress_with_dois[i]] = res[i]
+                res = res.json()
+                for i in range(len(ress_with_dois)):
+                    cls._add_request_data_cache_entry(ress_with_dois[i], res[i])
+                    result[ress_with_dois[i]] = res[i]
 
         for resource in ress_with_no_dois:
             data = cls._get_request_data(resource)
@@ -189,18 +203,37 @@ class S2agAdapter(Adapter):
 
     @classmethod
     def get_citation_count(cls, resource):
+        if DevCache.cache_enabled():
+            cls.request_data_cache = DevCache.load_cache_file(
+                cls.REQUEST_DATA_CACHE_FILEPATH
+            )
+
         data = cls._get_request_data(resource)
-        if data is None:
-            return -1
-        return data["citationCount"]
+
+        if DevCache.cache_enabled():
+            cls.request_data_cache = DevCache.save_cache_file(
+                cls.REQUEST_DATA_CACHE_FILEPATH, data=cls.request_data_cache
+            )
+
+        return -1 if data is None else data["citationCount"]
 
     @classmethod
     def get_references(cls, resources):
+        if DevCache.cache_enabled():
+            cls.request_data_cache = DevCache.load_cache_file(
+                cls.REQUEST_DATA_CACHE_FILEPATH
+            )
+
         data_dict = cls._get_req_data_in_batches(resources)
 
         ref_list_dict: dict[Resource, list[Resource]] = {}
         for resource, data in data_dict.items():
             ref_list_dict[resource] = cls._get_req_ref_data_as_ress(data)
+
+        if DevCache.cache_enabled():
+            cls.request_data_cache = DevCache.save_cache_file(
+                cls.REQUEST_DATA_CACHE_FILEPATH, data=cls.request_data_cache
+            )
 
         return ref_list_dict
 
@@ -239,6 +272,7 @@ if __name__ == "__main__":
 
         t1 = time.time()
         references = S2agAdapter.get_references([target_resource])
+        references = references[target_resource]
         print(f"S2agAdapter: len(references): {len(references)}")
         t2 = time.time()
         print(f"S2agAdapter: Time taken to execute: {t2 - t1} seconds")

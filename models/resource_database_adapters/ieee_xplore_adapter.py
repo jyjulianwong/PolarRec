@@ -19,12 +19,12 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         self._title = ""
         self._keywords = []
 
-    def _get_candidate_resources(self, query_args):
+    def _get_request_data(self, query_args):
         """
         :param query_args: The query parameters passed on to the API.
         :type query_args: dict[str, str]
-        :return: The candidate resources that are to be filtered later on.
-        :rtype: list[Resouce]
+        :return: The JSON data returned by the API request.
+        :rtype: None | dict
         """
         try:
             res = requests.get(
@@ -38,22 +38,33 @@ class IEEEXploreQueryBuilder(QueryBuilder):
             )
         except Exception as err:
             log(str(err), "IEEEXploreQueryBuilder", "error")
-            return []
+            return None
 
         # Detect any errors or empty responses.
         if res.status_code != 200:
             # IEEE Xplore has a limit on how many API calls can be made per day.
             log(f"Got {res} from {res.url}", "IEEEXploreQueryBuilder", "error")
-            return []
+            return None
 
         log(f"Successful response from {res.url}", "IEEEXploreQueryBuilder")
 
-        res = res.json()
+        return res.json()
+
+    def _get_candidate_resources(self, query_args):
+        """
+        :param query_args: The query parameters passed on to the API.
+        :type query_args: dict[str, str]
+        :return: The candidate resources that are to be filtered later on.
+        :rtype: list[Resource]
+        """
+        res = self._get_request_data(query_args)
+        if res is None:
+            return []
         if res["total_records"] == 0:
             return []
 
         # Transform response data into Resource objects.
-        resources = []
+        resources: list[Resource] = []
         for resource_data in res["articles"]:
             author_data_list = resource_data["authors"]["authors"]
             authors = [data["full_name"] for data in author_data_list]
@@ -130,8 +141,8 @@ class IEEEXploreQueryBuilder(QueryBuilder):
             self._query_args["querytext"] = f"({self._query_args['querytext']})"
         if len(self._title) > 0:
             self._query_args["article_title"] = self._title
-        # The add-one is necessary due to an IEEE Xplore API indexing issue.
-        self._query_args["max_records"] = max_resources_returned + 1
+        # The minimum result return length for IEEE Xplore API is 2.
+        self._query_args["max_records"] = max(max_resources_returned, 2)
         self._query_args["apikey"] = self._API_KEY
 
         ress: list[Resource] = []

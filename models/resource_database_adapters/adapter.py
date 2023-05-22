@@ -145,6 +145,7 @@ class QueryBuilder:
         """
         Sends a GET request to the database's API and returns the response.
 
-        :return: Response
+        :return: The list of resources returned by the query.
+        :rtype: list[Resource]
         """
         pass

@@ -29,6 +29,7 @@ def _get_cit_db_adapter():
     :return: The citation database the recommendation algorithm calls.
     :rtype: type[Adapter]
     """
+    # TODO: Return a list of adapters instead of a chosen one.
     return S2agAdapter
 
 
@@ -76,8 +77,13 @@ def _set_resource_references(resources):
     :param resources: The list of resources to collect references for.
     :type resources: list[Resource]
     """
+    ress_with_no_refs: list[Resource] = []
+    for resource in resources:
+        if resource.references is None:
+            ress_with_no_refs.append(resource)
+
     cit_db_adapter = _get_cit_db_adapter()
-    reference_dict = cit_db_adapter.get_references(resources)
+    reference_dict = cit_db_adapter.get_references(ress_with_no_refs)
     for resource, references in reference_dict.items():
         if len(references) > 0:
             resource.references = references

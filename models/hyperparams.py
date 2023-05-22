@@ -1,12 +1,18 @@
 """
 The list of hyperparameter values for the whole recommendation algorithm.
 """
+import os
 
 
 class Hyperparams:
     """
     The list of hyperparameter values for the whole recommendation algorithm.
     """
+    APP_ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    # Whether resource and citation data should be retrieved from cache or not.
+    DISABLE_CACHED_DATA = False
+
     # Max. # of keywords to extract from targets to generate resource queries.
     MAX_RES_QUERY_KEYWORDS_USED = 10
     # Max. # of results to be returned by each resource query made.

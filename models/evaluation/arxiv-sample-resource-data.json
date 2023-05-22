@@ -1,0 +1,745 @@
+[
+    {
+        "authors": [
+            "Hassan Wasfi",
+            "Richard Stone"
+        ],
+        "title": "The Effectiveness of Applying Different Strategies on Recognition and Recall Textual Password",
+        "year": 2023,
+        "month": 4,
+        "abstract": "Using English words as passwords have been a popular topic in the last few\nyears. The following article discusses a study to compare self-selection of the\nsystem-generated words for recognition and self-generated words for recall for\nnouns and mixture words. The results revealed no significant difference between\nrecognition and recall of password nouns. The average memorability rate of noun\nrecognition was 75.72%, slightly higher than noun recall 74.23% in long-term\nmemory. Also, there was no significant difference between recognition and\nrecall mixture word passwords. The average memorability rate of mixture word\nrecognition was 95.23%, and recall was 84.14% in long-term memory. The authors\nconcluded that the recognition and recall of mixed word passwords had a higher\nmemorability rate than nouns.",
+        "url": "http://arxiv.org/abs/2305.00177v1"
+    },
+    {
+        "authors": [
+            "Edgar Pacheco"
+        ],
+        "title": "The social media use of adult New Zealanders: Evidence from an online survey",
+        "year": 2023,
+        "month": 4,
+        "abstract": "To explore social media use in New Zealand, a sample of 1001 adults aged 18\nand over were surveyed in November 2021. Participants were asked about the\nfrequency of their use of different social media platforms (text message\nincluded). This report describes how often each of the nine social media sites\nand apps covered in the survey are used individually on a daily basis.\nDifferences based on key demographics, ie, age and gender, are tested for\nstatistical significance, and findings summarised.",
+        "url": "http://arxiv.org/abs/2305.00119v1",
+        "references": [
+            {
+                "title": "Jamovi (Version 2.3) [Computer software"
+            },
+            {
+                "title": "Teens, social media"
+            },
+            {
+                "title": "The Face of Technology-Facilitated Aggression in New Zealand: Exploring Adult Aggressors' Behaviors"
+            },
+            {
+                "title": "Social Media Use in 2021"
+            },
+            {
+                "title": "The world internet project New Zealand 2021"
+            },
+            {
+                "title": "New Zealand children\u2019s experiences of online risks and their perceptions of harm. Evidence from Ng\u0101 taiohi matihiko o Aotearoa \u2013 New Zealand Kids Online"
+            },
+            {
+                "title": "Perceptions of the Internet 2020"
+            },
+            {
+                "title": "Exploring New Zealand children\u2019s technology access, use, skills and opportunities. Evidence from Ng\u0101 taiohi matihiko o Aotearoa - New Zealand Kids Online"
+            },
+            {
+                "title": "Digital Inclusion and Wellbeing in New Zealand"
+            },
+            {
+                "title": "New Zealand\u2019s Internet insights 2019"
+            },
+            {
+                "title": "Teens and \"sexting"
+            },
+            {
+                "title": "Digital New Zealanders: The pulse of our nation"
+            },
+            {
+                "title": "Conducting Online Surveys"
+            },
+            {
+                "title": "Secondary Analysis of Survey Data"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Yasith Amarasinghe",
+            "Darshana Sandaruwan",
+            "Thilina Madusanka",
+            "Indika Perera",
+            "Lakmal Meegahapola"
+        ],
+        "title": "Multimodal Earable Sensing for Human Energy Expenditure Estimation",
+        "year": 2023,
+        "month": 4,
+        "abstract": "Energy Expenditure Estimation (EEE) is vital for maintaining weight, managing\nchronic diseases, achieving fitness goals, and improving overall health and\nwell-being. Gold standard measurements for energy expenditure are expensive and\ntime-consuming, hence limiting utility and adoption. Prior work has used\nwearable sensors for EEE as a workaround. Moreover, earables (ear-worn sensing\ndevices such as earbuds) have recently emerged as a sub-category of wearables\nwith unique characteristics (i.e., small form factor, high adoption) and\npositioning on the human body (i.e., robust to motion, high stability, facing\nthin skin), opening up a novel sensing opportunity. However, earables with\nmultimodal sensors have rarely been used for EEE, with data collected in\nmultiple activity types. Further, it is unknown how earable sensors perform\ncompared to standard wearable sensors worn on other body positions. In this\nstudy, using a publicly available dataset gathered from 17 participants, we\nevaluate the EEE performance using multimodal sensors of earable devices to\nshow that an MAE of 0.5 MET (RMSE = 0.67) can be achieved. Furthermore, we\ncompare the EEE performance of three commercial wearable devices with the\nearable, demonstrating competitive performance of earables",
+        "url": "http://arxiv.org/abs/2305.00517v1",
+        "references": [
+            {
+                "title": "Excerpt from \u201cSensing with Earables: A Systematic Literature Review and Taxonomy of Phenomena\u201d"
+            },
+            {
+                "title": "A multidevice and multimodal dataset for human energy expenditure estimation using wearable devices"
+            },
+            {
+                "title": "Response To: Investigating sources of inaccuracy in wearable optical heart rate sensors"
+            },
+            {
+                "title": "A Survey on Energy Expenditure Estimation Using Wearable Devices"
+            },
+            {
+                "title": "NeuroKit2: A Python toolbox for neurophysiological signal processing"
+            },
+            {
+                "title": "How well do activity monitors estimate energy expenditure? A systematic review and meta-analysis of the validity of current technologies"
+            },
+            {
+                "title": "Optuna: A Next-generation Hyperparameter Optimization Framework"
+            },
+            {
+                "title": "PyWavelets: A Python package for wavelet analysis"
+            },
+            {
+                "title": "CatBoost: gradient boosting with categorical features support"
+            },
+            {
+                "title": "Time Series FeatuRe Extraction on basis of Scalable Hypothesis tests (tsfresh - A Python package)"
+            },
+            {
+                "title": "Heart Rate Analysis for Human Factors: Development and Validation of an Open Source Toolkit for Noisy Naturalistic Heart Rate Data"
+            },
+            {
+                "title": "LightGBM: A Highly Efficient Gradient Boosting Decision Tree"
+            },
+            {
+                "title": "Use of Consumer Wearable Devices to Promote Physical Activity: A Review of Health Intervention Studies"
+            },
+            {
+                "title": "XGBoost: A Scalable Tree Boosting System"
+            },
+            {
+                "title": "Assessment of Physical Activity and Energy Expenditure: An Overview of Objective Measures"
+            },
+            {
+                "title": "Predicting Free-Living Energy Expenditure Using a Miniaturized Ear-Worn Sensor: An Evaluation Against Doubly Labeled Water"
+            },
+            {
+                "title": "Earbud-based sensor for the assessment of energy expenditure, heart rate, and vo2max"
+            },
+            {
+                "title": "Sleep disturbances, body fat distribution, food intake and/or energy expenditure: pathophysiological aspects"
+            },
+            {
+                "title": "Towards Human Energy Expenditure Estimation Using Smart Phone Inertial Sensors"
+            },
+            {
+                "title": "Energy expenditure estimation using wearable sensors: a new methodology for activity-specific models"
+            },
+            {
+                "title": "2011 Compendium of Physical Activities: a second update of codes and MET values."
+            },
+            {
+                "title": "Energy Expenditure and Metabolism during Exercise in Persons with a Spinal Cord Injury"
+            },
+            {
+                "title": "Genotype-dependent response to energy-restricted diets in obese subjects: towards personalized nutrition."
+            },
+            {
+                "title": "An artificial neural network model of energy expenditure using nonintegrated acceleration signals."
+            },
+            {
+                "title": "Assessment of physical activity and energy expenditure in epidemiological research of chronic diseases"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Boning Zhang",
+            "Dongzhu Liu",
+            "Osvaldo Simeone",
+            "Guangxu Zhu"
+        ],
+        "title": "Bayesian Over-the-Air FedAvg via Channel Driven Stochastic Gradient Langevin Dynamics",
+        "year": 2023,
+        "month": 5,
+        "abstract": "The recent development of scalable Bayesian inference methods has renewed\ninterest in the adoption of Bayesian learning as an alternative to conventional\nfrequentist learning that offers improved model calibration via uncertainty\nquantification. Recently, federated averaging Langevin dynamics (FALD) was\nintroduced as a variant of federated averaging that can efficiently implement\ndistributed Bayesian learning in the presence of noiseless communications. In\nthis paper, we propose wireless FALD (WFALD), a novel protocol that realizes\nFALD in wireless systems by integrating over-the-air computation and\nchannel-driven sampling for Monte Carlo updates. Unlike prior work on wireless\nBayesian learning, WFALD enables (\\emph{i}) multiple local updates between\ncommunication rounds; and (\\emph{ii}) stochastic gradients computed by\nmini-batch. A convergence analysis is presented in terms of the 2-Wasserstein\ndistance between the samples produced by WFALD and the targeted global\nposterior distribution. Analysis and experiments show that, when the\nsignal-to-noise ratio is sufficiently large, channel noise can be fully\nrepurposed for Monte Carlo sampling, thus entailing no loss in performance.",
+        "url": "http://arxiv.org/abs/2305.04152v2",
+        "references": [
+            {
+                "title": "Bayesian Federated Learning: A Survey"
+            },
+            {
+                "title": "Channel-Driven Decentralized Bayesian Federated Learning for Trustworthy Decision Making in D2D Networks"
+            },
+            {
+                "title": "Wireless Federated Langevin Monte Carlo: Repurposing Channel Noise for Bayesian Sampling and Privacy"
+            },
+            {
+                "title": "Machine Learning for Engineers"
+            },
+            {
+                "title": "Federated Averaging Langevin Dynamics: Toward a unified theory and new algorithms"
+            },
+            {
+                "title": "Leveraging Channel Noise for Sampling and Privacy via Quantized Federated Langevin Monte Carlo"
+            },
+            {
+                "title": "Transmission Power Control for Over-the-Air Federated Averaging at Network Edge"
+            },
+            {
+                "title": "QLSD: Quantised Langevin stochastic dynamics for Bayesian federated learning"
+            },
+            {
+                "title": "On Convergence of Federated Averaging Langevin Dynamics"
+            },
+            {
+                "title": "The Bayesian Learning Rule"
+            },
+            {
+                "title": "Channel-Driven Monte Carlo Sampling for Bayesian Distributed Learning in Wireless Data Centers"
+            },
+            {
+                "title": "A Review of Uncertainty Quantification in Deep Learning: Techniques, Applications and Challenges"
+            },
+            {
+                "title": "Over-the-Air Federated Learning From Heterogeneous Data"
+            },
+            {
+                "title": "Over-the-Air Computing for Wireless Data Aggregation in Massive IoT"
+            },
+            {
+                "title": "Privacy for Free: Wireless Federated Learning via Uncoded Transmission With Adaptive Power Control"
+            },
+            {
+                "title": "Bayesian Deep Learning and a Probabilistic Perspective of Generalization"
+            },
+            {
+                "title": "SCAFFOLD: Stochastic Controlled Averaging for Federated Learning"
+            },
+            {
+                "title": "Broadband Analog Aggregation for Low-Latency Federated Edge Learning"
+            },
+            {
+                "title": "Time Synchronization in 5G Wireless Edge: Requirements and Solutions for Critical-MTC"
+            },
+            {
+                "title": "On Calibration of Modern Neural Networks"
+            },
+            {
+                "title": "Further and stronger analogy between sampling and optimization: Langevin Monte Carlo and gradient descent"
+            },
+            {
+                "title": "Communication-Efficient Learning of Deep Networks from Decentralized Data"
+            },
+            {
+                "title": "Federated Learning: Strategies for Improving Communication Efficiency"
+            },
+            {
+                "title": "Patterns of Scalable Bayesian Inference"
+            },
+            {
+                "title": "Distributed Stochastic Gradient MCMC"
+            },
+            {
+                "title": "Bayesian Learning via Stochastic Gradient Langevin Dynamics"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Geetanjali Bihani",
+            "Julia Taylor Rayz"
+        ],
+        "title": "Calibration Error Estimation Using Fuzzy Binning",
+        "year": 2023,
+        "month": 4,
+        "abstract": "Neural network-based decisions tend to be overconfident, where their raw\noutcome probabilities do not align with the true decision probabilities.\nCalibration of neural networks is an essential step towards more reliable deep\nlearning frameworks. Prior metrics of calibration error primarily utilize crisp\nbin membership-based measures. This exacerbates skew in model probabilities and\nportrays an incomplete picture of calibration error. In this work, we propose a\nFuzzy Calibration Error metric (FCE) that utilizes a fuzzy binning approach to\ncalculate calibration error. This approach alleviates the impact of probability\nskew and provides a tighter estimate while measuring calibration error. We\ncompare our metric with ECE across different data populations and class\nmemberships. Our results show that FCE offers better calibration error\nestimation, especially in multi-class settings, alleviating the effects of skew\nin model confidence scores on calibration error estimation. We make our code\nand supplementary materials available at: https://github.com/bihani-g/fce",
+        "url": "http://arxiv.org/abs/2305.00543v2",
+        "references": [
+            {
+                "title": "Bag of Tricks for In-Distribution Calibration of Pretrained Transformers"
+            },
+            {
+                "title": "Mitigating bias in calibration error estimation"
+            },
+            {
+                "title": "Fuzzy Classification of Multi-intent Utterances"
+            },
+            {
+                "title": "Low Anisotropy Sense Retrofitting (LASeR) : Towards Isotropic and Sense Enriched Representations"
+            },
+            {
+                "title": "How Can We Know When Language Models Know? On the Calibration of Language Models for Question Answering"
+            },
+            {
+                "title": "Calibrated Language Model Fine-Tuning for In- and Out-of-Distribution Data"
+            },
+            {
+                "title": "CSI: Novelty Detection via Contrastive Learning on Distributionally Shifted Instances"
+            },
+            {
+                "title": "Pretrained Transformers Improve Out-of-Distribution Robustness"
+            },
+            {
+                "title": "Mix-n-Match: Ensemble and Compositional Methods for Uncertainty Calibration in Deep Learning"
+            },
+            {
+                "title": "A tutorial on calibration measurements and calibration models for clinical prediction models"
+            },
+            {
+                "title": "Revisiting the Evaluation of Uncertainty Estimation and Its Application to Explore Model Complexity-Uncertainty Trade-Off"
+            },
+            {
+                "title": "XLNet: Generalized Autoregressive Pretraining for Language Understanding"
+            },
+            {
+                "title": "Can You Trust Your Model's Uncertainty? Evaluating Predictive Uncertainty Under Dataset Shift"
+            },
+            {
+                "title": "On Mixup Training: Improved Calibration and Predictive Uncertainty for Deep Neural Networks"
+            },
+            {
+                "title": "Measuring Calibration in Deep Learning"
+            },
+            {
+                "title": "BERT for Joint Intent Classification and Slot Filling"
+            },
+            {
+                "title": "Language Models are Unsupervised Multitask Learners"
+            },
+            {
+                "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
+            },
+            {
+                "title": "Predictive Uncertainty Estimation via Prior Networks"
+            },
+            {
+                "title": "On Calibration of Modern Neural Networks"
+            },
+            {
+                "title": "Character-level Convolutional Networks for Text Classification"
+            },
+            {
+                "title": "Obtaining Well Calibrated Probabilities Using Bayesian Binning"
+            },
+            {
+                "title": "Learning Word Vectors for Sentiment Analysis"
+            },
+            {
+                "title": "Obtaining calibrated probability estimates from decision trees and naive Bayesian classifiers"
+            },
+            {
+                "title": "Probabilistic Outputs for Support vector Machines and Comparisons to Regularized Likelihood Methods"
+            },
+            {
+                "title": "Twenty newsgroups data set"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Harshit Daga",
+            "Jaemin Shin",
+            "Dhruv Garg",
+            "Ada Gavrilovska",
+            "Myungjin Lee",
+            "Ramana Rao Kompella"
+        ],
+        "title": "Federated Learning Operations Made Simple with Flame",
+        "year": 2023,
+        "month": 5,
+        "abstract": "Distributed machine learning approaches, including a broad class of federated\nlearning techniques, present a number of benefits when deploying machine\nlearning applications over widely distributed infrastructures. To realize the\nexpected benefits, however, introduces substantial operational challenges due\nto required application and configuration-level changes related to\ndeployment-specific details. Such complexities can be greatly reduced by\nintroducing higher-level abstractions -- role and channel -- using which\nfederated learning applications are described as Topology Abstraction Graphs\n(TAGs). TAGs decouple the ML application logic from the underlying deployment\ndetails, making it possible to specialize the application deployment, thus\nreducing development effort and paving the way for improved automation and\ntuning. We present Flame, the first system that supports these abstractions,\nand demonstrate its benefits for several use cases.",
+        "url": "http://arxiv.org/abs/2305.05118v1",
+        "references": [
+            {
+                "title": "Auxo: Heterogeneity-Mitigating Federated Learning via Scalable Client Clustering"
+            },
+            {
+                "title": "OpenFL: the open federated learning library"
+            },
+            {
+                "title": "FLUTE: A Scalable, Extensible Framework for High-Performance Federated Learning Simulations"
+            },
+            {
+                "title": "FedBalancer: data and pace control for efficient federated learning on heterogeneous clients"
+            },
+            {
+                "title": "Papaya: Practical, Private, and Scalable Federated Learning"
+            },
+            {
+                "title": "Federated Learning with Buffered Asynchronous Aggregation"
+            },
+            {
+                "title": "Hybrid Local SGD for Federated Learning with Heterogeneous Communications"
+            },
+            {
+                "title": "Managed federated learning on AWS: A case study for healthcare. https://d1.awsstatic.com/events/aws-remars-event-2022/Managed_federated_learning_on_AWS__A_case_study_for_ healthcare_MLR312.pdf"
+            },
+            {
+                "title": "Federated Learning Based on Dynamic Regularization"
+            },
+            {
+                "title": "Canoe : A System for Collaborative Learning for Neural Nets"
+            },
+            {
+                "title": "FedJAX: Federated learning simulation with JAX"
+            },
+            {
+                "title": "FedScale: Benchmarking Model and System Performance of Federated Learning"
+            },
+            {
+                "title": "Adaptive Federated Optimization"
+            },
+            {
+                "title": "Oort: Informed Participant Selection for Scalable Federated Learning"
+            },
+            {
+                "title": "Flower: A Friendly Federated Learning Research Framework"
+            },
+            {
+                "title": "FedML: A Research Library and Benchmark for Federated Machine Learning"
+            },
+            {
+                "title": "Tackling the Objective Inconsistency Problem in Heterogeneous Federated Optimization"
+            },
+            {
+                "title": "HFEL: Joint Edge Association and Resource Allocation for Cost-Efficient Hierarchical Federated Edge Learning"
+            },
+            {
+                "title": "SCAFFOLD: Stochastic Controlled Averaging for Federated Learning"
+            },
+            {
+                "title": "Fair Resource Allocation in Federated Learning"
+            },
+            {
+                "title": "Client-Edge-Cloud Hierarchical Federated Learning"
+            },
+            {
+                "title": "Federated Optimization in Heterogeneous Networks"
+            },
+            {
+                "title": "FLSim: An Extensible and Reusable Simulation Framework for Federated Learning"
+            },
+            {
+                "title": "A systematic review: machine learning based recommendation systems for e-learning"
+            },
+            {
+                "title": "PyTorch: An Imperative Style, High-Performance Deep Learning Library"
+            },
+            {
+                "title": "Cartel: A System for Collaborative Transfer Learning at the Edge"
+            },
+            {
+                "title": "Machine Learning in Banking Risk Management: A Literature Review"
+            },
+            {
+                "title": "Towards Federated Learning at Scale: System Design"
+            },
+            {
+                "title": "Peer-to-peer Federated Learning on Graphs"
+            },
+            {
+                "title": "Client Selection for Federated Learning with Heterogeneous Resources in Mobile Edge"
+            },
+            {
+                "title": "APPLIED FEDERATED LEARNING: IMPROVING GOOGLE KEYBOARD QUERY SUGGESTIONS"
+            },
+            {
+                "title": "A generic framework for privacy preserving deep learning"
+            },
+            {
+                "title": "Federated Learning for Mobile Keyboard Prediction"
+            },
+            {
+                "title": "European Parliament and Council of the European Union"
+            },
+            {
+                "title": "Private federated learning on vertically partitioned data via entity resolution and additively homomorphic encryption"
+            },
+            {
+                "title": "Practical Secure Aggregation for Privacy-Preserving Machine Learning"
+            },
+            {
+                "title": "A Survey of Data Mining and Machine Learning Methods for Cyber Security Intrusion Detection"
+            },
+            {
+                "title": "Survey of Machine Learning Algorithms for Disease Diagnostic"
+            },
+            {
+                "title": "Communication-Efficient Learning of Deep Networks from Decentralized Data"
+            },
+            {
+                "title": "TensorFlow: A system for large-scale machine learning"
+            },
+            {
+                "title": "Machine learning in manufacturing: advantages, challenges, and applications"
+            },
+            {
+                "title": "Apache Spark: a unified engine for big data processing"
+            },
+            {
+                "title": "Hidden Technical Debt in Machine Learning Systems"
+            },
+            {
+                "title": "MXNet: A Flexible and Efficient Machine Learning Library for Heterogeneous Distributed Systems"
+            },
+            {
+                "title": "The MNIST Database of Handwritten Digit Images for Machine Learning Research [Best of the Web]"
+            },
+            {
+                "title": "Scikit-learn: Machine Learning in Python"
+            },
+            {
+                "title": "Bandwidth optimal all-reduce algorithms for clusters of workstations"
+            },
+            {
+                "title": "Differential Privacy"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "Orhan Erece",
+            "Irek Khamitov",
+            "Murat Kaplan",
+            "Yucel Kilic",
+            "Hee-Jae Lee",
+            "Myung-Jin Kim",
+            "Ilfan F. Bikmaev",
+            "Rustem I. Gumerov",
+            "Eldar N. Irtuganov"
+        ],
+        "title": "Physical properties of the slow-rotating near-Earth asteroid (2059) Baboquivari from one apparition",
+        "year": 2023,
+        "month": 5,
+        "abstract": "In this study, we carried out photometric, spectroscopic, and for the first\ntime, polarimetric observations of the Amor-type near-Earth asteroid (2059)\nBaboquivari. Our findings represent the first reliable determination of\nBaboquivari's physical properties. We used data from a 1m-class telescope\n(T100) along with ALCDEF data for photometric analyses and a 1.5-m-class\ntelescope (RTT150) for polarimetric, spectroscopic, and additional photometric\nobservations. We obtained the synodic rotation period of Baboquivari as 129.93\n+/- 2.31 hours and the standard phase function parameters H and G as 16.05 +/-\n0.05, 0.22 +/- 0.02, respectively. Our colour index (V-R) measurement of 0.45\n+/- 0.02 is consistent with spectroscopic observations, indicating an S (or\nsub-S) spectral type. Using the polarimetric and spectroscopic data, we found\nthat the geometric albedo is 0.15 +/- 0.03, and the spectral type is Sq. Based\non the estimated albedo and absolute magnitude, Baboquivari has an effective\ndiameter of 2.12 +/- 0.21 km. Due to the scattered data in the light curve, its\nslow rotation and location among the NEAs suggest that Baboquivari may be a\nnon-principal axis (NPA) rotator.",
+        "doi": "10.1016/j.pss.2023.105698",
+        "url": "http://arxiv.org/abs/2305.05217v1",
+        "references": [
+            {
+                "title": "The tumbling spin May"
+            },
+            {
+                "title": "Asteroid polametric database (APD) bundle V2.0"
+            },
+            {
+                "title": "Asteroid Diameters and Albedos from NEOWISE Reactivation Mission Years Six and Seven"
+            },
+            {
+                "title": "Photometric observations of Low Delta v asteroids"
+            },
+            {
+                "title": "NEAR-EARTH ASTEROID LIGHTCURVE ANALYSIS AT THE CENTER FOR SOLAR SYSTEM STUDIES: 2019 JULY-SEPTEMBER."
+            },
+            {
+                "title": "Gaia Early Data Release 3 Summary of the contents and survey properties"
+            },
+            {
+                "title": "Stellar occultation by TNOs: from predictions to observations"
+            },
+            {
+                "title": "Near-Earth Asteroid Lightcurve Analysis at the Center for Solar System Studies"
+            },
+            {
+                "title": "Compositional distributions and evolutionary processes for the near-Earth object population: Results from the MIT-Hawaii Near-Earth Object Spectroscopic Survey (MITHNEOS)"
+            },
+            {
+                "title": "astroquery: An Astronomical Web-querying Package in Python"
+            },
+            {
+                "title": "July-September. Minor Planet Bulletin"
+            },
+            {
+                "title": "Studies of physical parameters of kilometer sized NEA by the RTT-150 telescope"
+            },
+            {
+                "title": "The Astropy Project: Building an Open-science Project and Status of the v2.0 Core Package"
+            },
+            {
+                "title": "Understanding the Lomb\u2013Scargle Periodogram"
+            },
+            {
+                "title": "Double-wedged Wollaston-type polarimeter design and integration to RTT150-TFOSC; initial tests, calibration, and characteristics"
+            },
+            {
+                "title": "Absolute magnitudes and slope parameters for 250,000 asteroids observed by Pan-STARRS PS1 \u2013 Preliminary results"
+            },
+            {
+                "title": "On the calibration of the relation between geometric albedo and polarimetric properties for the asteroids"
+            },
+            {
+                "title": "gatspy: General tools for Astronomical Time Series in Python"
+            },
+            {
+                "title": "The tumbling spin state of (99942) Apophis"
+            },
+            {
+                "title": "Asteroid Polarimetry: recent advances."
+            },
+            {
+                "title": "Polarized Light Scattered from Asteroid Surfaces. V. Can We Estimate Polarization Maximum for Main Belt Asteroids"
+            },
+            {
+                "title": "Apophis. Icarus 2014;233:48\u201360"
+            },
+            {
+                "title": "Astropy: A community Python package for astronomy"
+            },
+            {
+                "title": "A new calibration of the albedo-polarization relation for the asteroids"
+            },
+            {
+                "title": "A REVISED ASTEROID POLARIZATION\u2013ALBEDO RELATIONSHIP USING WISE/NEOWISE DATA"
+            },
+            {
+                "title": "Radiative Transfer 2012;113(18):2552\u20132560"
+            },
+            {
+                "title": "THE ACTIVE ASTEROIDS"
+            },
+            {
+                "title": "Save the Lightcurves"
+            },
+            {
+                "title": "A three-parameter magnitude phase function for asteroids"
+            },
+            {
+                "title": "Polarimetric remote sensing of Solar System objects"
+            },
+            {
+                "title": "ASTROMETRY.NET: BLIND ASTROMETRIC CALIBRATION OF ARBITRARY ASTRONOMICAL IMAGES"
+            },
+            {
+                "title": "An extension of the Bus asteroid taxonomy into the near-infrared"
+            },
+            {
+                "title": "The asteroid lightcurve database"
+            },
+            {
+                "title": "Asteroid families: Current situation"
+            },
+            {
+                "title": "High-Dispersion Spectroscopic Study of Solar Twins: HIP 56948, HIP 79672, and HIP 100963"
+            },
+            {
+                "title": "doi:https://doi.org/10.1016/j.pss.2008.07.028; catastrophic Disruption in the Solar System"
+            },
+            {
+                "title": "Generalized YORP evolution: Onset of tumbling and new asymptotic states"
+            },
+            {
+                "title": "Publications of the Astronomical Society of the Pacific"
+            },
+            {
+                "title": "Optical colors of 56 near-Earth objects: trends with size and orbit"
+            },
+            {
+                "title": "SpeX: A Medium\u2010Resolution 0.8\u20135.5 Micron Spectrograph and Imager for the NASA Infrared Telescope Facility"
+            },
+            {
+                "title": "Phase II of the Small Main-Belt Asteroid Spectroscopic Survey: A Feature-Based Taxonomy"
+            },
+            {
+                "title": "Asteroid Observations at Low Phase Angles: II. 5 Astraea, 75 Eurydike, 77 Frigga, 105 Artemis, 119 Althaea, 124 Alkeste, and 201 Penelope"
+            },
+            {
+                "title": "Relationships with other photometric systems"
+            },
+            {
+                "title": "Preliminary results of the alignment and Hartmann tests of the AZT-22 telescope"
+            },
+            {
+                "title": "Polarimetric Observations of Small Asteroids: Preliminary Results"
+            },
+            {
+                "title": "SExtractor: Software for source extraction"
+            },
+            {
+                "title": "A New Calibration of the Polarimetric Albedo Scale of Asteroids"
+            },
+            {
+                "title": "A Two-Parameter System for Linear Polarization of Some Solar System Objects"
+            },
+            {
+                "title": "The Hubble Space Telescope Northern-Hemisphere Grid of Stellar Polarimetric Standards"
+            },
+            {
+                "title": "Short-period comets and apollo-amor-aten type asteroids in view of tisserand invariant"
+            },
+            {
+                "title": "Polarimetric Standards. The Astronomical Journal 1992;104:1563"
+            },
+            {
+                "title": "IRAS asteroid data processing; chap"
+            },
+            {
+                "title": "An analysis of the amplitude-phase relationship among asteroids"
+            },
+            {
+                "title": "DAOPHOT: A COMPUTER PROGRAM FOR CROWDED-FIELD STELLAR PHOTOMETRY"
+            },
+            {
+                "title": "The Iraf Data Reduction And Analysis System"
+            },
+            {
+                "title": "Studies in astronomical time series analysis. II - Statistical aspects of spectral analysis of unevenly spaced data"
+            },
+            {
+                "title": "On the Similarity of Orbits of Associated Comets, Asteroids and Meteoroids"
+            },
+            {
+                "title": "unevenly spaced data. Astrophysical Journal 1982;263:835\u2013853"
+            },
+            {
+                "title": "Random sample consensus: a paradigm for model fitting with applications to image analysis and automated cartography"
+            },
+            {
+                "title": "Polarimetry of Meteorites and the Asteroid Albedo Scale"
+            },
+            {
+                "title": "Least-squares frequency analysis of unequally spaced data"
+            },
+            {
+                "title": "Polarizations of asteroids and satellites"
+            },
+            {
+                "title": "Planets, Stars and Nebulae Studied with Photopolarimetry"
+            }
+        ]
+    },
+    {
+        "authors": [
+            "David Korda",
+            "Tom\u00e1\u0161 Kohout",
+            "Kate\u0159ina Flanderov\u00e1",
+            "Jean-Baptiste Vincent",
+            "Antti Penttil\u00e4"
+        ],
+        "title": "(433) Eros and (25143) Itokawa surface properties from reflectance spectra",
+        "year": 2023,
+        "month": 5,
+        "abstract": "Context. Upcoming space missions will provide us with surface-resolved NEA\nreflectance spectra. Neural networks are useful tools for analysing reflectance\nspectra and determining material composition with high precision and low\nprocessing time. Aims. We applied neural-network models on disk-resolved\nspectra of the Eros and Itokawa asteroids observed by the NEAR Shoemaker and\nHayabusa spacecraft. With this approach, the mineral variations or intensity of\nspace weathering can be mapped. Methods. We tested two types of convolutional\nneural networks. The first one was trained using asteroid reflectance spectra\nwith known taxonomy classes. The other one used silicate reflectance spectra\nwith assigned mineral abundances and compositions. Results. The reliability of\nthe classification model depends on the resolution of reflectance spectra.\nTypical F1 score and Cohen's ${\\kappa}_C$ values decrease from about 0.90 for\nhigh-resolution spectra to about 0.70 for low-resolution spectra. The predicted\nsilicate composition does not strongly depend on spectrum resolution and\ncoverage of the 2${\\mu}$m band of pyroxene. The typical root mean square error\nis between 6 and 10 percentage points. For the Eros and Itokawa asteroids, the\npredicted taxonomy classes favour the S-type and the predicted surface\ncompositions are homogeneous and correspond to the composition of L/LL and LL\nordinary chondrites, respectively. On the Itokawa surface, the model identified\nfresh spots that were connected with craters or coarse-grain areas.\nConclusions. The neural network models trained with measured spectra of\nasteroids and silicate samples are suitable for deriving surface silicate\nmineralogy with a reasonable level of accuracy. The predicted surface\nmineralogy is comparable to the mineralogy of returned samples measured in the\nlaboratory. Moreover, the taxonomical predictions can point out locations of\nfresher areas.",
+        "doi": "10.1051/0004-6361/202346290",
+        "url": "http://arxiv.org/abs/2305.05700v1"
+    },
+    {
+        "authors": [
+            "Shangjia Zhang",
+            "Matt Kalscheur",
+            "Feng Long",
+            "Ke Zhang",
+            "Deryl E. Long",
+            "Edwin A. Bergin",
+            "Zhaohuan Zhu",
+            "Leon Trapman"
+        ],
+        "title": "Substructures in Compact Disks of the Taurus Star-forming Region",
+        "year": 2023,
+        "month": 5,
+        "abstract": "Observations of substructure in protoplanetary disks have largely been\nlimited to the brightest and largest disks, excluding the abundant population\nof compact disks which are likely sites of planet formation. Here, we reanalyze\n~0.1'', 1.33 mm ALMA continuum observations of 12 compact protoplanetary disks\nin the Taurus star-forming region. By fitting visibilities directly, we\nidentify substructures in 6 of the 12 compact disks. We then compare the\nsubstructures identified in the full Taurus sample of 24 disks in single star\nsystems and the ALMA DSHARP survey, differentiating between compact (R_eff,90%\n< 50 au) and extended (R_eff,90% > 50 au) disk sources. We find that\nsubstructures are detected at nearly all radii in both small and large disks.\nTentatively, we find fewer wide gaps in intermediate-sized disks with R_eff,90%\nbetween 30 and 90 au. We perform a series of planet-disk interaction\nsimulations to constrain the sensitivity of our visibility-fitting approach.\nUnder an assumption of planet-disk interaction, we use the gap widths and\ncommon disk parameters to calculate potential planet masses within the Taurus\nsample. We find that the young planet occurrence rate peaks near Neptune\nmasses, similar to the DSHARP sample. For 0.01 $M_J/M_\\odot$ $\\lesssim$\n$M_p/M_*$ $\\lesssim$ 0.1 $M_J/M_\\odot$, the rate is 17.4$\\pm$8.3%; for 0.1\n$M_J/M_\\odot$ $\\lesssim$ $M_p/M_*$ $\\lesssim$ 1 $M_J/M_\\odot$, it is\n27.8$\\pm$8.3%. Both of them are consistent with microlensing surveys. For gas\ngiants more massive than 5 $M_J$, the occurrence rate is 4.2$\\pm$4.2%,\nconsistent with direct imaging surveys.",
+        "url": "http://arxiv.org/abs/2305.03862v2"
+    }
+]
