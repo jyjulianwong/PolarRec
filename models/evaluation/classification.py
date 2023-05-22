@@ -39,11 +39,11 @@ def get_resource_category_dict(resources):
             res = res.read().decode("utf-8")
             res = xmltodict.parse(res)
         except Exception as err:
-            log(str(err), "classification", "error")
+            log(str(err), "evaluation.classification", "error")
             res_cat_dict[resource] = None
             continue
 
-        log(f"Successful response from {url}", "classification")
+        log(f"Successful response from {url}", "evaluation.classification")
 
         if res["feed"]["opensearch:totalResults"]["#text"] == "0":
             res_cat_dict[resource] = None
@@ -58,7 +58,7 @@ def get_resource_category_dict(resources):
         if not isinstance(resource_data, dict):
             log(
                 f"Expected type 'dict' from result returned, got '{type(resource_data)}' instead: {resource_data}",
-                "classification",
+                "evaluation.classification",
                 "error"
             )
             res_cat_dict[resource] = None

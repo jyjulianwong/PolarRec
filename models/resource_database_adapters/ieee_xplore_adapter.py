@@ -92,13 +92,6 @@ class IEEEXploreQueryBuilder(QueryBuilder):
                 resource_args["abstract"] = resource_data["abstract"]
             if "doi" in resource_data:
                 resource_args["doi"] = resource_data["doi"]
-            if "index_terms" in resource_data:
-                predef_keywords = []
-                for kw_type, kw_data in resource_data["index_terms"].items():
-                    predef_keywords += kw_data["terms"]
-                # Remove duplicates but preserve ordering.
-                predef_keywords = list(dict.fromkeys(predef_keywords))
-                resource_args["predef_keywords"] = predef_keywords
 
             resources.append(Resource(resource_args))
         return resources
