@@ -66,7 +66,7 @@ class AuthorRanker(Ranker):
         return rel_mat
 
     @classmethod
-    def set_ranking_for_resources(
+    def set_resource_rankings(
         cls,
         rankable_resources,
         target_resources,
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     print(f"author_ranker: Time taken to execute: {t2 - t1} seconds")
 
     t1 = time.time()
-    AuthorRanker.set_ranking_for_resources(
+    AuthorRanker.set_resource_rankings(
         [i2, i4, i5],
         [i1, i3]
     )

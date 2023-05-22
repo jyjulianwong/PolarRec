@@ -10,7 +10,7 @@ class Ranker:
     """
 
     @classmethod
-    def set_ranking_for_resources(
+    def set_resource_rankings(
         cls,
         rankable_resources,
         target_resources,

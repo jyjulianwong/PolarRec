@@ -117,7 +117,7 @@ def _get_candidate_mean_rank_dict(
     rankers = [AuthorRanker, CitationRanker, KeywordRanker]
     for ranker in rankers:
         # Assign rankings for each type of Ranker.
-        ranker.set_ranking_for_resources(
+        ranker.set_resource_rankings(
             rankable_resources=rankable_cand_ress,
             target_resources=target_resources,
             # Additional arguments for AuthorRanker and CitationRanker.
