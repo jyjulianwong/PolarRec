@@ -8,6 +8,7 @@ from config import Config
 from models.custom_logger import log
 from models.dev_cache import DevCache
 from models.evaluation import sample_resources as sr
+from models.hyperparams import Hyperparams as hp
 from models.resource import Resource
 from models.resource_rankers.keyword_ranker import KeywordRanker
 
@@ -108,7 +109,10 @@ def get_keyword_precision(target_resource):
 
     res_dw_dict = get_resource_keyword_dict(resources=[target_resource])
     predef_keywords = res_dw_dict[target_resource]
-    ranker_keywords = KeywordRanker.get_keywords(resources=[target_resource])
+    ranker_keywords = KeywordRanker.get_keywords(
+        resources=[target_resource],
+        kw_rank_method=hp.KEYWORD_RANK_METHOD
+    )
 
     for ranker_keyword in ranker_keywords:
         ranker_keyword = "".join(

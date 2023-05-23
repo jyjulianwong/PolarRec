@@ -26,6 +26,8 @@ class Hyperparams:
     # See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
     CITATION_COOC_PROB_TS = 0.4
 
+    # The keyword extraction and ranking method used.
+    KEYWORD_RANK_METHOD = "textrank"  # "tfidf", "textrank"
     # Max. # of keywords to extract from each resource during keyword similarity comparison.
     # This is used to rank candidate resources by their keywords.
     MAX_SIM_COMPAR_KEYWORDS_USED = 20

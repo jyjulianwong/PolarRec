@@ -124,6 +124,7 @@ def _get_candidate_mean_rank_dict(
             cf_method=hp.UNIVERSAL_CF_METHOD,
             # Additional arguments for KeywordRanker.
             model=keyword_model,
+            kw_rank_method=hp.KEYWORD_RANK_METHOD,
             target_keywords=target_keywords
         )
 
@@ -161,7 +162,10 @@ def get_ranked_resources(
     :rtype: dict[str, list[RankableResource]]
     """
     # Extract keywords from target resources.
-    target_keywords = KeywordRanker.get_keywords(target_resources)
+    target_keywords = KeywordRanker.get_keywords(
+        resources=target_resources,
+        kw_rank_method=hp.KEYWORD_RANK_METHOD
+    )
     # Extract the complete list of authors from target resources.
     target_authors = []
     for resource in target_resources:

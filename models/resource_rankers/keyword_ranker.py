@@ -5,6 +5,9 @@ import math
 import nltk
 import numpy as np
 import pandas as pd
+import pytextrank
+import spacy
+import subprocess
 import time
 from gensim import downloader
 from models.custom_logger import log, log_extended_line
@@ -17,29 +20,99 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class KeywordRanker(Ranker):
     @classmethod
-    def _get_keywords_from_text(cls, text):
+    def _get_keywords_from_text(
+        cls,
+        text,
+        kw_rank_method,
+        min_phrase_length=1,
+        max_phrase_length=3
+    ):
         """
-        Extracts a list of keywords from text using the TD-IDF algorithm.
+        Extracts a list of keywords from text using either the TF-IDF algorithm
+        (``"tdidf"``) or the TextRank algorithm (``"textrank"``).
 
         :param text: The text from which keywords are extracted.
         :type text: str
+        :param kw_rank_method: The keyword extraction algorithm to use.
+        :type kw_rank_method: str
+        :param min_phrase_length: The min. number of words in each key phrase.
+        :type min_phrase_length: int
+        :param max_phrase_length: The max. number of words in each key phrase.
+        :type min_phrase_length: int
         :return: A list of keywords, sorted in order of importance.
         :rtype: list[str]
         """
-        # Custom tokenizer used to whitelist certain characters such as hyphens.
-        vectorizer = TfidfVectorizer(
-            stop_words=stopwords.words("english"),
-            token_pattern=r"(?u)\b\w[\w-]*\w\b",
-            ngram_range=(1, 3),
-            smooth_idf=False
-        )
-        tfidf_mat = vectorizer.fit_transform([text])
-        words = vectorizer.get_feature_names_out()
-        tdidf_coo = tfidf_mat.tocoo()
-        tfidf_zip = zip(tdidf_coo.col, tdidf_coo.data)
-        tfidf_zip = sorted(tfidf_zip, key=lambda x: (x[1], x[0]), reverse=True)
-        keywords = [words[i] for i, score in tfidf_zip]
-        return keywords
+        # Remove any newline characters and quotation marks in the input text.
+        text = text.replace("\n", " ")
+        text = text.replace("\"", " ")
+        text = text.replace("\'", " ")
+        # Replace occurrences of multiple whitespaces with a single whitespace.
+        text = " ".join(text.split())
+
+        if kw_rank_method == "tfidf":
+            # Custom tokenizer used to whitelist some characters like hyphens.
+            vectorizer = TfidfVectorizer(
+                stop_words=stopwords.words("english"),
+                token_pattern=r"(?u)\b\w[\w-]*\w\b",
+                ngram_range=(min_phrase_length, max_phrase_length),
+                smooth_idf=False
+            )
+            tfidf_mat = vectorizer.fit_transform([text])
+            words = vectorizer.get_feature_names_out()
+            tdidf_coo = tfidf_mat.tocoo()
+            tfidf_zip = zip(tdidf_coo.col, tdidf_coo.data)
+            tfidf_zip = sorted(
+                tfidf_zip,
+                key=lambda x: (x[1], x[0]),
+                reverse=True
+            )
+            keywords = [words[i] for i, score in tfidf_zip]
+            return keywords
+
+        if kw_rank_method == "textrank":
+            # This code is based on the official PyTextRank documentation:
+            # https://derwen.ai/docs/ptr/sample/
+            @spacy.registry.misc("articles_scrubber")
+            def articles_scrubber():
+                """
+                :rtype: function
+                """
+
+                def scrubber_func(span):
+                    """
+                    :type span: spacy.util.Span
+                    :rtype: str
+                    """
+                    for token in span:
+                        if token.pos_ not in ["DET", "PRON"]:
+                            break
+                        span = span[1:]
+                    return span.text
+
+                return scrubber_func
+
+            # Load the pre-trained spaCy pipeline that contains a PoS tagger,
+            # a lemmatiser, a parser, and an entity recogniser.
+            nlp = spacy.load("en_core_web_sm")
+            # Add the additional TextRank pipe to the end of the pipeline.
+            # TextRank uses PoS and dependency data to rank key phrases.
+            nlp.add_pipe(
+                "textrank",
+                config={"scrubber": {"@misc": "articles_scrubber"}}
+            )
+            # Process the text with the full pipeline and save the results.
+            doc = nlp(text)
+            # Sort the key phrases by their "rank", or TextRank score.
+            kw_rank_pairs = [
+                (phrase.rank, phrase.text.lower()) for phrase in doc._.phrases
+            ]
+            kw_rank_pairs = sorted(kw_rank_pairs, reverse=True)
+            keywords = [kw for rank, kw in kw_rank_pairs]
+            # Only show key phrases that are within the length limit.
+            keywords = [
+                w for w in keywords if len(w.split(" ")) <= max_phrase_length
+            ]
+            return keywords
 
     @classmethod
     def _get_phrase_embedding_vector(cls, model, phrase):
@@ -222,6 +295,24 @@ class KeywordRanker(Ranker):
         nltk.download("stopwords")
         log("NLTK Stopwords corpus download completed", "KeywordRanker")
 
+        log("spaCy pre-trained pipeline download started", "KeywordRanker")
+        try:
+            subprocess.run(
+                ["spacy download en_core_web_sm"],
+                shell=True,
+                check=True
+            )
+            log(
+                "spaCy pre-trained pipeline download completed",
+                "KeywordRanker"
+            )
+        except subprocess.CalledProcessError as err:
+            log(
+                f"spaCy pre-trained pipeline download failed: {err}",
+                "KeywordRanker",
+                "error"
+            )
+
         log("GloVe model download via Gensim started", "KeywordRanker")
         model = downloader.load("glove-wiki-gigaword-50")
         log("GloVe model download via Gensim completed", "KeywordRanker")
@@ -229,10 +320,12 @@ class KeywordRanker(Ranker):
         return model
 
     @classmethod
-    def get_keywords(cls, resources):
+    def get_keywords(cls, resources, kw_rank_method):
         """
         :param resources: The list of resources from which keywords are extracted.
         :type resources: list[Resource]
+        :param kw_rank_method: The keyword extraction algorithm to use.
+        :type kw_rank_method: str
         :return: A list of keywords, sorted in order of importance.
         :rtype: list[str]
         """
@@ -244,7 +337,7 @@ class KeywordRanker(Ranker):
             summary += f"{title} {abstract} "
 
         # Extract a list of ranked keywords from the summary text.
-        keywords = cls._get_keywords_from_text(summary)
+        keywords = cls._get_keywords_from_text(summary, kw_rank_method)
         return keywords
 
     @classmethod
@@ -259,6 +352,7 @@ class KeywordRanker(Ranker):
         keyword lists match the targets' keyword lists.
         This function requires 2 additional keyword arguments:
             ``model: gensim.models.KeyedVectors``,
+            ``kw_rank_method: str``,
             ``target_keywords: list[str]``.
 
         :param rankable_resources: The list of resources to rank.
@@ -271,6 +365,10 @@ class KeywordRanker(Ranker):
             model = kwargs["model"]
         else:
             model = cls.get_model()
+        if "kw_rank_method" in kwargs:
+            kw_rank_method = kwargs["kw_rank_method"]
+        else:
+            kw_rank_method = "textrank"
         if "target_keywords" in kwargs:
             target_keywords = kwargs["target_keywords"]
         else:
@@ -279,7 +377,8 @@ class KeywordRanker(Ranker):
         sim_dict: dict[RankableResource, float] = {}
         for candidate_resource in rankable_resources:
             candidate_keywords = cls.get_keywords(
-                [candidate_resource]
+                [candidate_resource],
+                kw_rank_method
             )
             similarity = cls._get_keyword_list_similarity(
                 model,
@@ -349,8 +448,8 @@ SegNet and a web demo at this http URL."""
 
     print("\nkeyword_ranker: Extract keywords from an abstract")
     t1 = time.time()
-    keywords1 = KeywordRanker._get_keywords_from_text(abstract1)
-    keywords2 = KeywordRanker._get_keywords_from_text(abstract2)
+    keywords1 = KeywordRanker._get_keywords_from_text(abstract1, "textrank")
+    keywords2 = KeywordRanker._get_keywords_from_text(abstract2, "textrank")
     t2 = time.time()
     print(f"keyword_ranker: keywords1:")
     for i, keyword in enumerate(keywords1[:20]):
@@ -365,7 +464,8 @@ SegNet and a web demo at this http URL."""
     resource2 = Resource({"title": "r2", "abstract": abstract2})
     t1 = time.time()
     combined_keywords = KeywordRanker.get_keywords(
-        [resource1, resource2]
+        [resource1, resource2],
+        "textrank"
     )
     t2 = time.time()
     print(f"keyword_ranker: combined_keywords:")
