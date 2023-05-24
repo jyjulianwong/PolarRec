@@ -14,33 +14,41 @@ from models.resource_filter import ResourceFilter
 from models.resource_rankers.author_ranker import AuthorRanker
 from models.resource_rankers.citation_ranker import CitationRanker
 from models.resource_rankers.keyword_ranker import KeywordRanker
+from typing import Type
 
 
-def _get_res_db_query_builders():
+# Support for type hinting requires Python 3.5.
+def _get_res_db_query_builders() -> list[Type[QueryBuilder]]:
     """
     :return: The list of resource databases the recommendation algorithm calls.
-    :rtype: list[type[QueryBuilder]]
+    :rtype: list[Type[QueryBuilder]]
     """
     return [ArxivQueryBuilder, IEEEXploreQueryBuilder]
 
 
-def _get_cit_db_adapter():
+# Support for type hinting requires Python 3.5.
+def _get_cit_db_adapter() -> Type[Adapter]:
     """
     :return: The citation database the recommendation algorithm calls.
-    :rtype: type[Adapter]
+    :rtype: Type[Adapter]
     """
     # TODO: Return a list of adapters instead of a chosen one.
     return S2agAdapter
 
 
-def _get_candidate_resources(target_keywords, target_authors, query_builder):
+def _get_candidate_resources(
+    target_keywords,
+    target_authors,
+    # Support for type hinting requires Python 3.5.
+    query_builder: Type[QueryBuilder]
+):
     """
     :param target_keywords: The list of keywords from the target resources.
     :type target_keywords: list[str]
     :param target_authors: The list of authors from the target resources.
     :type target_authors: list[str]
     :param query_builder: The resource database to call.
-    :type query_builder: type[QueryBuilder]
+    :type query_builder: Type[QueryBuilder]
     :return: A list of candidate resources based on the target resource.
     :rtype: list[Resource]
     """
@@ -120,12 +128,8 @@ def _get_candidate_mean_rank_dict(
         ranker.set_resource_rankings(
             rankable_resources=rankable_cand_ress,
             target_resources=target_resources,
-            # Additional arguments for AuthorRanker and CitationRanker.
-            cf_method=hp.UNIVERSAL_CF_METHOD,
             # Additional arguments for KeywordRanker.
-            model=keyword_model,
-            kw_rank_method=hp.KEYWORD_RANK_METHOD,
-            target_keywords=target_keywords
+            kw_model=keyword_model
         )
 
     cand_mean_rank_dict: dict[RankableResource, float] = {}
@@ -162,10 +166,7 @@ def get_ranked_resources(
     :rtype: dict[str, list[RankableResource]]
     """
     # Extract keywords from target resources.
-    target_keywords = KeywordRanker.get_keywords(
-        resources=target_resources,
-        kw_rank_method=hp.KEYWORD_RANK_METHOD
-    )
+    target_keywords = KeywordRanker.get_keywords(resources=target_resources)
     # Extract the complete list of authors from target resources.
     target_authors = []
     for resource in target_resources:

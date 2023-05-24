@@ -76,7 +76,7 @@ class AuthorRanker(Ranker):
         Ranks candidate resources from best to worst according to how similar
         their association matrix paper vectors are to targets (if using CCF).
         See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
-        This function requires 1 additional keyword argument:
+        This function optionally accepts 1 additional keyword argument:
             ``cf_method: str``.
 
         :param rankable_resources: The list of resources to rank.
@@ -85,7 +85,7 @@ class AuthorRanker(Ranker):
         :type target_resources: list[Resource]
         """
         # Extract additional required keyword arguments.
-        cf_method = kwargs.get("cf_method", "userbased")
+        cf_method = kwargs.get("cf_method", hp.UNIVERSAL_CF_METHOD)
 
         resource_idx_dict, author_idx_dict = cls._get_res_idx_dict(
             rankable_resources + target_resources

@@ -109,10 +109,7 @@ def get_keyword_precision(target_resource):
 
     res_dw_dict = get_resource_keyword_dict(resources=[target_resource])
     predef_keywords = res_dw_dict[target_resource]
-    ranker_keywords = KeywordRanker.get_keywords(
-        resources=[target_resource],
-        kw_rank_method=hp.KEYWORD_RANK_METHOD
-    )
+    ranker_keywords = KeywordRanker.get_keywords(resources=[target_resource])
 
     for ranker_keyword in ranker_keywords:
         ranker_keyword = "".join(

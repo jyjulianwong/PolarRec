@@ -320,7 +320,7 @@ class KeywordRanker(Ranker):
         return model
 
     @classmethod
-    def get_keywords(cls, resources, kw_rank_method):
+    def get_keywords(cls, resources, kw_rank_method=hp.KEYWORD_RANK_METHOD):
         """
         :param resources: The list of resources from which keywords are extracted.
         :type resources: list[Resource]
@@ -350,10 +350,10 @@ class KeywordRanker(Ranker):
         """
         Ranks candidate resources from best to worst according to how well their
         keyword lists match the targets' keyword lists.
-        This function requires 2 additional keyword arguments:
-            ``model: gensim.models.KeyedVectors``,
-            ``kw_rank_method: str``,
-            ``target_keywords: list[str]``.
+        This function requires 1 additional keyword argument:
+            ``kw_model: gensim.models.KeyedVectors``.
+        This function optionally accepts 1 additional keyword argument:
+            ``kw_rank_method: str``.
 
         :param rankable_resources: The list of resources to rank.
         :type rankable_resources: list[RankableResource]
@@ -361,18 +361,16 @@ class KeywordRanker(Ranker):
         :type target_resources: list[Resource]
         """
         # Extract additional required keyword arguments.
-        if "model" in kwargs:
-            model = kwargs["model"]
+        if "kw_model" in kwargs:
+            model = kwargs["kw_model"]
         else:
             model = cls.get_model()
         if "kw_rank_method" in kwargs:
             kw_rank_method = kwargs["kw_rank_method"]
         else:
-            kw_rank_method = "textrank"
-        if "target_keywords" in kwargs:
-            target_keywords = kwargs["target_keywords"]
-        else:
-            target_keywords = cls.get_keywords(target_resources)
+            kw_rank_method = hp.KEYWORD_RANK_METHOD
+
+        target_keywords = cls.get_keywords(target_resources, kw_rank_method)
 
         sim_dict: dict[RankableResource, float] = {}
         for candidate_resource in rankable_resources:
@@ -448,8 +446,14 @@ SegNet and a web demo at this http URL."""
 
     print("\nkeyword_ranker: Extract keywords from an abstract")
     t1 = time.time()
-    keywords1 = KeywordRanker._get_keywords_from_text(abstract1, "textrank")
-    keywords2 = KeywordRanker._get_keywords_from_text(abstract2, "textrank")
+    keywords1 = KeywordRanker._get_keywords_from_text(
+        abstract1,
+        hp.KEYWORD_RANK_METHOD
+    )
+    keywords2 = KeywordRanker._get_keywords_from_text(
+        abstract2,
+        hp.KEYWORD_RANK_METHOD
+    )
     t2 = time.time()
     print(f"keyword_ranker: keywords1:")
     for i, keyword in enumerate(keywords1[:20]):
@@ -463,10 +467,7 @@ SegNet and a web demo at this http URL."""
     resource1 = Resource({"title": "r1", "abstract": abstract1})
     resource2 = Resource({"title": "r2", "abstract": abstract2})
     t1 = time.time()
-    combined_keywords = KeywordRanker.get_keywords(
-        [resource1, resource2],
-        "textrank"
-    )
+    combined_keywords = KeywordRanker.get_keywords([resource1, resource2])
     t2 = time.time()
     print(f"keyword_ranker: combined_keywords:")
     for i, keyword in enumerate(combined_keywords[:20]):
