@@ -104,18 +104,18 @@ class AuthorRanker(Ranker):
             )
             sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
 
-        res_idx_pair_list = resource_idx_dict.items()
-        target_idx_pair_list = [
-            (r, i) for r, i in res_idx_pair_list if r in target_resources
+        res_idx_pairs = resource_idx_dict.items()
+        targ_res_idx_pairs = [
+            (r, i) for r, i in res_idx_pairs if r in target_resources
         ]
-        cand_idx_pair_list = [
-            (r, i) for r, i in res_idx_pair_list if r in rankable_resources
+        cand_res_idx_pairs = [
+            (r, i) for r, i in res_idx_pairs if r in rankable_resources
         ]
 
         # Keep track of the similarity scores obtained by each candidate.
         sim_dict: dict[RankableResource, [float]] = {}
-        for r, i in cand_idx_pair_list:
-            for r0, i0 in target_idx_pair_list:
+        for r, i in cand_res_idx_pairs:
+            for r0, i0 in targ_res_idx_pairs:
                 if r not in sim_dict:
                     sim_dict[r] = [sim_mat[i0][i]]
                 else:

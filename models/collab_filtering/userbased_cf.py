@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import time
 
 
 def get_relation_vector_similarity(rel_vec1, rel_vec2):
@@ -43,12 +44,7 @@ def get_similarity_matrix(rel_mat):
     return sim_mat
 
 
-def get_score_matrix(
-    rel_mat,
-    user_idxs,
-    item_idxs,
-    target_user_idxs
-):
+def get_score_matrix(rel_mat, user_idxs, item_idxs, target_user_idxs):
     """
     The indices in ``target_user_idxs`` must be included in ``user_idxs``.
 
@@ -79,3 +75,35 @@ def get_score_matrix(
             score_mat[i0][j] = weighted_score_sum / max(sim_sum, 1e-9)
 
     return score_mat
+
+if __name__ == "__main__":
+    # Recreate the example from the paper that introduced this algorithm:
+    # https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
+    # In this implementation, each row of the relation matrix refers to a user,
+    # and each column refers to an item.
+    rel_mat = np.array([
+        [1, 0],
+        [1, 1],
+        [1, 1],
+        [0, 1],
+        [1, 0]
+    ])
+    user_idxs = [0, 1, 2, 3, 4]
+    item_idxs = [0, 1]
+
+    t1 = time.time()
+    sim_mat = get_similarity_matrix(rel_mat)
+    t2 = time.time()
+    print(f"userbased_cf: Similarity matrix:\n{sim_mat}")
+    print(f"userbased_cf: Time taken to execute: {t2 - t1} seconds")
+
+    t1 = time.time()
+    score_mat = get_score_matrix(
+        rel_mat,
+        user_idxs,
+        item_idxs,
+        [0, 2]
+    )
+    t2 = time.time()
+    print(f"userbased_cf: Citation score matrix:\n{np.transpose(score_mat)}")
+    print(f"userbased_cf: Time taken to execute: {t2 - t1} seconds")

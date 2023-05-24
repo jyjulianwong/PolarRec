@@ -114,12 +114,7 @@ def get_similarity_matrix(ass_mat):
     return sim_mat
 
 
-def get_score_matrix(
-    rel_mat,
-    user_idxs,
-    item_idxs,
-    target_user_idxs
-):
+def get_score_matrix(rel_mat, user_idxs, item_idxs, target_user_idxs):
     """
     The indices in ``target_user_idxs`` must be included in ``user_idxs``.
     See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
