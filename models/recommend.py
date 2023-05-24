@@ -14,11 +14,11 @@ from models.resource_filter import ResourceFilter
 from models.resource_rankers.author_ranker import AuthorRanker
 from models.resource_rankers.citation_ranker import CitationRanker
 from models.resource_rankers.keyword_ranker import KeywordRanker
-from typing import Type
+from typing import List, Type
 
 
 # Support for type hinting requires Python 3.5.
-def _get_res_db_query_builders() -> list[Type[QueryBuilder]]:
+def _get_res_db_query_builders() -> List[Type[QueryBuilder]]:
     """
     :return: The list of resource databases the recommendation algorithm calls.
     :rtype: list[Type[QueryBuilder]]
