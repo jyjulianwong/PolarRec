@@ -6,9 +6,10 @@ from models.citation_database_adapters.adapter import Adapter
 from models.citation_database_adapters.s2ag_adapter import S2agAdapter
 from models.hyperparams import Hyperparams as hp
 from models.resource import RankableResource, Resource
-from models.resource_database_adapters.adapter import QueryBuilder
-from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
-from models.resource_database_adapters.ieee_xplore_adapter import \
+from models.resource_database_adapters.query_builder import QueryBuilder
+from models.resource_database_adapters.arxiv_query_builder import \
+    ArxivQueryBuilder
+from models.resource_database_adapters.ieee_xplore_query_builder import \
     IEEEXploreQueryBuilder
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.author_ranker import AuthorRanker

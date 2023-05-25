@@ -5,7 +5,7 @@ import urllib
 import xmltodict
 from models.custom_logger import log
 from models.resource import Resource
-from models.resource_database_adapters.adapter import QueryBuilder
+from models.resource_database_adapters.query_builder import QueryBuilder
 
 
 class ArxivQueryBuilder(QueryBuilder):

@@ -7,8 +7,9 @@ import sys
 from models.custom_logger import log
 from models.citation_database_adapters.s2ag_adapter import S2agAdapter
 from models.resource import Resource
-from models.resource_database_adapters.arxiv_adapter import ArxivQueryBuilder
-from models.resource_database_adapters.ieee_xplore_adapter import \
+from models.resource_database_adapters.arxiv_query_builder import \
+    ArxivQueryBuilder
+from models.resource_database_adapters.ieee_xplore_query_builder import \
     IEEEXploreQueryBuilder
 
 ARXIV_SAMPLE_FILEPATH = "arxiv-sample-resource-data.json"
