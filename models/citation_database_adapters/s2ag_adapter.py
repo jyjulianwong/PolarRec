@@ -13,17 +13,18 @@ from models.resource import Resource
 
 
 class S2agAdapter(Adapter):
-    API_URL_SINGLE_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
-    API_URL_BATCH = "https://api.semanticscholar.org/graph/v1/paper/batch"
-    API_RETURNED_FIELDS = "paperId,title,citationCount,influentialCitationCount,references"
+    _API_KEY = Config.S2_API_KEY
+    _API_URL_SINGLE_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
+    _API_URL_BATCH = "https://api.semanticscholar.org/graph/v1/paper/batch"
+    _API_RETURNED_FIELDS = "paperId,title,citationCount,influentialCitationCount,references"
 
     # To minimise the number of API calls per resource, cache the results.
     # This is recommended for etiquette purposes in the documentation.
-    REQUEST_DATA_CACHE_FILEPATH = os.path.join(
+    _REQUEST_DATA_CACHE_FILEPATH = os.path.join(
         Config.APP_ROOT_DIR,
         "s2ag-adapter-cache.json"
     )
-    request_data_cache = {}
+    _request_data_cache = {}
 
     @classmethod
     def _get_query_str(cls, resource):
@@ -60,13 +61,13 @@ class S2agAdapter(Adapter):
         :rtype: str
         """
         param_str = cls._get_query_str(resource)
-        param_str += f"&fields={cls.API_RETURNED_FIELDS}"
-        param_str += f"&limit={cls.MAX_QUERY_RESULTS_RETD}"
-        return cls.API_URL_SINGLE_BASE + param_str
+        param_str += f"&fields={cls._API_RETURNED_FIELDS}"
+        param_str += f"&limit={cls._MAX_QUERY_RESULTS_RETD}"
+        return cls._API_URL_SINGLE_BASE + param_str
 
     @classmethod
     def _add_request_data_cache_entry(cls, resource, data):
-        cls.request_data_cache[resource.title] = data
+        cls._request_data_cache[resource.title] = data
 
     @classmethod
     def _get_request_data(cls, resource):
@@ -76,12 +77,13 @@ class S2agAdapter(Adapter):
         :return: The JSON data returned by the API request.
         :rtype: None | dict
         """
-        if resource.title in cls.request_data_cache:
-            return cls.request_data_cache[resource.title]
+        if resource.title in cls._request_data_cache:
+            return cls._request_data_cache[resource.title]
 
         headers = {
-            "User-Agent": f"PolarRec ({cls.APP_URL}; mailto:{cls.APP_MAILTO})",
-            "Content-Type": "application/json"
+            "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
+            "Content-Type": "application/json",
+            "x-api-key": cls._API_KEY
         }
         try:
             res = requests.get(
@@ -95,8 +97,8 @@ class S2agAdapter(Adapter):
 
         # Detect any errors or empty responses.
         if res.status_code != 200:
-            # Non-partners can only send 5,000 requests per 5 minutes.
             log(f"Got {res} from {res.url}", "S2agAdapter", "error")
+            # Non-partners can only send 5,000 requests per 5 minutes.
             log_extended_line(f"Response.text: {res.text}")
             return None
 
@@ -132,18 +134,24 @@ class S2agAdapter(Adapter):
         ress_with_dois: list[Resource] = []
         ress_with_no_dois: list[Resource] = []
         for resource in resources:
-            if resource.title in cls.request_data_cache:
-                result[resource] = cls.request_data_cache[resource.title]
+            if resource.title in cls._request_data_cache:
+                result[resource] = cls._request_data_cache[resource.title]
             elif resource.doi is None:
                 ress_with_no_dois.append(resource)
             else:
                 ress_with_dois.append(resource)
 
         if len(ress_with_dois) > 0:
+            headers = {
+                "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
+                "Content-Type": "application/json",
+                "x-api-key": cls._API_KEY
+            }
             try:
                 res = requests.post(
-                    cls.API_URL_BATCH,
-                    params={"fields": cls.API_RETURNED_FIELDS},
+                    cls._API_URL_BATCH,
+                    params={"fields": cls._API_RETURNED_FIELDS},
+                    headers=headers,
                     json={"ids": [res.doi for res in ress_with_dois]}
                 )
             except Exception as err:
@@ -203,15 +211,15 @@ class S2agAdapter(Adapter):
     @classmethod
     def get_citation_count(cls, resource):
         if DevCache.cache_enabled():
-            cls.request_data_cache = DevCache.load_cache_file(
-                cls.REQUEST_DATA_CACHE_FILEPATH
+            cls._request_data_cache = DevCache.load_cache_file(
+                cls._REQUEST_DATA_CACHE_FILEPATH
             )
 
         data = cls._get_request_data(resource)
 
         if DevCache.cache_enabled():
             DevCache.save_cache_file(
-                cls.REQUEST_DATA_CACHE_FILEPATH, data=cls.request_data_cache
+                cls._REQUEST_DATA_CACHE_FILEPATH, data=cls._request_data_cache
             )
 
         return -1 if data is None else data["citationCount"]
@@ -219,8 +227,8 @@ class S2agAdapter(Adapter):
     @classmethod
     def get_references(cls, resources):
         if DevCache.cache_enabled():
-            cls.request_data_cache = DevCache.load_cache_file(
-                cls.REQUEST_DATA_CACHE_FILEPATH
+            cls._request_data_cache = DevCache.load_cache_file(
+                cls._REQUEST_DATA_CACHE_FILEPATH
             )
 
         data_dict = cls._get_req_data_in_batches(resources)
@@ -231,7 +239,7 @@ class S2agAdapter(Adapter):
 
         if DevCache.cache_enabled():
             DevCache.save_cache_file(
-                cls.REQUEST_DATA_CACHE_FILEPATH, data=cls.request_data_cache
+                cls._REQUEST_DATA_CACHE_FILEPATH, data=cls._request_data_cache
             )
 
         return ref_list_dict

@@ -35,6 +35,11 @@ For the application to access the IEEE Xplore web API as part of the recommendat
 export PLR_IEEE_XPLORE_API_KEY="myieeexploreapikey"
 ```
 
+Optionally, you can also set your Semantic Scholar (S2) API key as an environment variable to enable higher API request rate limits and prevent requests to Semantic Scholar from being blocked, thus affecting the recommendation algorithm's performance. Non-partners can only send 5,000 requests per 5 minutes, whereas users with API keys can send up to 100 requests per second.
+```shell
+export PLR_S2_API_KEY="mys2apikey"
+```
+
 Compile the Flask application and run the local development server.
 ```shell
 python3 -m flask run

@@ -3,6 +3,7 @@ Objects and methods used to calculate the recommendation accuracy of the
 recommendation algorithm.
 """
 import requests
+from config import Config
 from models.custom_logger import log, log_extended_line
 from models.dev_cache import DevCache
 from models.evaluation import sample_resources as sr
@@ -19,12 +20,13 @@ class S2rAdapter:
     recommendation algorithm of this application.
     """
     # Used by APIs to identify the calling application as part of etiquette.
-    APP_URL = "https://github.com/jyjulianwong/PolarRec"
-    APP_MAILTO = "jyw19@ic.ac.uk"
-    API_URL_BASE = "https://api.semanticscholar.org/recommendations/v1/papers/forpaper"
+    _APP_URL = "https://github.com/jyjulianwong/PolarRec"
+    _APP_MAILTO = "jyw19@ic.ac.uk"
+    _API_KEY = Config.S2_API_KEY
+    _API_URL_BASE = "https://api.semanticscholar.org/recommendations/v1/papers/forpaper"
 
-    REQUEST_DATA_CACHE_FILEPATH = "recommendation-cache.json"
-    request_data_cache = {}
+    _REQUEST_DATA_CACHE_FILEPATH = "recommendation-cache.json"
+    _request_data_cache = {}
 
     @classmethod
     def _get_request_url_str(cls, resource, max_results_retd):
@@ -37,11 +39,11 @@ class S2rAdapter:
         :rtype: str
         """
         param_str = f"fields=paperId,title,authors&limit={max_results_retd}"
-        return f"{cls.API_URL_BASE}/{resource.doi}?{param_str}"
+        return f"{cls._API_URL_BASE}/{resource.doi}?{param_str}"
 
     @classmethod
     def _add_request_data_cache_entry(cls, resource, data):
-        cls.request_data_cache[resource.title] = data
+        cls._request_data_cache[resource.title] = data
 
     @classmethod
     def _get_request_data(cls, resource, max_results_retd):
@@ -53,12 +55,13 @@ class S2rAdapter:
         :return: The JSON data returned by the API request.
         :rtype: None | list[dict]
         """
-        if resource.title in cls.request_data_cache:
-            return cls.request_data_cache[resource.title]
+        if resource.title in cls._request_data_cache:
+            return cls._request_data_cache[resource.title]
 
         headers = {
-            "User-Agent": f"PolarRec ({cls.APP_URL}; mailto:{cls.APP_MAILTO})",
-            "Content-Type": "application/json"
+            "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
+            "Content-Type": "application/json",
+            "x-api-key": cls._API_KEY
         }
         try:
             res = requests.get(
@@ -93,8 +96,8 @@ class S2rAdapter:
         :return: The list of recommended resources.
         :rtype: list[Resource]
         """
-        cls.request_data_cache = DevCache.load_cache_file(
-            cls.REQUEST_DATA_CACHE_FILEPATH
+        cls._request_data_cache = DevCache.load_cache_file(
+            cls._REQUEST_DATA_CACHE_FILEPATH
         )
 
         res = cls._get_request_data(target_resource, max_results_retd)
@@ -110,7 +113,7 @@ class S2rAdapter:
             recommended_resources.append(Resource(args=resource_args))
 
         DevCache.save_cache_file(
-            cls.REQUEST_DATA_CACHE_FILEPATH, data=cls.request_data_cache
+            cls._REQUEST_DATA_CACHE_FILEPATH, data=cls._request_data_cache
         )
 
         return recommended_resources
