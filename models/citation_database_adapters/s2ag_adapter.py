@@ -18,7 +18,6 @@ class S2agAdapter(Adapter):
     API_RETURNED_FIELDS = "paperId,title,citationCount,influentialCitationCount,references"
 
     # To minimise the number of API calls per resource, cache the results.
-    # This only caches incoming data within a single API call, not across calls.
     # This is recommended for etiquette purposes in the documentation.
     REQUEST_DATA_CACHE_FILEPATH = os.path.join(
         Config.APP_ROOT_DIR,
@@ -211,7 +210,7 @@ class S2agAdapter(Adapter):
         data = cls._get_request_data(resource)
 
         if DevCache.cache_enabled():
-            cls.request_data_cache = DevCache.save_cache_file(
+            DevCache.save_cache_file(
                 cls.REQUEST_DATA_CACHE_FILEPATH, data=cls.request_data_cache
             )
 
@@ -231,7 +230,7 @@ class S2agAdapter(Adapter):
             ref_list_dict[resource] = cls._get_req_ref_data_as_ress(data)
 
         if DevCache.cache_enabled():
-            cls.request_data_cache = DevCache.save_cache_file(
+            DevCache.save_cache_file(
                 cls.REQUEST_DATA_CACHE_FILEPATH, data=cls.request_data_cache
             )
 
