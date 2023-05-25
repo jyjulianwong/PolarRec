@@ -1,6 +1,7 @@
 """
 Objects and methods for the /recommend service of the API.
 """
+import math
 import time
 from models.citation_database_adapters.adapter import Adapter
 from models.citation_database_adapters.s2ag_adapter import S2agAdapter
@@ -194,6 +195,8 @@ def get_ranked_resources(
             query_builder=query_builder
         )
 
+    # Add existing resources into the pool of candidate resources for ranking.
+    candidate_resources += existing_resources
     # Remove any duplicate resources from the multiple queries.
     candidate_resources = list(dict.fromkeys(candidate_resources))
     # Remove any occurrences of target resources themselves from the candidates.
@@ -220,10 +223,20 @@ def get_ranked_resources(
         (s, c) for c, s in candidate_mean_rank_dict.items()
     ]
     # Sort the list of candidates in order of their scores.
-    ranked_database_resources = [c for s, c in sorted(candidate_mean_rank_dict)]
+    # Only include existing resources if they appear in the top half of all...
+    # ... the ranked resources, i.e. is genuinely related to the targets.
+    existing_included_th = math.floor(0.5 * len(candidate_mean_rank_dict))
+    ranked_existing_resources = [
+        c for s, c in sorted(candidate_mean_rank_dict)[:existing_included_th] if
+        c in existing_resources
+    ]
+    ranked_database_resources = [
+        c for s, c in sorted(candidate_mean_rank_dict) if
+        c not in existing_resources
+    ]
 
     return {
-        "ranked_existing_resources": [],
+        "ranked_existing_resources": ranked_existing_resources,
         "ranked_database_resources": ranked_database_resources,
         "ranked_citation_resources": []
     }

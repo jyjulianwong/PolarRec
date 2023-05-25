@@ -93,10 +93,12 @@ def recommend():
 
     # Convert each ranked resource into JSON-like data.
     res_data = {
-        "ranked_existing_resources": [], # TODO: Populate.
+        "ranked_existing_resources": [],
         "ranked_database_resources": [],
         "ranked_citation_resources": []  # TODO: Populate.
     }
+    for ranked_resource in ranked_resources["ranked_existing_resources"]:
+        res_data["ranked_existing_resources"].append(ranked_resource.to_dict())
     for ranked_resource in ranked_resources["ranked_database_resources"]:
         res_data["ranked_database_resources"].append(ranked_resource.to_dict())
 
