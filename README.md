@@ -86,7 +86,10 @@ The following is an example of the body of a POST request.
     "filter": {
         "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
         "conference_name": "2014 IEEE Conference on Computer Vision..."
-    }
+    },
+    "resource_databases": [
+        "arxiv", "ieeexplore"
+    ]
 }
 ```
 

@@ -10,6 +10,10 @@ from models.resource_database_adapters.adapter import QueryBuilder
 
 
 class IEEEXploreQueryBuilder(QueryBuilder):
+    @classmethod
+    def get_id(cls):
+        return "ieeexplore"
+
     def __init__(self):
         super().__init__()
         self._API_KEY = Config.IEEE_XPLORE_API_KEY

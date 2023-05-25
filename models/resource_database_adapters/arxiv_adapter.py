@@ -9,6 +9,10 @@ from models.resource_database_adapters.adapter import QueryBuilder
 
 
 class ArxivQueryBuilder(QueryBuilder):
+    @classmethod
+    def get_id(cls):
+        return "arxiv"
+
     def __init__(self):
         super().__init__()
         self._API_URL_BASE = "http://export.arxiv.org/api/query"

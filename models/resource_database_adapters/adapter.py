@@ -11,6 +11,14 @@ class QueryBuilder:
     Builds and sends queries for a resource database.
     """
 
+    @classmethod
+    def get_id(cls):
+        """
+        :return: The custom ID of the QueryBuilder class for filtering purposes.
+        :rtype: str
+        """
+        pass
+
     def __init__(self):
         pass
 

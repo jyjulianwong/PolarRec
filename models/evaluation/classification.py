@@ -92,6 +92,7 @@ def get_classif_precision(target_resource):
         target_resources=[target_resource],
         existing_resources=[],
         resource_filter=ResourceFilter({}),
+        resource_database_ids=[],
         keyword_model=KeywordRanker.get_model()
     )["ranked_database_resources"]
 

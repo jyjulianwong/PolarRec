@@ -148,11 +148,14 @@ def get_ranked_resources(
     target_resources,
     existing_resources,
     resource_filter,
+    resource_database_ids,
     keyword_model
 ):
     """
     Calls research database APIs and recommends lists of academic resources
     based on target resources, sorted according to their scores.
+    If ``resource_database_ids`` is empty, assumes that all available resource
+    databases can be searched through to obtain recommendations.
 
     :param target_resources: The list of target resources.
     :type target_resources: list[Resource]
@@ -160,6 +163,8 @@ def get_ranked_resources(
     :type existing_resources: list[Resource]
     :param resource_filter: The filter to be applied to the results.
     :type resource_filter: ResourceFilter
+    :param resource_database_ids: The list of databases to use for searching.
+    :type resource_database_ids: list[str]
     :param keyword_model: The word embedding model to be used for keywords.
     :type keyword_model: Word2Vec.KeyedVectors
     :return: Lists of ranked recommended academic resources.
@@ -176,6 +181,12 @@ def get_ranked_resources(
     # Collect candidate resources from resource databases.
     candidate_resources: list[Resource] = []
     for query_builder in _get_res_db_query_builders():
+        if len(resource_database_ids) > 0:
+            # User has specified filters for what databases to use.
+            if query_builder.get_id() not in resource_database_ids:
+                # This database is not included in the user's "whitelist".
+                continue
+
         candidate_resources += _get_candidate_resources(
             target_keywords=target_keywords,
             target_authors=target_authors,
@@ -276,6 +287,7 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         ResourceFilter({
             # "authors": ["Vijay Badrinarayanan"]
         }),
+        [],
         keyword_model
     )
     t2 = time.time()

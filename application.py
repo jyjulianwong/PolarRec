@@ -77,12 +77,18 @@ def recommend():
     if "filter" in req_data:
         resource_filter = ResourceFilter(req_data["filter"])
 
+    # Process all the user-specified resource databases to search through.
+    resource_database_ids = []
+    if "resource_databases" in req_data:
+        resource_database_ids = req_data["resource_databases"]
+
     # Retrieve the lists of ranked resources via the recommendation algorithm.
     ranked_resources = get_ranked_resources(
-        target_resources,
-        existing_resources,
-        resource_filter,
-        keyword_model
+        target_resources=target_resources,
+        existing_resources=existing_resources,
+        resource_filter=resource_filter,
+        resource_database_ids=resource_database_ids,
+        keyword_model=keyword_model
     )
 
     # Convert each ranked resource into JSON-like data.
