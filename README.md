@@ -6,7 +6,7 @@ PolarRec is an academic resource recommendation engine, tailor-made for the [Zot
 
 This code repository implements the PolarRec web API, a lightweight monolithic service with a RESTful API that allows client applications to interact with the PolarRec service. Visit the [PolarRec Zotero Plugin](https://github.com/jyjulianwong/PolarRec-Zotero-Plugin) code repository to learn more about the Zotero plugin / add-on itself, which can be downloaded separately and imported into the Zotero client application. The plugin provides a simple user interface that allows users to interact with the PolarRec service and get recommendations based on items in their Zotero library. 
 
-# Getting started
+# Getting started with development
 
 Before getting started with development, ensure that Python 3 (3.8 or above) and Pip 3 have been installed on your device. The following examples demonstrate the process of compiling the application using a Bash terminal.
 
