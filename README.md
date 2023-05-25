@@ -1,3 +1,5 @@
+![PolarRec](static/favicon.ico)
+
 # PolarRec
 
 PolarRec is an academic resource recommendation engine, tailor-made for the [Zotero](https://www.zotero.org/) research assistant platform. Given a collection of target academic resources (such as papers of interest to the user), PolarRec utilises publicly available data including authors, conference names, publication dates, citations and citation counts to collect and generate recommended resources for the user.
