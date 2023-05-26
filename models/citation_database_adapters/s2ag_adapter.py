@@ -95,9 +95,6 @@ class S2agAdapter(Adapter):
         :return: The API response data for this resource.
         :rtype: None | dict
         """
-        if resource.title in cls._request_data_cache:
-            return cls._request_data_cache[resource.title]
-
         url = cls._get_req_url_str(resource)
         headers = cls._get_req_headers()
         try:
@@ -199,7 +196,7 @@ class S2agAdapter(Adapter):
         # Collect data for resources with no DOIs in parallel for each chunk.
         for chunk in ress_with_no_dois_chunks:
             res_list = asyncio.run(cls._get_req_data_async_batch(chunk))
-            for i, resource in enumerate(ress_with_no_dois):
+            for i, resource in enumerate(chunk):
                 # Response data is returned in the same order as the input list.
                 result[resource] = res_list[i]
 
