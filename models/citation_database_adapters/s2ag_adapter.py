@@ -44,9 +44,7 @@ class S2agAdapter(Adapter):
         """
         # Use the resource's title and search for it.
         # Remove punctuation from title string.
-        clean_title = resource.title.translate(
-            str.maketrans(string.punctuation, " " * len(string.punctuation))
-        )
+        clean_title = Resource.get_comparable_str(resource.title)
         title_words = clean_title.split()
         # Remove any whitespace to avoid unnecessary "+"s in the query string.
         title_words = [word for word in title_words if word != ""]
@@ -113,7 +111,9 @@ class S2agAdapter(Adapter):
                     return None
 
                 for cand_data in res["data"]:
-                    if cand_data["title"].lower() == resource.title.lower():
+                    cand_title = Resource.get_comparable_str(cand_data["title"])
+                    targ_title = Resource.get_comparable_str(resource.title)
+                    if cand_title == targ_title:
                         # When the target resource has been found.
                         cls._add_req_data_cache_entry(resource, cand_data)
                         return cand_data

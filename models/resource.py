@@ -2,6 +2,8 @@
 Definition of the Resource (an academic resource object) class.
 """
 import datetime
+import string
+import unicodedata
 
 
 class Resource:
@@ -87,19 +89,46 @@ class Resource:
     def __eq__(self, other):
         # The "identity" of an academic resource is defined by its full title.
         # Low likelihood of two well-known academic resources having same title.
-        if isinstance(self.title, str) and isinstance(other.title, str):
-            return self.title.lower() == other.title.lower()
-        else:
-            return False
+        return self.get_comparable_title() == other.get_comparable_title()
 
     def __lt__(self, other):
-        if isinstance(self.title, str) and isinstance(other.title, str):
-            return self.title < other.title
-        else:
-            return False
+        return self.get_comparable_title() < other.get_comparable_title()
 
     def __hash__(self):
-        return hash(self.title)
+        return hash(self.get_comparable_title())
+
+    @classmethod
+    def get_comparable_str(cls, s, whitespace=True):
+        """
+        Depending on the source, the same resource can have slightly different
+        title strings depending on the formatting, such as punctuation and
+        capitalisation.
+        In order to check whether two resources are the same by their title,
+        their titles need to be processed in a way that removes all these
+        variables.
+
+        :param s: The input string.
+        :type s: str
+        :return: The input string in lowercase and with no punctuation.
+        :rtype: str
+        """
+        if not isinstance(s, str):
+            return ""
+
+        # Turn to lowercase.
+        result = s.lower()
+        # Remove all punctuation.
+        join_str = " " if whitespace else ""
+        result = join_str.join(result.split(string.punctuation))
+        # Replace accented characters with non-accented equivalents.
+        # Ignore all other characters that cannot be translated, e.g. Kanji.
+        result = unicodedata.normalize("NFKD", result)
+        result = result.encode("ascii", "ignore")
+        result = result.decode("ascii")
+        return result
+
+    def get_comparable_title(self):
+        return self.__class__.get_comparable_str(self.title, whitespace=False)
 
     def to_dict(self):
         """

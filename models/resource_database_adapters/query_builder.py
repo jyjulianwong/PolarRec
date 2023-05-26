@@ -81,7 +81,7 @@ class QueryBuilder:
             # Do not include first names that have been shortened.
             # This is usually not supported by resource database adapters.
             formatted_name = author_last_name
-        formatted_name = formatted_name.lower()
+        formatted_name = Resource.get_comparable_str(formatted_name)
         return formatted_name
 
     def _summarise_results_data(self, resources):
