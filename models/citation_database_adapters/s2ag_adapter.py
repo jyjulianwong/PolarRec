@@ -1,6 +1,9 @@
 """
 Citation database adapter for the Semantic Scholar Academic Graph (S2AG) API.
 """
+import asyncio
+import aiohttp
+import json
 import os
 import requests
 import string
@@ -13,10 +16,15 @@ from models.resource import Resource
 
 
 class S2agAdapter(Adapter):
+    # Users with API keys can send up to 100 requests per second.
     _API_KEY = Config.S2_API_KEY
     _API_URL_SINGLE_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
     _API_URL_BATCH = "https://api.semanticscholar.org/graph/v1/paper/batch"
     _API_RETURNED_FIELDS = "paperId,title,citationCount,influentialCitationCount,references"
+    # The max. number of requests to send in parallel in a single batch.
+    # Users with API keys can send up to 100 requests per second.
+    # Stay well below this limit for redundancy to prevent blocked requests.
+    _API_REQ_BATCH_SIZE = 25
 
     # To minimise the number of API calls per resource, cache the results.
     # This is recommended for etiquette purposes in the documentation.
@@ -53,7 +61,7 @@ class S2agAdapter(Adapter):
         return query_str
 
     @classmethod
-    def _get_request_url_str(cls, resource):
+    def _get_req_url_str(cls, resource):
         """
         :param resource: The target resource.
         :type resource: Resource
@@ -66,64 +74,76 @@ class S2agAdapter(Adapter):
         return cls._API_URL_SINGLE_BASE + param_str
 
     @classmethod
-    def _add_request_data_cache_entry(cls, resource, data):
+    def _get_req_headers(cls):
+        return {
+            "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
+            "Content-Type": "application/json",
+            "x-api-key": cls._API_KEY
+        }
+
+    @classmethod
+    def _add_req_data_cache_entry(cls, resource, data):
         cls._request_data_cache[resource.title] = data
 
     @classmethod
-    def _get_request_data(cls, resource):
+    async def _get_req_data_async_task(cls, resource, session):
         """
-        :param resource: The target resource.
+        :param resource: The target resources.
         :type resource: Resource
-        :return: The JSON data returned by the API request.
+        :param session: The AIOHTTP client session.
+        :type session: aiohttp.client.ClientSession
+        :return: The API response data for this resource.
         :rtype: None | dict
         """
         if resource.title in cls._request_data_cache:
             return cls._request_data_cache[resource.title]
 
-        headers = {
-            "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
-            "Content-Type": "application/json",
-            "x-api-key": cls._API_KEY
-        }
+        url = cls._get_req_url_str(resource)
+        headers = cls._get_req_headers()
         try:
-            res = requests.get(
-                cls._get_request_url_str(resource),
+            async with session.get(
+                url=url,
                 headers=headers,
                 timeout=10
-            )
+            ) as response:
+                res = await response.read()
+                res = json.loads(res.decode("utf-8"))
+                log(f"Successful response from {url}", "S2agAdapter")
+
+                if "total" not in res or res["total"] == 0:
+                    # When the target resource cannot be found.
+                    return None
+
+                for cand_data in res["data"]:
+                    if cand_data["title"].lower() == resource.title.lower():
+                        # When the target resource has been found.
+                        cls._add_req_data_cache_entry(resource, cand_data)
+                        return cand_data
         except Exception as err:
             log(str(err), "S2agAdapter", "error")
-            return None
 
-        # Detect any errors or empty responses.
-        if res.status_code != 200:
-            log(f"Got {res} from {res.url}", "S2agAdapter", "error")
-            # Non-partners can only send 5,000 requests per 5 minutes.
-            log_extended_line(f"Response.text: {res.text}")
-            return None
-
-        log(f"Successful response from {res.url}", "S2agAdapter")
-
-        res = res.json()
-        if "total" not in res or res["total"] == 0:
-            # When the target resource cannot be found.
-            cls._add_request_data_cache_entry(resource, None)
-            return None
-
-        for cand_data in res["data"]:
-            if cand_data["title"].lower() == resource.title.lower():
-                # When the target resource has been found.
-                cls._add_request_data_cache_entry(resource, cand_data)
-                return cand_data
-
-        cls._add_request_data_cache_entry(resource, None)
+        # When the target resource cannot be found.
         return None
 
     @classmethod
-    def _get_req_data_in_batches(cls, resources):
+    async def _get_req_data_async_batch(cls, resources):
         """
-        :param resource: The target resources.
-        :type resource: list[Resource]
+        :param resources: The target resources.
+        :type resources: list[Resource]
+        :return: The API response data for each resource.
+        :rtype: list[None | dict]
+        """
+        async with aiohttp.ClientSession() as session:
+            res_list = await asyncio.gather(
+                *[cls._get_req_data_async_task(r, session) for r in resources]
+            )
+        return res_list
+
+    @classmethod
+    def _get_req_data(cls, resources):
+        """
+        :param resources: The target resources.
+        :type resources: list[Resource]
         :return: The JSON data returned by the API request.
         :rtype: dict[Resource, None | dict]
         """
@@ -141,17 +161,13 @@ class S2agAdapter(Adapter):
             else:
                 ress_with_dois.append(resource)
 
+        # Collect data for resources with DOIs in a single POST request.
         if len(ress_with_dois) > 0:
-            headers = {
-                "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
-                "Content-Type": "application/json",
-                "x-api-key": cls._API_KEY
-            }
             try:
                 res = requests.post(
                     cls._API_URL_BATCH,
                     params={"fields": cls._API_RETURNED_FIELDS},
-                    headers=headers,
+                    headers=cls._get_req_headers(),
                     json={"ids": [res.doi for res in ress_with_dois]}
                 )
             except Exception as err:
@@ -171,12 +187,21 @@ class S2agAdapter(Adapter):
 
                 res = res.json()
                 for i in range(len(ress_with_dois)):
-                    cls._add_request_data_cache_entry(ress_with_dois[i], res[i])
+                    cls._add_req_data_cache_entry(ress_with_dois[i], res[i])
                     result[ress_with_dois[i]] = res[i]
 
-        for resource in ress_with_no_dois:
-            data = cls._get_request_data(resource)
-            result[resource] = data
+        # Divide list of resources with no DOIs into smaller chunks.
+        ress_with_no_dois_chunks = [
+            ress_with_no_dois[x:x + cls._API_REQ_BATCH_SIZE] for x in range(
+                0, len(ress_with_no_dois), cls._API_REQ_BATCH_SIZE
+            )
+        ]
+        # Collect data for resources with no DOIs in parallel for each chunk.
+        for chunk in ress_with_no_dois_chunks:
+            res_list = asyncio.run(cls._get_req_data_async_batch(chunk))
+            for i, resource in enumerate(ress_with_no_dois):
+                # Response data is returned in the same order as the input list.
+                result[resource] = res_list[i]
 
         return result
 
@@ -215,7 +240,7 @@ class S2agAdapter(Adapter):
                 cls._REQUEST_DATA_CACHE_FILEPATH
             )
 
-        data = cls._get_request_data(resource)
+        data = cls._get_req_data([resource])[resource]
 
         if DevCache.cache_enabled():
             DevCache.save_cache_file(
@@ -231,7 +256,7 @@ class S2agAdapter(Adapter):
                 cls._REQUEST_DATA_CACHE_FILEPATH
             )
 
-        data_dict = cls._get_req_data_in_batches(resources)
+        data_dict = cls._get_req_data(resources)
 
         ref_list_dict: dict[Resource, list[Resource]] = {}
         for resource, data in data_dict.items():
@@ -266,7 +291,7 @@ if __name__ == "__main__":
 
         target_resource = Resource(target_data)
 
-        request_url_str = S2agAdapter._get_request_url_str(target_resource)
+        request_url_str = S2agAdapter._get_req_url_str(target_resource)
         print(f"S2agAdapter: request_url_str: {request_url_str}")
 
         t1 = time.time()
