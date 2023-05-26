@@ -20,7 +20,7 @@ class S2agAdapter(Adapter):
     _API_KEY = Config.S2_API_KEY
     _API_URL_SINGLE_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
     _API_URL_BATCH = "https://api.semanticscholar.org/graph/v1/paper/batch"
-    _API_RETURNED_FIELDS = "paperId,title,citationCount,influentialCitationCount,references"
+    _API_RETURNED_RESOURCE_FIELDS = "paperId,title,citationCount,influentialCitationCount,references"
     # The max. number of requests to send in parallel in a single batch.
     # Users with API keys can send up to 100 requests per second.
     # Stay well below this limit for redundancy to prevent blocked requests.
@@ -69,7 +69,8 @@ class S2agAdapter(Adapter):
         :rtype: str
         """
         param_str = cls._get_query_str(resource)
-        param_str += f"&fields={cls._API_RETURNED_FIELDS}"
+        param_str += f"&fields={cls._API_RETURNED_RESOURCE_FIELDS}"
+        param_str += f"&offset=0"
         param_str += f"&limit={cls._MAX_QUERY_RESULTS_RETD}"
         return cls._API_URL_SINGLE_BASE + param_str
 
@@ -163,7 +164,7 @@ class S2agAdapter(Adapter):
             try:
                 res = requests.post(
                     cls._API_URL_BATCH,
-                    params={"fields": cls._API_RETURNED_FIELDS},
+                    params={"fields": cls._API_RETURNED_RESOURCE_FIELDS},
                     headers=cls._get_req_headers(),
                     json={"ids": [res.doi for res in ress_with_dois]}
                 )
