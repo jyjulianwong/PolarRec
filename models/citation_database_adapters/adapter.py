@@ -17,12 +17,12 @@ class Adapter:
     _MAX_QUERY_RESULTS_RETD = hp.MAX_CIT_QUERY_RESULTS_RETD
 
     @classmethod
-    def get_citation_count(cls, resource):
+    def get_citation_count(cls, resources):
         """
-        :param resource: The target resource.
-        :type resource: Resource
-        :return: The number of times the resource had been cited previously.
-        :rtype: int
+        :param resources: The target resources.
+        :type resources: list[Resource]
+        :return: The number of times the resources had been cited previously.
+        :rtype: dict[Resource, int]
         """
         pass
 

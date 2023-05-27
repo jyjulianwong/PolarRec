@@ -232,20 +232,27 @@ class S2agAdapter(Adapter):
         return references
 
     @classmethod
-    def get_citation_count(cls, resource):
+    def get_citation_count(cls, resources):
         if DevCache.cache_enabled():
             cls._request_data_cache = DevCache.load_cache_file(
                 cls._REQUEST_DATA_CACHE_FILEPATH
             )
 
-        data = cls._get_req_data([resource])[resource]
+        data_dict = cls._get_req_data(resources)
+
+        cit_count_dict: dict[Resource, int] = {}
+        for resource, data in data_dict.items():
+            if data is None:
+                cit_count_dict[resource] = -1
+            else:
+                cit_count_dict[resource] = data["citationCount"]
 
         if DevCache.cache_enabled():
             DevCache.save_cache_file(
                 cls._REQUEST_DATA_CACHE_FILEPATH, data=cls._request_data_cache
             )
 
-        return -1 if data is None else data["citationCount"]
+        return cit_count_dict
 
     @classmethod
     def get_references(cls, resources):
@@ -293,7 +300,8 @@ if __name__ == "__main__":
         print(f"S2agAdapter: request_url_str: {request_url_str}")
 
         t1 = time.time()
-        citation_count = S2agAdapter.get_citation_count(target_resource)
+        citation_count = S2agAdapter.get_citation_count([target_resource])
+        citation_count = citation_count[target_resource]
         print(f"S2agAdapter: citation_count: {citation_count}")
         t2 = time.time()
         print(f"S2agAdapter: Time taken to execute: {t2 - t1} seconds")

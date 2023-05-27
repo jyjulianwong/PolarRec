@@ -1,8 +1,11 @@
 """
 Citation database adapter for the Crossref API.
+This module is no longer being properly updated, as all citation database data
+is now obtained through the S2agAdapter instead. This module now exists simply
+as a demonstration of how the recommendation engine can support the use of
+multiple Citation Database Adapters at the choice of the developer.
 """
 import requests
-import string
 import time
 from models.citation_database_adapters.adapter import Adapter
 from models.resource import Resource
@@ -42,25 +45,33 @@ class CrossrefAdapter(Adapter):
         return cls.API_URL_BASE + param_str
 
     @classmethod
-    def get_citation_count(cls, resource):
-        headers = {
-            "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
-            "Content-Type": "application/json"
-        }
-        try:
-            res = requests.get(
-                cls._get_request_url_str(resource),
-                headers=headers,
-                timeout=10
-            ).json()
-        except:
-            return -1
+    def get_citation_count(cls, resources):
+        # TODO: Not an efficient implementation.
+        cit_count_dict: dict[Resource, int] = {}
 
-        if len(res["message"]["items"]) == 0:
-            # When the target resource cannot be found.
-            return -1
+        for resource in resources:
+            headers = {
+                "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
+                "Content-Type": "application/json"
+            }
+            try:
+                res = requests.get(
+                    cls._get_request_url_str(resource),
+                    headers=headers,
+                    timeout=10
+                ).json()
+            except:
+                cit_count_dict[resource] = -1
 
-        return res["message"]["items"][0]["is-referenced-by-count"]
+            if len(res["message"]["items"]) == 0:
+                # When the target resource cannot be found.
+                cit_count_dict[resource] = -1
+
+            cit_count_dict[resource] = res["message"]["items"][0][
+                "is-referenced-by-count"
+            ]
+
+        return cit_count_dict
 
     @classmethod
     def get_references(cls, resources):
@@ -98,7 +109,8 @@ if __name__ == "__main__":
         print(f"CrossrefAdapter: request_url_str: {request_url_str}")
 
         t1 = time.time()
-        citation_count = CrossrefAdapter.get_citation_count(target_resource)
+        citation_count = CrossrefAdapter.get_citation_count([target_resource])
+        citation_count = citation_count[target_resource]
         print(f"CrossrefAdapter: citation_count: {citation_count}")
         t2 = time.time()
         print(f"CrossrefAdapter: Time taken to execute: {t2 - t1} seconds")
@@ -106,7 +118,8 @@ if __name__ == "__main__":
         print("\nCrossrefAdapter: Collect reference list for a single resource")
 
         t1 = time.time()
-        references = CrossrefAdapter.get_references(target_resource)
+        references = CrossrefAdapter.get_references([target_resource])
+        references = references[target_resource]
         print(f"CrossrefAdapter: len(references): {len(references)}")
         t2 = time.time()
         print(f"CrossrefAdapter: Time taken to execute: {t2 - t1} seconds")

@@ -26,7 +26,8 @@ class Resource:
             ``abstract: str`` (the abstract from the resource),
             ``doi: str`` (the DOI number of the resource),
             ``url: str`` (the URL to the resource online),
-            ``references: list[Resource]`` (the references used by resource).
+            ``references: list[Resource]`` (the references used by resource),
+            ``citation_count: int`` (the number of times the resource has been cited).
         :raises ValueError: When value of arguments are invalid.
         """
         # Type validation and conversion for year parameter.
@@ -54,6 +55,16 @@ class Resource:
 
             if args["month"] < 1 or args["month"] > 12:
                 raise ValueError("Value of month is outside of valid range")
+
+        # Type validation and conversion for citation_count parameter.
+        if "citation_count" in args:
+            if isinstance(args["citation_count"], str):
+                try:
+                    args["citation_count"] = int(args["citation_count"])
+                except ValueError:
+                    raise ValueError("Value of citation_count must be a number")
+            elif not isinstance(args["citation_count"], int):
+                raise ValueError("Value of citation_count must be a number")
 
         self.authors = None
         if "authors" in args:
@@ -85,6 +96,9 @@ class Resource:
         self.references = None
         if "references" in args:
             self.references = args["references"]
+        self.citation_count = None
+        if "citation_count" in args:
+            self.citation_count = args["citation_count"]
 
     def __eq__(self, other):
         # The "identity" of an academic resource is defined by its full title.
@@ -160,6 +174,8 @@ class Resource:
             as_dict["references"] = []
             for reference in self.references:
                 as_dict["references"].append(reference.to_dict())
+        if self.citation_count is not None:
+            as_dict["citation_count"] = self.citation_count
         return as_dict
 
     def to_rankable_resource(self):
@@ -186,12 +202,14 @@ class RankableResource(Resource):
         super().__init__(args)
         self.author_based_ranking = -1
         self.citation_based_ranking = -1
+        self.citation_count_ranking = -1
         self.keyword_based_ranking = -1
 
     def to_dict(self):
         as_dict = super().to_dict()
         as_dict["author_based_ranking"] = self.author_based_ranking
         as_dict["citation_based_ranking"] = self.citation_based_ranking
+        as_dict["citation_count_ranking"] = self.citation_count_ranking
         as_dict["keyword_based_ranking"] = self.keyword_based_ranking
         return as_dict
 

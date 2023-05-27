@@ -15,6 +15,7 @@ from models.resource_database_adapters.ieee_xplore_query_builder import \
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.author_ranker import AuthorRanker
 from models.resource_rankers.citation_ranker import CitationRanker
+from models.resource_rankers.citation_count_ranker import CitationCountRanker
 from models.resource_rankers.keyword_ranker import KeywordRanker
 from typing import List, Type
 
@@ -99,6 +100,26 @@ def _set_resource_references(resources):
             resource.references = references
 
 
+def _set_resource_citation_counts(resources):
+    """
+    Searches for and assigns citation counts to resources using the chosen
+    citation database adapters.
+
+    :param resources: The list of resources to collect citation counts for.
+    :type resources: list[Resource]
+    """
+    ress_with_no_cit_counts: list[Resource] = []
+    for resource in resources:
+        if resource.citation_count is None:
+            ress_with_no_cit_counts.append(resource)
+
+    cit_db_adapter = _get_cit_db_adapter()
+    cit_count_dict = cit_db_adapter.get_citation_count(ress_with_no_cit_counts)
+    for resource, count in cit_count_dict.items():
+        if count > 0:
+            resource.citation_count = count
+
+
 def _get_candidate_mean_rank_dict(
     candidate_resources,
     target_resources,
@@ -124,7 +145,7 @@ def _get_candidate_mean_rank_dict(
     """
     # Convert Resource objects to RankableResource objects.
     rankable_cand_ress = [c.to_rankable_resource() for c in candidate_resources]
-    rankers = [AuthorRanker, CitationRanker, KeywordRanker]
+    rankers = [AuthorRanker, CitationRanker, CitationCountRanker, KeywordRanker]
     for ranker in rankers:
         # Assign rankings for each type of Ranker.
         ranker.set_resource_rankings(
@@ -140,8 +161,9 @@ def _get_candidate_mean_rank_dict(
         # Calculate the mean ranking across all rankers.
         mean_rank = ranked_cand_res.author_based_ranking
         mean_rank += ranked_cand_res.citation_based_ranking
+        mean_rank += ranked_cand_res.citation_count_ranking
         mean_rank += ranked_cand_res.keyword_based_ranking
-        mean_rank /= 3
+        mean_rank /= 4
         cand_mean_rank_dict[ranked_cand_res] = mean_rank
     return cand_mean_rank_dict
 
@@ -210,6 +232,7 @@ def get_ranked_resources(
     # Collect references for all resources using citation database adapters.
     # This information is not available from resource database adapters.
     _set_resource_references(candidate_resources + target_resources)
+    _set_resource_citation_counts(candidate_resources + target_resources)
 
     # Assign a recommendation score for every candidate resource.
     candidate_mean_rank_dict = _get_candidate_mean_rank_dict(
@@ -317,5 +340,6 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         print(f"\t{ranked_res.url}")
         print(f"\tAuthor-based ranking:   {ranked_res.author_based_ranking}")
         print(f"\tCitation-based ranking: {ranked_res.citation_based_ranking}")
+        print(f"\tCitation count ranking: {ranked_res.citation_count_ranking}")
         print(f"\tKeyword-based ranking:  {ranked_res.keyword_based_ranking}")
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")
