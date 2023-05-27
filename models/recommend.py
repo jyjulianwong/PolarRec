@@ -159,11 +159,10 @@ def _get_candidate_mean_rank_dict(
     for ranked_cand_res in rankable_cand_ress:
         # Retrieve rankings set by rankers.
         # Calculate the mean ranking across all rankers.
-        mean_rank = ranked_cand_res.author_based_ranking
-        mean_rank += ranked_cand_res.citation_based_ranking
-        mean_rank += ranked_cand_res.citation_count_ranking
-        mean_rank += ranked_cand_res.keyword_based_ranking
-        mean_rank /= 4
+        mean_rank = 0.25 * ranked_cand_res.author_based_ranking
+        mean_rank += 0.25 * ranked_cand_res.citation_based_ranking
+        mean_rank += 0.15 * ranked_cand_res.citation_count_ranking
+        mean_rank += 0.35 * ranked_cand_res.keyword_based_ranking
         cand_mean_rank_dict[ranked_cand_res] = mean_rank
     return cand_mean_rank_dict
 
