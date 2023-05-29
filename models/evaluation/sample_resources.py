@@ -15,33 +15,33 @@ from models.resource_database_adapters.ieee_xplore_query_builder import \
 ARXIV_SAMPLE_FILEPATH = "arxiv-sample-resource-data.json"
 ARXIV_SAMPLE_TITLES = [
     # Human-computer interaction
-    "The Effectiveness of Applying Different Strategies on Recognition and Recall Textual Password",
-    "The social media use of adult New Zealanders: Evidence from an online survey",
-    "Multimodal Earable Sensing for Human Energy Expenditure Estimation",
+    "Human or Machine: Reflections on Turing-Inspired Testing for the Everyday",
+    "Towards a Deep(er) Understanding of Interaction through Modeling, Simulation, and Optimization",
+    "Timeline Design Space for Immersive Exploration of Time-Varying Spatial 3D Data",
     # Machine learning
-    "Bayesian Over-the-Air FedAvg via Channel Driven Stochastic Gradient Langevin Dynamics",
+    "Interpretation of Time-Series Deep Models: A Survey",
+    "Dynamic Causal Explanation Based Diffusion-Variational Graph Neural Network for Spatio-temporal Forecasting",
     "Calibration Error Estimation Using Fuzzy Binning",
-    "Federated Learning Operations Made Simple with Flame",
     # Astrophysics (Earth and Planetary Astrophysics)
-    "Physical properties of the slow-rotating near-Earth asteroid (2059) Baboquivari from one apparition",
-    "(433) Eros and (25143) Itokawa surface properties from reflectance spectra",
+    "Star-Planet Interaction at radio wavelengths in YZ Ceti: Inferring planetary magnetic field",
     "Substructures in Compact Disks of the Taurus Star-forming Region",
+    "A Bayesian Analysis of Technological Intelligence in Land and Oceans",
 ]
 
 IEEE_XPLORE_SAMPLE_FILEPATH = "ieee-xplore-sample-resource-data.json"
 IEEE_XPLORE_SAMPLE_TITLES = [
     # Human-computer interaction
-    "Human-Computer Interaction for BCI Games: Usability and User Experience",
-    "Various levels of human stress & their impact on human computer interaction",
-    "Understanding users! Perception of privacy in human-robot interaction",
+    "Spatial approximation of volumetric images for simplified transmission and display",
+    "Recent development in stereoscopic display technology",
+    "Electoronic hologram generation using high quality color and depth information of natural scene",
     # Machine learning
-    "A new heuristic of the decision tree induction",
-    "A fuzzy classification method based on support vector machine",
-    "Survey on lie group machine learning",
+    "Wavelet Basis Function Neural Networks for Sequential Learning",
+    "Bayesian Bidirectional Backpropagation Learning",
+    "A Bagging Long Short-term Memory Network for Financial Transmission Rights Forecasting",
     # Astrophysics
-    "A walk on the warped side: Astrophysics with gravitational waves",
-    "Computational Astrophysics",
-    "Programming an astrophysics application in an object-oriented parallel language",
+    "Comparative Study on the Performance of Two Different Planetary Geared Permanent Magnet Planetary Gear Motors",
+    "Prediction of DC magnetic fields for magnetic cleanliness on spacecraft",
+    "Planetary radio occultation technique and inversion method for YH-1 Mars mission",
 ]
 
 RES_SET_FILEPATH_DICT = {
@@ -68,9 +68,14 @@ def save_resources_as_json():
         resources: list[Resource] = []
         for title in titles:
             query_builder = RES_SET_ADAPTER_DICT[filepath]
-            query_builder.set_title(title)
-            resource = query_builder.get_resources(1)[0]
-            resources.append(resource)
+            query_builder.set_title(Resource.get_comparable_str(title))
+            result_resources = query_builder.get_resources(5)
+            for resource in result_resources:
+                result_comp_title = Resource.get_comparable_str(resource.title)
+                target_comp_title = Resource.get_comparable_str(title)
+                if result_comp_title == target_comp_title:
+                    # A sample resource has been found.
+                    resources.append(resource)
 
         reference_dict = S2agAdapter.get_references(resources)
         for resource, references in reference_dict.items():
