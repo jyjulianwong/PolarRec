@@ -76,10 +76,19 @@ def get_resource_category_dict(resources):
     return res_cat_dict
 
 
-def get_classif_precision(target_resource):
+def get_classif_precision(target_resource, macro=True):
     """
+    Macro-precision considers candidate resources that match the target's wider
+    subject area as being a correct classification.
+    Micro-precision only considers candidate resources that match the target's
+    exact specific subject area as being a correct classification.
+    For example, the difference between ``cs`` (computer science in general) and
+    ``cs.AI`` (artificial intelligence-specific resources).
+
     :param target_resource: The target sample resource.
     :type target_resource: Resource
+    :param macro: Whether to return macro-precision or micro-precision.
+    :type macro: bool
     :return: The classification precision of the recommendation algorithm.
     :rtype: float
     """
@@ -99,6 +108,12 @@ def get_classif_precision(target_resource):
     res_cat_dict = get_resource_category_dict(
         ranked_resources + [target_resource]
     )
+
+    if macro:
+        for resource, categories in res_cat_dict.items():
+            # For example, extract "cs" from the "cs.AI" category string.
+            macro_categories = [c.split(".")[0] for c in categories]
+            res_cat_dict[resource] = macro_categories
 
     for ranked_resource in ranked_resources:
         if res_cat_dict[ranked_resource] is None:
