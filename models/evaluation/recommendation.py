@@ -5,7 +5,7 @@ recommendation algorithm.
 import requests
 from config import Config
 from models.custom_logger import log, log_extended_line
-from models.dev_cache import DevCache
+from models.persistent_cache import PersistentCache
 from models.evaluation import sample_resources as sr
 from models.recommend import get_ranked_resources
 from models.resource import Resource
@@ -96,7 +96,7 @@ class S2rAdapter:
         :return: The list of recommended resources.
         :rtype: list[Resource]
         """
-        cls._request_data_cache = DevCache.load_cache_file(
+        cls._request_data_cache = PersistentCache.load_cache_file(
             cls._REQUEST_DATA_CACHE_FILEPATH
         )
 
@@ -112,7 +112,7 @@ class S2rAdapter:
             }
             recommended_resources.append(Resource(args=resource_args))
 
-        DevCache.save_cache_file(
+        PersistentCache.save_cache_file(
             cls._REQUEST_DATA_CACHE_FILEPATH, data=cls._request_data_cache
         )
 

@@ -1,5 +1,5 @@
 """
-Definition of the DevCache class.
+Definition of the PersistentCache class.
 """
 import json
 import os
@@ -7,7 +7,7 @@ from models.custom_logger import log
 from models.hyperparams import Hyperparams as hp
 
 
-class DevCache:
+class PersistentCache:
     """
     Methods related to saving and loading data, typically API response data,
     to and from local JSON cache files.

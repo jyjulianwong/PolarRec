@@ -6,7 +6,7 @@ import requests
 import string
 from config import Config
 from models.custom_logger import log
-from models.dev_cache import DevCache
+from models.persistent_cache import PersistentCache
 from models.evaluation import sample_resources as sr
 from models.hyperparams import Hyperparams as hp
 from models.resource import Resource
@@ -61,7 +61,7 @@ def get_resource_keyword_dict(resources):
     """
     res_dw_dict: dict[Resource, list[str]] = {}
 
-    keyword_cache = DevCache.load_cache_file(KEYWORD_CACHE_FILEPATH)
+    keyword_cache = PersistentCache.load_cache_file(KEYWORD_CACHE_FILEPATH)
 
     for resource in resources:
         if resource.title in keyword_cache:
@@ -90,7 +90,7 @@ def get_resource_keyword_dict(resources):
             res_dw_dict[resource] = []
             continue
 
-    DevCache.save_cache_file(KEYWORD_CACHE_FILEPATH, keyword_cache)
+    PersistentCache.save_cache_file(KEYWORD_CACHE_FILEPATH, keyword_cache)
 
     return res_dw_dict
 

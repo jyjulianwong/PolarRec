@@ -9,7 +9,7 @@ import requests
 import string
 import time
 from config import Config
-from models.dev_cache import DevCache
+from models.persistent_cache import PersistentCache
 from models.citation_database_adapters.adapter import Adapter
 from models.custom_logger import log, log_extended_line
 from models.resource import Resource
@@ -233,8 +233,8 @@ class S2agAdapter(Adapter):
 
     @classmethod
     def get_citation_count(cls, resources):
-        if DevCache.cache_enabled():
-            cls._request_data_cache = DevCache.load_cache_file(
+        if PersistentCache.cache_enabled():
+            cls._request_data_cache = PersistentCache.load_cache_file(
                 cls._REQUEST_DATA_CACHE_FILEPATH
             )
 
@@ -247,8 +247,8 @@ class S2agAdapter(Adapter):
             else:
                 cit_count_dict[resource] = data["citationCount"]
 
-        if DevCache.cache_enabled():
-            DevCache.save_cache_file(
+        if PersistentCache.cache_enabled():
+            PersistentCache.save_cache_file(
                 cls._REQUEST_DATA_CACHE_FILEPATH, data=cls._request_data_cache
             )
 
@@ -256,8 +256,8 @@ class S2agAdapter(Adapter):
 
     @classmethod
     def get_references(cls, resources):
-        if DevCache.cache_enabled():
-            cls._request_data_cache = DevCache.load_cache_file(
+        if PersistentCache.cache_enabled():
+            cls._request_data_cache = PersistentCache.load_cache_file(
                 cls._REQUEST_DATA_CACHE_FILEPATH
             )
 
@@ -267,8 +267,8 @@ class S2agAdapter(Adapter):
         for resource, data in data_dict.items():
             ref_list_dict[resource] = cls._get_req_ref_data_as_ress(data)
 
-        if DevCache.cache_enabled():
-            DevCache.save_cache_file(
+        if PersistentCache.cache_enabled():
+            PersistentCache.save_cache_file(
                 cls._REQUEST_DATA_CACHE_FILEPATH, data=cls._request_data_cache
             )
 
