@@ -5,7 +5,6 @@ import json
 import os
 import sys
 from models.custom_logger import log
-from models.citation_database_adapters.s2ag_adapter import S2agAdapter
 from models.resource import Resource
 from models.resource_database_adapters.arxiv_query_builder import \
     ArxivQueryBuilder
