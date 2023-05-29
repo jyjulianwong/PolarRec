@@ -119,10 +119,12 @@ class S2rAdapter:
         return recommended_resources
 
 
-def get_recommend_precision(target_resource):
+def get_recommend_precision(target_resource, keyword_model):
     """
     :param target_resource: The target resource.
     :type target_resource: Resource
+    :param keyword_model: The word embedding model to be used for keywords.
+    :type keyword_model: Word2Vec.KeyedVectors
     :return: The recommendation precision of the recommendation algorithm.
     :rtype: float
     """
@@ -140,8 +142,10 @@ def get_recommend_precision(target_resource):
         existing_resources=[],
         resource_filter=ResourceFilter({}),
         resource_database_ids=[],
-        keyword_model=KeywordRanker.get_model()
+        keyword_model=keyword_model
     )["ranked_database_resources"]
+    # Only consider the top 10 resources returned by our algorithm.
+    y_pred = y_pred[:min(len(y_pred), 10)]
 
     max_ress_compared = min(len(y_true), len(y_pred))
     y_true = y_true[:max_ress_compared]
