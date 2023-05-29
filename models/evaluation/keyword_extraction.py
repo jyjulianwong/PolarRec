@@ -1,18 +1,16 @@
 """
-Objects and methods used to calculate the keyword accuracy of the
+Objects and methods used to calculate the keyword extraction accuracy of the
 recommendation algorithm.
 """
 import requests
-import string
 from config import Config
 from models.custom_logger import log
 from models.persistent_cache import PersistentCache
 from models.evaluation import sample_resources as sr
-from models.hyperparams import Hyperparams as hp
 from models.resource import Resource
 from models.resource_rankers.keyword_ranker import KeywordRanker
 
-KEYWORD_CACHE_FILEPATH = "keyword-cache.json"
+KEYWORD_CACHE_FILEPATH = "keyword-extraction-cache.json"
 
 
 def get_request_data(resource):
@@ -112,15 +110,11 @@ def get_keyword_precision(target_resource):
     ranker_keywords = KeywordRanker.get_keywords(resources=[target_resource])
 
     for ranker_keyword in ranker_keywords:
-        ranker_keyword = "".join(
-            " " if c in string.punctuation else c for c in ranker_keyword
-        ).lower()
+        ranker_keyword = Resource.get_comparable_str(ranker_keyword)
 
         matched = False
         for predef_keyword in predef_keywords:
-            predef_keyword = "".join(
-                " " if c in string.punctuation else c for c in predef_keyword
-            ).lower()
+            predef_keyword = Resource.get_comparable_str(predef_keyword)
 
             common_words = list(set(ranker_keyword.split(" ")).intersection(
                 predef_keyword.split(" ")

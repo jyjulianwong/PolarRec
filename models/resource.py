@@ -132,8 +132,12 @@ class Resource:
         # Turn to lowercase.
         result = s.lower()
         # Remove all punctuation.
+        result = result.translate(
+            str.maketrans(string.punctuation, " " * len(string.punctuation))
+        )
+        # Remove repeated whitespace.
         join_str = " " if whitespace else ""
-        result = join_str.join(result.split(string.punctuation))
+        result = join_str.join(result.split())
         # Replace accented characters with non-accented equivalents.
         # Ignore all other characters that cannot be translated, e.g. Kanji.
         result = unicodedata.normalize("NFKD", result)
