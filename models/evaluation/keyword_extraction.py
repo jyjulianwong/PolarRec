@@ -54,54 +54,46 @@ def _get_request_data(resource):
     return res.json()
 
 
-def _get_resource_keyword_dict(resources):
+def _get_predef_keywords(resource):
     """
-    :param resources: The resources to collect pre-defined keywords for.
-    :type resources: list[Resource]
+    :param resource: The resource to collect pre-defined keywords for.
+    :type resource: Resource
     :return: The mapping between resources and their pre-defined keywords.
-    :rtype: dict[Resource, list[str]]
+    :rtype: None | list[str]
     """
-    res_dw_dict: dict[Resource, list[str]] = {}
-
     keyword_cache = PersistentCache.load_cache_file(KEYWORD_CACHE_FILEPATH)
 
-    for resource in resources:
-        if resource.title in keyword_cache:
-            res_dw_dict[resource] = keyword_cache[resource.title]
-            continue
+    if resource.title in keyword_cache:
+        return keyword_cache[resource.title]
 
-        res = _get_request_data(resource)
+    res = _get_request_data(resource)
 
-        if res is None:
-            res_dw_dict[resource] = []
-            continue
-        if res["total_records"] == 0:
-            res_dw_dict[resource] = []
-            continue
+    if res is None:
+        return None
+    if res["total_records"] == 0:
+        return None
 
-        resource_data = res["articles"][0]
-        if "index_terms" in resource_data:
-            predef_keywords = []
-            for kw_type, kw_data in resource_data["index_terms"].items():
-                predef_keywords += kw_data["terms"]
-            # Remove duplicates but preserve ordering.
-            predef_keywords = list(dict.fromkeys(predef_keywords))
-            res_dw_dict[resource] = predef_keywords
-            keyword_cache[resource.title] = predef_keywords
-        else:
-            res_dw_dict[resource] = []
-            continue
+    resource_data = res["articles"][0]
+    if "index_terms" not in resource_data:
+        return None
+
+    predef_keywords = []
+    for kw_type, kw_data in resource_data["index_terms"].items():
+        predef_keywords += kw_data["terms"]
+    # Remove duplicates but preserve ordering.
+    predef_keywords = list(dict.fromkeys(predef_keywords))
+    keyword_cache[resource.title] = predef_keywords
 
     PersistentCache.save_cache_file(KEYWORD_CACHE_FILEPATH, keyword_cache)
 
-    return res_dw_dict
+    return predef_keywords
 
 
-def get_keyword_precision(target_resource):
+def get_kw_extraction_precision(target_resource):
     """
     :param target_resource: The target sample resource.
     :type target_resource: Resource
-    :return: The keyword precision of the keyword extraction algorithm.
+    :return: The keyword extraction precision of the extraction algorithm.
     :rtype: float
     """
     true_positive = 0
@@ -109,9 +101,18 @@ def get_keyword_precision(target_resource):
     false_positive = 0
     false_negative = 0
 
-    res_dw_dict = _get_resource_keyword_dict(resources=[target_resource])
-    predef_keywords = res_dw_dict[target_resource]
+    predef_keywords = _get_predef_keywords(target_resource)
+    if predef_keywords is None:
+        log(
+            f"No pre-defined keywords found for '{target_resource.title}'",
+            "evaluation.keyword_extraction",
+            "error"
+        )
+        return 0.0
+
     ranker_keywords = KeywordRanker.get_keywords(resources=[target_resource])
+    # Only consider the top 20 keywords extracted by the algorithm.
+    ranker_keywords = ranker_keywords[:min(len(ranker_keywords), 20)]
 
     for ranker_keyword in ranker_keywords:
         ranker_keyword = Resource.get_comparable_str(ranker_keyword)
@@ -136,5 +137,15 @@ def get_keyword_precision(target_resource):
 
 
 if __name__ == "__main__":
-    # TODO: Implement.
-    pass
+    sample_resources = sr.load_resources_from_json()[
+        sr.IEEE_XPLORE_SAMPLE_FILEPATH
+    ]
+
+    keps: list[float] = []
+    for i, resource in enumerate(sample_resources):
+        kep = get_kw_extraction_precision(resource)
+        keps.append(get_kw_extraction_precision(resource))
+        print(f"Keyword extraction precision {i}: {kep}")
+
+    mean_kep = sum(keps) / len(keps)
+    print(f"Mean keyword extraction precision: {mean_kep}")
