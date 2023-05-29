@@ -77,11 +77,6 @@ def save_resources_as_json():
                     # A sample resource has been found.
                     resources.append(resource)
 
-        reference_dict = S2agAdapter.get_references(resources)
-        for resource, references in reference_dict.items():
-            if len(references) > 0:
-                resource.references = references
-
         data_list = [resource.to_dict() for resource in resources]
         json_list = json.dumps(data_list, indent=4)
         with open(filepath, "w+", encoding="utf-8") as file_object:

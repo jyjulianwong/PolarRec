@@ -8,39 +8,7 @@
         "year": 2009,
         "abstract": "The volumetric 3-D space of the images captured from an object is approximated into five lateral planes making simplification in transmission and display. Schemes transmitting the approximated images, their reception and display in volumetric display tank are presented. Selected display devices and systems producing efficiently the volumetric display are reported. A modified picture tube displaying five sectional images is also proposed. Furthermore, spatially located multiple screens producing the volumetric display with maximized optical transparency is explained. Lastly, a triorthogonal image pickup system is explored for its appropriateness for volumetric image transmission and display.",
         "doi": "10.1109/TCE.2009.4814437",
-        "url": "https://ieeexplore.ieee.org/document/4814437/",
-        "references": [
-            {
-                "title": "Simplified video transmission of stereo images for 3D image reconstruction in TV"
-            },
-            {
-                "title": "Visual experience of 3D TV"
-            },
-            {
-                "title": "On the realization of constraintfree stereo Television \u201d , IEEE Trans . on Cons"
-            },
-            {
-                "title": "Seuntiens, \u201cVisual Experience of 3D TV"
-            },
-            {
-                "title": "On the realization of constraint-free stereo television"
-            },
-            {
-                "title": "On the design and development of flash ADCs \u201d"
-            },
-            {
-                "title": "Multifunction oscillographic display with dot-matrix displays"
-            },
-            {
-                "title": "Regional Blur Reduction In Images"
-            },
-            {
-                "title": "Compatible volumetric 3-D TV systems: a proposal."
-            },
-            {
-                "title": "Picture tube for real-time monochrome stereo TV."
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/4814437/"
     },
     {
         "authors": [
@@ -69,24 +37,7 @@
         "year": 2010,
         "abstract": "Recently, computer-generated holograms (CGHs) have received considerable attention from researchers. However, computer-generated (CG) objects are usually represented by using multiple mono-color points, and high-resolution color holograms of real scenes are rarely provided. Although we proposed a method for generating holograms using a set of 2-D texture and depth maps of a real scene, the image obtained by optical reconstruction has been displayed in a single color. In this paper, we report that we obtained an accurate reconstruction of an image by using our proposed method against the color hologram anew. We confirmed that our proposed the color hologram properly recorded both color and the 3-D information of the space by an assessment experiment which optically reconstructs the hologram.",
         "doi": "10.1109/PCS.2010.5702538",
-        "url": "https://ieeexplore.ieee.org/document/5702538/",
-        "references": [
-            {
-                "title": "Fresnel hologram generation using an HD resolution depth range video camera"
-            },
-            {
-                "title": "Hologram generation using depth maps of real object under the natural light"
-            },
-            {
-                "title": "Electronic generation of holograms by using depth maps of real scenes"
-            },
-            {
-                "title": "Shifted Fresnel diffraction for computational holography."
-            },
-            {
-                "title": "E.Tohline, Shifted Fresnel diffraction for computational olography"
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/5702538/"
     },
     {
         "authors": [
@@ -97,69 +48,7 @@
         "year": 2008,
         "abstract": " In this letter, we develop the wavelet basis function neural networks (WBFNNs). It is analogous to radial basis function neural networks (RBFNNs) and to wavelet neural networks (WNNs). In WBFNNs, both the scaling function and the wavelet function of a multiresolution approximation (MRA) are adopted as the basis for approximating functions. A sequential learning algorithm for WBFNNs is presented and compared to the sequential learning algorithm of RBFNNs. Experimental results show that WBFNNs have better generalization property and require shorter training time than RBFNNs. ",
         "doi": "10.1109/TNN.2007.911749",
-        "url": "https://ieeexplore.ieee.org/document/4441696/",
-        "references": [
-            {
-                "title": "A new class of wavelet networks for nonlinear system identification"
-            },
-            {
-                "title": "Haar Wavelet-Based Approach for Optimal Control of Second-Order Linear Systems in Time Domain"
-            },
-            {
-                "title": "Modular structure of fuzzy system modeling using wavelet networks"
-            },
-            {
-                "title": "SSA, SVD, QR-cp, and RBF Model Reduction"
-            },
-            {
-                "title": "Radial Basis Function Neural Networks With Sequential Learning: Mran and Its Applications"
-            },
-            {
-                "title": "Performance evaluation of a sequential minimal radial basis function (RBF) neural network learning algorithm"
-            },
-            {
-                "title": "A neural-network learning theory and a polynomial time RBF algorithm"
-            },
-            {
-                "title": "Growing radial basis neural networks: merging supervised and unsupervised learning with network growth techniques"
-            },
-            {
-                "title": "A Sequential Learning Scheme for Function Approximation Using Minimal Radial Basis Function Neural Networks"
-            },
-            {
-                "title": "Wavelet neural networks for function learning"
-            },
-            {
-                "title": "Implementing Adaptive Fuzzy Logic Controllers with Neural Networks: A Design Paradigm"
-            },
-            {
-                "title": "A Function Estimation Approach to Sequential Learning with Neural Networks"
-            },
-            {
-                "title": "Ten Lectures on Wavelets"
-            },
-            {
-                "title": "A Resource-Allocating Network for Function Interpolation"
-            },
-            {
-                "title": "Orthogonal least squares learning algorithm for radial basis function networks"
-            },
-            {
-                "title": "Networks for approximation and learning"
-            },
-            {
-                "title": "Multiresolution approximations and wavelet orthonormal bases of L^2(R)"
-            },
-            {
-                "title": "Radial Basis Functions, Multi-Variable Functional Interpolation and Adaptive Networks"
-            },
-            {
-                "title": "Multivariable Functional Interpolation and Adaptive Networks"
-            },
-            {
-                "title": "Radial basis functions for multivariable interpolation: a review"
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/4441696/"
     },
     {
         "authors": [
@@ -172,63 +61,7 @@
         "year": 2021,
         "abstract": "We show that training neural classifiers with Bayesian bidirectional backpropagation improves the performance of the network. Bidirectional backpropagation trains a deep network for both forward and backward recall through the same layers of neurons and with the same weights. It maximizes the network's joint forward and backward likelihood. Bayesian bidirectional backpropagation combines prior probabilities at the input and output layers with the likelihood structure of the layers. It maximizes the posterior probability of the network. It differs from other forms of neural Bayesian estimation because it uses the bidirectional likelihood of the network instead of the unidirectional likelihood. Bayesian bidirectional backpropagation outperformed classifiers trained with both unidirectional and bidirectional backpropagation. The networks trained on the CIFAR-10 and CIFAR-100 image test sets. A Laplacian or Lasso-like prior outperformed both Gaussian and uniform priors.",
         "doi": "10.1109/IJCNN52387.2021.9533873",
-        "url": "https://ieeexplore.ieee.org/document/9533873/",
-        "references": [
-            {
-                "title": "Bidirectional Associative Memories: Unsupervised Hebbian Learning to Bidirectional Backpropagation"
-            },
-            {
-                "title": "High Capacity Neural Block Classifiers with Logistic Neurons and Random Coding"
-            },
-            {
-                "title": "Bidirectional Backpropagation"
-            },
-            {
-                "title": "Noise can speed backpropagation learning and deep bidirectional pretraining"
-            },
-            {
-                "title": "Noise-boosted bidirectional backpropagation and adversarial learning"
-            },
-            {
-                "title": "Training Generative Adversarial Networks with Bidirectional Backpropagation"
-            },
-            {
-                "title": "Noise-enhanced convolutional neural networks"
-            },
-            {
-                "title": "The Noisy Expectation-Maximization Algorithm for Multiplicative Noise Injection"
-            },
-            {
-                "title": "Bidirectional Representation and Backpropagation Learning"
-            },
-            {
-                "title": "Computer age statistical inference"
-            },
-            {
-                "title": "Machine learning: Trends, perspectives, and prospects"
-            },
-            {
-                "title": "Deep Learning"
-            },
-            {
-                "title": "The Noisy Expectation Maximization Algorithm"
-            },
-            {
-                "title": "Machine learning - a probabilistic perspective"
-            },
-            {
-                "title": "Learning Multiple Layers of Features from Tiny Images"
-            },
-            {
-                "title": "Pattern Recognition and Machine Learning"
-            },
-            {
-                "title": "Adaptive bidirectional associative memories."
-            },
-            {
-                "title": "Beyond Regression : \"New Tools for Prediction and Analysis in the Behavioral Sciences"
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/9533873/"
     },
     {
         "authors": [
@@ -242,42 +75,7 @@
         "year": 2022,
         "abstract": "A financial transmission right (FTR) is a financial derivative based on the differences between locational marginal prices (LMPs) of different nodes. FTRs are introduced into the electricity market to help market participants hedge against the risks of transmission congestion. Also, virtual bidders with advanced computational power and forecasting capabilities are encouraged to participate in the FTRs market. This enables FTRs a good crowd-sourcing indicator of transmission congestion. Hence, FTRs prediction can be very valuable to various stakeholders in the electricity sector. Noticing the value of FTRs, we propose Univariate Long Short-term Memory (ULSTM) and Multivariate Long Short-term Memory (MLSTM) networks for FTRs forecasting. To find out applicable predictors, we conduct ablation studies that compare the prediction accuracy of the Long Short-term Memory (LSTM) networks by varying features and input lag lengths. Although the incorporation of associated features generally improves the forecast accuracy, the periodic noises of these features may ruin the forecasting ability of our proposed network. To smooth out the noises, we further propose a bagging method to enhance our prediction networks.",
         "doi": "10.1109/eGRID57376.2022.9990015",
-        "url": "https://ieeexplore.ieee.org/document/9990015/",
-        "references": [
-            {
-                "title": "Cross-Market Price Difference Forecast Using Deep Learning for Electricity Markets"
-            },
-            {
-                "title": "Open power system data"
-            },
-            {
-                "title": "A Model Research on PJM Day-Ahead Market Locational Marginal Price Spread"
-            },
-            {
-                "title": "Introducing Uncertainty Components in Locational Marginal Prices for Pricing Wind Power and Load Uncertainties"
-            },
-            {
-                "title": "FTR Allocations to Ease Transition to Nodal Pricing: An Application to the German Power System"
-            },
-            {
-                "title": "On the difficulty of training recurrent neural networks"
-            },
-            {
-                "title": "Using Virtual Bids to Manipulate the Value of Financial Transmission Rights"
-            },
-            {
-                "title": "A Comprehensive Assessment of the Evolution of Financial Transmission Rights"
-            },
-            {
-                "title": "Advanced financial transmission rights in the PJM market"
-            },
-            {
-                "title": "An Introduction to Financial Transmission Rights"
-            },
-            {
-                "title": "Long Short-Term Memory"
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/9990015/"
     },
     {
         "authors": [
@@ -291,30 +89,7 @@
         "year": 2020,
         "abstract": "In order to solve the problem of high torque of magnetic gears, this paper proposes two topological structures of permanent magnet planetary gear motors, that is, a permanent magnet planetary gear motor with six planetary wheels and a permanent magnet planetary gear motor with three planetary wheels. Compare the magnetic field distribution and electromagnetic torque of two kinds of permanent magnet planetary gear motors, including the radial magnetic flux density, tangential magnetic flux density. The calculation results show that with the same structural parameters, the permanent magnet planetary gear motors with six planetary gears can provide better decoupling and larger torque, and the losses of the two permanent magnet planetary gear motors are basically the same. The research results lay a theoretical foundation for further research on the new permanent magnet planetary gear motor.",
         "doi": "10.1109/ASEMD49065.2020.9276094",
-        "url": "https://ieeexplore.ieee.org/document/9276094/",
-        "references": [
-            {
-                "title": "Predictive Control of Dual-Rotor Magnetic Regulating Motor,"
-            },
-            {
-                "title": "Z.Xiang,\u201cMulti-Mode Optimization Research on a Multi-Port Magnetic Planetary Gear Permanent Magnet Machine for Hybrid Electric Vehicles,"
-            },
-            {
-                "title": "Multi-Mode Optimization Research on a Multi-Port Magnetic Planetary Gear Permanent Magnet Machine for Hybrid Electric Vehicles"
-            },
-            {
-                "title": "A Review of Topology Analysis and Application of Magnetic Gear"
-            },
-            {
-                "title": "A Review on the Development of Magnetic Gear Gear"
-            },
-            {
-                "title": "Model Predictive Control of Dual - Rotor Magnetic Regulating Motor"
-            },
-            {
-                "title": "Analysis of torque of permanent magnet gear slot with magnetic field modulation"
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/9276094/"
     },
     {
         "authors": [
@@ -327,45 +102,7 @@
         "year": 2011,
         "abstract": "Magnetometry is among the most used techniques in space exploration, e.g. to study complex plasma interactions between the solar wind and the Earth's magnetosphere, to map the planetary or interplanetary magnetic fields, or to retrieve information about the structural composition of planets. The success of each mission relies on the attainment of an adequate level of magnetic cleanliness at the sensor locations. At the European Space Agency (ESA) a prediction tool has been developed to simulate the far-field spurious magnetic field generated by the spacecraft in terms of remanent and induced magnetic dipole moments. Such magnetic dipole moments represent units and components of the satellite. Input data can be obtained from measurements, derived by analysis, or estimated by heritage from previous missions. The development of the analytical tool is finished and will be validated by measurements carried out on the integrated spacecraft in a large magnetic coil facility, and later used to support the definition of the algorithms for processing the flight data of a mission, which is currently under development. The prediction tool will also find useful applications for future missions, for example during the design trade-off for the instrument positioning, e.g. the length of the boom.",
         "doi": "10.1109/ISEMC.2011.6038424",
-        "url": "https://ieeexplore.ieee.org/document/6038424/",
-        "references": [
-            {
-                "title": "Fluxgate Magnetometers for Space Research"
-            },
-            {
-                "title": "Measurement of Induced Equivalent Magnetic Dipole Moments for Spacecraft Units and Components"
-            },
-            {
-                "title": "Ulysses Mobile Coil Facility Specification"
-            },
-            {
-                "title": "The Magnetostatic Cleanliness Program for the Cassini Spacecraft"
-            },
-            {
-                "title": "Performance Improvement of the Magnetic Field Simulation Facility MFSA"
-            },
-            {
-                "title": "Space-based magnetometers"
-            },
-            {
-                "title": "Afternotes on numerical analysis"
-            },
-            {
-                "title": "Multiple magnetic dipole modeling and field prediction of satellites"
-            },
-            {
-                "title": "Magnetostatic Cleanliness Analysis by the Multiple Dipole Modelling Method"
-            },
-            {
-                "title": "Classical Electrodynamics"
-            },
-            {
-                "title": "The Physical Principles of Magnetism"
-            },
-            {
-                "title": "Magnetic testing of spacecraft"
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/6038424/"
     },
     {
         "authors": [
@@ -380,62 +117,6 @@
         "year": 2009,
         "abstract": "Investigations of planetary atmospheres, ionospheres, rings, and magnetic fields using radio science techniques have been conducted by almost every planetary mission, and are planned for many future projects. Changes in the frequency, phase, amplitude and polarization of the spacecraft radio signal, caused by passage through the atmosphere and ionosphere of the planet, were observed in rising and descending planet occultation events. Utilizing one inversion method, we can get the refractivity profiles of the atmosphere, density, temperature and pressure profiles of the neutral atmosphere, and the electron density profile of the ionosphere. Principles of the planetary radio occultation technique, physical backgrounds and module specifications of the YH-1 ground-based planetary atmosphere occultation processing system are described in this paper.",
         "doi": "10.1109/APCC.2009.5375630",
-        "url": "https://ieeexplore.ieee.org/document/5375630/",
-        "references": [
-            {
-                "title": "Report of the IAU Working Group on Cartographic Coordinates and Rotational Elements: 2009"
-            },
-            {
-                "title": "Open loop tracking in 1st Chinese Mars exploration mission: Yinghuo-1 Martian orbiter"
-            },
-            {
-                "title": "Report of the IAU/IAG Working Group on cartographic coordinates and rotational elements: 2006"
-            },
-            {
-                "title": "Radio science measurements of atmospheric refractivity with Mars Global Surveyor"
-            },
-            {
-                "title": "Mars Express and MARSIS"
-            },
-            {
-                "title": "Ionospheres : physics, plasma physics, and chemistry"
-            },
-            {
-                "title": "Update to Mars Coordinate Frame Definitions"
-            },
-            {
-                "title": "Jupiter's ionosphere- New results from Voyager 2"
-            },
-            {
-                "title": "Ulysses Radio Occultation Observations of the lo Plasma Torus During the Jupiter Encounter"
-            },
-            {
-                "title": "Radio science investigations with Mars Observer"
-            },
-            {
-                "title": "Galileo radio science investigations"
-            },
-            {
-                "title": "The atmosphere of Neptune : an analysis of radio occultation data acquired with Voyager 2"
-            },
-            {
-                "title": "The Deep Space Network: An instrument for radio science research"
-            },
-            {
-                "title": "Radio science investigations with Voyager"
-            },
-            {
-                "title": "The neutral atmosphere of Venus as studied with the Mariner V radio occultation experiments"
-            },
-            {
-                "title": "The atmosphere of mars analyzed by integral inversion of the Mariner IV occultation data"
-            },
-            {
-                "title": "Occultation Experiment: Results of the First Direct Measurement of Mars's Atmosphere and Ionosphere"
-            },
-            {
-                "title": "The bistatic radar\u2010occultation method for the study of planetary atmospheres"
-            }
-        ]
+        "url": "https://ieeexplore.ieee.org/document/5375630/"
     }
 ]
