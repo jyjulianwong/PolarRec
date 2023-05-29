@@ -82,6 +82,7 @@ class QueryBuilder:
             # This is usually not supported by resource database adapters.
             formatted_name = author_last_name
         formatted_name = Resource.get_comparable_str(formatted_name)
+        formatted_name = formatted_name.replace(" ", "+")
         return formatted_name
 
     def _summarise_results_data(self, resources):
