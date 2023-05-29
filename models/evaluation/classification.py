@@ -13,12 +13,12 @@ from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
 
 
-def get_resource_category_dict(resources):
+def _get_resource_category_dict(resources):
     """
     :param resources: The resources to collect subject categories for.
     :type resources: list[Resource]
     :return: The mapping between resources and their subject categories.
-    :rtype: dict[Resource, list[str]]
+    :rtype: dict[Resource, None | list[str]]
     """
     res_cat_dict: dict[Resource, list[str]] = {}
 
@@ -76,7 +76,7 @@ def get_resource_category_dict(resources):
     return res_cat_dict
 
 
-def get_classif_precision(target_resource, macro=True):
+def get_classif_precision(target_resource, keyword_model):
     """
     Macro-precision considers candidate resources that match the target's wider
     subject area as being a correct classification.
@@ -87,53 +87,94 @@ def get_classif_precision(target_resource, macro=True):
 
     :param target_resource: The target sample resource.
     :type target_resource: Resource
-    :param macro: Whether to return macro-precision or micro-precision.
-    :type macro: bool
+    :param keyword_model: The word embedding model to be used for keywords.
+    :type keyword_model: Word2Vec.KeyedVectors
     :return: The classification precision of the recommendation algorithm.
-    :rtype: float
+    :rtype: tuple[float, float]
     """
-    true_positive = 0
-    true_negative = 0
-    false_positive = 0
-    false_negative = 0
+    macro_tp = 0
+    micro_tp = 0
+    macro_fp = 0
+    micro_fp = 0
 
     ranked_resources = get_ranked_resources(
         target_resources=[target_resource],
         existing_resources=[],
         resource_filter=ResourceFilter({}),
         resource_database_ids=[],
-        keyword_model=KeywordRanker.get_model()
+        keyword_model=keyword_model
     )["ranked_database_resources"]
+    # Only consider the top 10 resources returned by the algorithm.
+    ranked_resources = ranked_resources[:min(len(ranked_resources), 10)]
 
-    res_cat_dict = get_resource_category_dict(
+    # Collect micro-categories for resources.
+    res_micro_cat_dict = _get_resource_category_dict(
         ranked_resources + [target_resource]
     )
 
-    if macro:
-        for resource, categories in res_cat_dict.items():
-            # For example, extract "cs" from the "cs.AI" category string.
-            macro_categories = [c.split(".")[0] for c in categories]
-            res_cat_dict[resource] = macro_categories
+    # Derive macro-categories from micro-categories.
+    res_macro_cat_dict: dict[Resource, list[str]] = {}
+    for resource, categories in res_micro_cat_dict.items():
+        if categories is None:
+            res_macro_cat_dict[resource] = None
+            continue
+
+        # For example, extract "cs" from the "cs.AI" category string.
+        macro_categories = [c.split(".")[0] for c in categories]
+        res_macro_cat_dict[resource] = macro_categories
 
     for ranked_resource in ranked_resources:
-        if res_cat_dict[ranked_resource] is None:
-            continue
-        if res_cat_dict[target_resource] is None:
+        # Calculate micro-precision.
+        pred_cats = res_micro_cat_dict[ranked_resource]
+        true_cats = res_micro_cat_dict[target_resource]
+        if pred_cats is None or true_cats is None:
+            # A NoneType indicates no category could be found for this resource.
+            # This should not be included in our calculation.
             continue
 
-        common_cats = list(set(res_cat_dict[ranked_resource]).intersection(
-            res_cat_dict[target_resource]
-        ))
+        common_cats = list(set(pred_cats).intersection(true_cats))
         if len(common_cats) > 0:
             # The recommended resource belongs in the same subject category.
-            true_positive += 1
+            micro_tp += 1
         else:
             # The recommended resource belongs in a different subject category.
-            false_positive += 1
+            micro_fp += 1
 
-    return true_positive / (true_positive + false_positive)
+        # Calculate macro-precision.
+        pred_cats = res_macro_cat_dict[ranked_resource]
+        true_cats = res_macro_cat_dict[target_resource]
+        if pred_cats is None or true_cats is None:
+            # A NoneType indicates no category could be found for this resource.
+            # This should not be included in our calculation.
+            continue
+
+        common_cats = list(set(pred_cats).intersection(true_cats))
+        if len(common_cats) > 0:
+            # The recommended resource belongs in the same subject category.
+            macro_tp += 1
+        else:
+            # The recommended resource belongs in a different subject category.
+            macro_fp += 1
+
+    macro_precision = macro_tp / (macro_tp + macro_fp)
+    micro_precision = micro_tp / (micro_tp + micro_fp)
+    return macro_precision, micro_precision
 
 
 if __name__ == "__main__":
-    # TODO: Implement.
-    pass
+    sample_resources = sr.load_resources_from_json()[sr.ARXIV_SAMPLE_FILEPATH]
+    keyword_model = KeywordRanker.get_model()
+
+    macro_cps: list[float] = []
+    micro_cps: list[float] = []
+    for i, resource in enumerate(sample_resources):
+        macro_cp, micro_cp = get_classif_precision(resource, keyword_model)
+        macro_cps.append(macro_cp)
+        micro_cps.append(micro_cp)
+        print(f"Macro-classification precision {i}: {macro_cp}")
+        print(f"Micro-classification precision {i}: {micro_cp}")
+
+    mean_macro_cp = sum(macro_cps) / len(macro_cps)
+    mean_micro_cp = sum(micro_cps) / len(micro_cps)
+    print(f"Mean macro-classification precision: {mean_macro_cp}")
+    print(f"Mean micro-classification precision: {mean_micro_cp}")
