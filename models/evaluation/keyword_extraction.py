@@ -13,7 +13,7 @@ from models.resource_rankers.keyword_ranker import KeywordRanker
 KEYWORD_CACHE_FILEPATH = "keyword-extraction-cache.json"
 
 
-def get_request_data(resource):
+def _get_request_data(resource):
     """
     :param resource: The resource to collect pre-defined keywords for.
     :type resource: Resource
@@ -36,21 +36,25 @@ def get_request_data(resource):
             timeout=10
         )
     except Exception as err:
-        log(str(err), "evaluation.keyword", "error")
+        log(str(err), "evaluation.keyword_extraction", "error")
         return None
 
     # Detect any errors or empty responses.
     if res.status_code != 200:
         # IEEE Xplore has a limit on how many API calls can be made per day.
-        log(f"Got {res} from {res.url}", "evaluation.keyword", "error")
+        log(
+            f"Got {res} from {res.url}",
+            "evaluation.keyword_extraction",
+            "error"
+        )
         return None
 
-    log(f"Successful response from {res.url}", "evaluation.keyword")
+    log(f"Successful response from {res.url}", "evaluation.keyword_extraction")
 
     return res.json()
 
 
-def get_resource_keyword_dict(resources):
+def _get_resource_keyword_dict(resources):
     """
     :param resources: The resources to collect pre-defined keywords for.
     :type resources: list[Resource]
@@ -66,7 +70,7 @@ def get_resource_keyword_dict(resources):
             res_dw_dict[resource] = keyword_cache[resource.title]
             continue
 
-        res = get_request_data(resource)
+        res = _get_request_data(resource)
 
         if res is None:
             res_dw_dict[resource] = []
@@ -105,7 +109,7 @@ def get_keyword_precision(target_resource):
     false_positive = 0
     false_negative = 0
 
-    res_dw_dict = get_resource_keyword_dict(resources=[target_resource])
+    res_dw_dict = _get_resource_keyword_dict(resources=[target_resource])
     predef_keywords = res_dw_dict[target_resource]
     ranker_keywords = KeywordRanker.get_keywords(resources=[target_resource])
 
