@@ -163,4 +163,14 @@ def get_recommend_precision(target_resource, keyword_model):
 
 
 if __name__ == "__main__":
-    pass
+    sample_resources = sr.load_resources_from_json()[sr.ARXIV_SAMPLE_FILEPATH]
+    keyword_model = KeywordRanker.get_model()
+
+    rps: list[float] = []
+    for i, resource in enumerate(sample_resources):
+        rp = get_recommend_precision(resource, keyword_model)
+        rps.append(rp)
+        print(f"Recommendation precision {i}: {rp}")
+
+    mean_rp = sum(rps) / len(rps)
+    print(f"Mean recommendation precision: {mean_rp}")
