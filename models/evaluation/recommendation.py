@@ -163,7 +163,9 @@ def get_recommend_precision(target_resource, keyword_model):
 
 
 if __name__ == "__main__":
-    sample_resources = sr.load_resources_from_json()[sr.ARXIV_SAMPLE_FILEPATH]
+    sample_resources = sr.load_resources_from_json()[
+        sr.IEEE_XPLORE_SAMPLE_FILEPATH
+    ]
     keyword_model = KeywordRanker.get_model()
 
     rps: list[float] = []
