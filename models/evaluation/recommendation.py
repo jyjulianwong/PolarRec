@@ -151,8 +151,11 @@ def get_recommend_precision(target_resource, keyword_model):
     y_true = y_true[:max_ress_compared]
     y_pred = y_pred[:max_ress_compared]
 
-    for pred_res in y_pred:
-        if pred_res in y_true:
+    y_true_titles = [Resource.get_comparable_str(r.title) for r in y_true]
+    y_pred_titles = [Resource.get_comparable_str(r.title) for r in y_pred]
+
+    for y_pred_title in y_pred_titles:
+        if y_pred_title in y_true_titles:
             # Our predicted resource is in the "gold standard" list.
             true_positive += 1
         else:
