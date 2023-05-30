@@ -135,7 +135,7 @@ def get_recommend_precision(target_resource, keyword_model):
 
     y_true = S2rAdapter.get_recommended_resources(
         target_resource=target_resource,
-        max_results_retd=20
+        max_results_retd=30
     )
     y_pred = get_ranked_resources(
         target_resources=[target_resource],
@@ -144,8 +144,8 @@ def get_recommend_precision(target_resource, keyword_model):
         resource_database_ids=[],
         keyword_model=keyword_model
     )["ranked_database_resources"]
-    # Only consider the top 10 resources returned by our algorithm.
-    y_pred = y_pred[:min(len(y_pred), 10)]
+    # Only consider the top 30 resources returned by our algorithm.
+    y_pred = y_pred[:min(len(y_pred), 30)]
 
     max_ress_compared = min(len(y_true), len(y_pred))
     y_true = y_true[:max_ress_compared]
