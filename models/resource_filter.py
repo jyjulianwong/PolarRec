@@ -1,6 +1,7 @@
 """
 Definition of the ResourceFilter class.
 """
+import math
 from models.resource import Resource
 
 
@@ -51,9 +52,28 @@ class ResourceFilter:
             required_last_name = self._get_author_last_name(author)
             # Only compare the last names of two authors.
             # First names are sometimes abbreviated, causing false rejects.
-            if required_last_name not in cand_last_names:
-                return False
-        return True
+            if required_last_name in cand_last_names:
+                return True
+        return False
+
+    def _conference_names_match(self, conference_name):
+        """
+        :param conference_name: The conf. name from the candidate resource.
+        :type conference_name: str
+        :return: Whether the conf. name matches the requirements of the filter.
+        :rtype: bool
+        """
+        # Remove punctuation or capitalisation that may affect this comparison.
+        targ_conf_name = Resource.get_comparable_str(self.conference_name)
+        cand_conf_name = Resource.get_comparable_str(conference_name)
+
+        # Check if there are any overlapping words between target and candidate.
+        targ_conf_words = set(targ_conf_name.split())
+        cand_conf_words = cand_conf_name.split()
+        common_words = list(targ_conf_words.intersection(cand_conf_words))
+
+        # Consider a "match" if overlapping words are sufficient in quantity.
+        return len(common_words) >= math.floor(0.5 * len(targ_conf_words))
 
     def get_filtered(self, resources):
         """
@@ -73,17 +93,39 @@ class ResourceFilter:
                 if resource.authors is None:
                     # The candidate resource has no recorded authors.
                     remove = True
-                else:
-                    # A list of candidate authors exists.
-                    if not self._author_lists_match(resource.authors):
-                        remove = True
+                elif not self._author_lists_match(resource.authors):
+                    remove = True
 
             if self.conference_name is not None:
                 # A filter for matching conference name is required.
-                if resource.conference_name != self.conference_name:
+                if resource.conference_name is None:
+                    # The candidate resource has no recorded conference name.
+                    remove = True
+                elif not self._conference_names_match(resource.conference_name):
                     remove = True
 
             if not remove:
                 filtered_ress.append(resource)
 
         return filtered_ress
+
+
+if __name__ == "__main__":
+    author_list1 = ["A", "B", "C"]
+    author_list2 = ["C", "D", "E"]
+
+    conf_name1 = "2023 IEEE Nuclear and Space Radiation Effects Conference"
+    conf_name2 = "IEEE Nuclear and Space Radiation Effects '23"
+
+    res_filter = ResourceFilter({
+        "authors": author_list1,
+        "conference_name": conf_name1
+    })
+
+    print("\nResourceFilter: Matching two author lists")
+    match = res_filter._author_lists_match(author_list2)
+    print(f"ResourceFilter: Author lists match: {match}")
+
+    print("\nResourceFilter: Matching two conference names")
+    match = res_filter._conference_names_match(conf_name2)
+    print(f"ResourceFilter: Conference names match: {match}")
