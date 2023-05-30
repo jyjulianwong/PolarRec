@@ -12,35 +12,6 @@
     },
     {
         "authors": [
-            "Lina Zhao",
-            "Fei Wang",
-            "Wei Liu"
-        ],
-        "conference_name": "IET International Conference on Communication Technology and Application (ICCTA 2011)",
-        "conference_location": "Beijing",
-        "title": "Recent development in stereoscopic display technology",
-        "year": 2011,
-        "abstract": "Focusing on the stereoscopic 3D key technologies, the latest international development trends and existing problems are analyzed. Future 3D displays need to minimize the problem of visual fatigue caused by viewing 3D images, to promote the widespread adoption of 3D displays. In this paper, we focus on the stereoscopic 3D key technologies, the latest development of various stereoscopic display technologies and existing problems. Ultimately, this paper analyzed the advantages and disadvantages of novel stereoscopic display technologies.",
-        "doi": "10.1049/cp.2011.0776",
-        "url": "https://ieeexplore.ieee.org/document/6192972/"
-    },
-    {
-        "authors": [
-            "Kousuke Nomura",
-            "Kyutaro Oi",
-            "Taiichiro Kurita",
-            "Takayuki Hamamoto"
-        ],
-        "conference_name": "28th Picture Coding Symposium",
-        "conference_location": "Nagoya, Japan",
-        "title": "Electoronic hologram generation using high quality color and depth information of natural scene",
-        "year": 2010,
-        "abstract": "Recently, computer-generated holograms (CGHs) have received considerable attention from researchers. However, computer-generated (CG) objects are usually represented by using multiple mono-color points, and high-resolution color holograms of real scenes are rarely provided. Although we proposed a method for generating holograms using a set of 2-D texture and depth maps of a real scene, the image obtained by optical reconstruction has been displayed in a single color. In this paper, we report that we obtained an accurate reconstruction of an image by using our proposed method against the color hologram anew. We confirmed that our proposed the color hologram properly recorded both color and the 3-D information of the space by an assessment experiment which optically reconstructs the hologram.",
-        "doi": "10.1109/PCS.2010.5702538",
-        "url": "https://ieeexplore.ieee.org/document/5702538/"
-    },
-    {
-        "authors": [
             "Ning Jin",
             "Derong Liu"
         ],
@@ -62,20 +33,6 @@
         "abstract": "We show that training neural classifiers with Bayesian bidirectional backpropagation improves the performance of the network. Bidirectional backpropagation trains a deep network for both forward and backward recall through the same layers of neurons and with the same weights. It maximizes the network's joint forward and backward likelihood. Bayesian bidirectional backpropagation combines prior probabilities at the input and output layers with the likelihood structure of the layers. It maximizes the posterior probability of the network. It differs from other forms of neural Bayesian estimation because it uses the bidirectional likelihood of the network instead of the unidirectional likelihood. Bayesian bidirectional backpropagation outperformed classifiers trained with both unidirectional and bidirectional backpropagation. The networks trained on the CIFAR-10 and CIFAR-100 image test sets. A Laplacian or Lasso-like prior outperformed both Gaussian and uniform priors.",
         "doi": "10.1109/IJCNN52387.2021.9533873",
         "url": "https://ieeexplore.ieee.org/document/9533873/"
-    },
-    {
-        "authors": [
-            "Tong Cai",
-            "Chenye Wu",
-            "Jiasheng Zhang"
-        ],
-        "conference_name": "2022 7th IEEE Workshop on the Electronic Grid (eGRID)",
-        "conference_location": "Auckland, New Zealand",
-        "title": "A Bagging Long Short-term Memory Network for Financial Transmission Rights Forecasting",
-        "year": 2022,
-        "abstract": "A financial transmission right (FTR) is a financial derivative based on the differences between locational marginal prices (LMPs) of different nodes. FTRs are introduced into the electricity market to help market participants hedge against the risks of transmission congestion. Also, virtual bidders with advanced computational power and forecasting capabilities are encouraged to participate in the FTRs market. This enables FTRs a good crowd-sourcing indicator of transmission congestion. Hence, FTRs prediction can be very valuable to various stakeholders in the electricity sector. Noticing the value of FTRs, we propose Univariate Long Short-term Memory (ULSTM) and Multivariate Long Short-term Memory (MLSTM) networks for FTRs forecasting. To find out applicable predictors, we conduct ablation studies that compare the prediction accuracy of the Long Short-term Memory (LSTM) networks by varying features and input lag lengths. Although the incorporation of associated features generally improves the forecast accuracy, the periodic noises of these features may ruin the forecasting ability of our proposed network. To smooth out the noises, we further propose a bagging method to enhance our prediction networks.",
-        "doi": "10.1109/eGRID57376.2022.9990015",
-        "url": "https://ieeexplore.ieee.org/document/9990015/"
     },
     {
         "authors": [
@@ -103,20 +60,5 @@
         "abstract": "Magnetometry is among the most used techniques in space exploration, e.g. to study complex plasma interactions between the solar wind and the Earth's magnetosphere, to map the planetary or interplanetary magnetic fields, or to retrieve information about the structural composition of planets. The success of each mission relies on the attainment of an adequate level of magnetic cleanliness at the sensor locations. At the European Space Agency (ESA) a prediction tool has been developed to simulate the far-field spurious magnetic field generated by the spacecraft in terms of remanent and induced magnetic dipole moments. Such magnetic dipole moments represent units and components of the satellite. Input data can be obtained from measurements, derived by analysis, or estimated by heritage from previous missions. The development of the analytical tool is finished and will be validated by measurements carried out on the integrated spacecraft in a large magnetic coil facility, and later used to support the definition of the algorithms for processing the flight data of a mission, which is currently under development. The prediction tool will also find useful applications for future missions, for example during the design trade-off for the instrument positioning, e.g. the length of the boom.",
         "doi": "10.1109/ISEMC.2011.6038424",
         "url": "https://ieeexplore.ieee.org/document/6038424/"
-    },
-    {
-        "authors": [
-            "Sujun Zhang",
-            "Jinsong Ping",
-            "Haojian Yan",
-            "Tingting Han"
-        ],
-        "conference_name": "2009 15th Asia-Pacific Conference on Communications",
-        "conference_location": "Shanghai, China",
-        "title": "Planetary radio occultation technique and inversion method for YH-1 Mars mission",
-        "year": 2009,
-        "abstract": "Investigations of planetary atmospheres, ionospheres, rings, and magnetic fields using radio science techniques have been conducted by almost every planetary mission, and are planned for many future projects. Changes in the frequency, phase, amplitude and polarization of the spacecraft radio signal, caused by passage through the atmosphere and ionosphere of the planet, were observed in rising and descending planet occultation events. Utilizing one inversion method, we can get the refractivity profiles of the atmosphere, density, temperature and pressure profiles of the neutral atmosphere, and the electron density profile of the ionosphere. Principles of the planetary radio occultation technique, physical backgrounds and module specifications of the YH-1 ground-based planetary atmosphere occultation processing system are described in this paper.",
-        "doi": "10.1109/APCC.2009.5375630",
-        "url": "https://ieeexplore.ieee.org/document/5375630/"
     }
 ]
