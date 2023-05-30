@@ -118,13 +118,15 @@ class QueryBuilder:
                 url_count += 100
 
         log("Summary of fields returned by query:", self.__class__.__name__)
-        log_extended_line(f"% with authors: {authors_count / len(resources)}")
-        log_extended_line(f"% with title: {title_count / len(resources)}")
-        log_extended_line(f"% with year: {year_count / len(resources)}")
-        log_extended_line(f"% with month: {month_count / len(resources)}")
-        log_extended_line(f"% with abstract: {abstract_count / len(resources)}")
-        log_extended_line(f"% with doi: {doi_count / len(resources)}")
-        log_extended_line(f"% with url: {url_count / len(resources)}")
+        # Set minimum denominator to avoid division-by-zero.
+        resource_count = max(len(resources), 1)
+        log_extended_line(f"% with authors: {authors_count / resource_count}")
+        log_extended_line(f"% with title: {title_count / resource_count}")
+        log_extended_line(f"% with year: {year_count / resource_count}")
+        log_extended_line(f"% with month: {month_count / resource_count}")
+        log_extended_line(f"% with abstract: {abstract_count / resource_count}")
+        log_extended_line(f"% with doi: {doi_count / resource_count}")
+        log_extended_line(f"% with url: {url_count / resource_count}")
 
     def set_authors(self, authors):
         pass

@@ -1,15 +1,26 @@
 """
 Resource database adapter for the IEEE Xplore library.
 """
+import os
 import random
 import requests
 from config import Config
 from models.custom_logger import log
+from models.persistent_cache import PersistentCache
 from models.resource import Resource
 from models.resource_database_adapters.query_builder import QueryBuilder
 
 
 class IEEEXploreQueryBuilder(QueryBuilder):
+    # To minimise the number of API calls made, cache the results.
+    # This is used for development purposes only,
+    # as IEEE Xplore has a limit on how many API calls can be made per day.
+    _REQUEST_DATA_CACHE_FILEPATH = os.path.join(
+        Config.APP_ROOT_DIR,
+        "ieee-xplore-query-builder-cache.json"
+    )
+    _request_data_cache = {}
+
     @classmethod
     def get_id(cls):
         return "ieeexplore"
@@ -23,6 +34,12 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         self._title = ""
         self._keywords = []
 
+        is_dev_env = os.environ.get("FLASK_ENV", "development") == "development"
+        if is_dev_env and PersistentCache.cache_enabled():
+            self._request_data_cache = PersistentCache.load_cache_file(
+                self._REQUEST_DATA_CACHE_FILEPATH
+            )
+
     def _get_request_data(self, query_args):
         """
         :param query_args: The query parameters passed on to the API.
@@ -31,15 +48,23 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         :rtype: None | dict
         """
         try:
-            res = requests.get(
+            req_session = requests.Session()
+            req = requests.Request(
+                "GET",
                 self._API_URL_BASE,
                 params=query_args,
                 headers={
                     "Accept": "application/json",
                     "Content-Type": "application/json"
-                },
-                timeout=10
+                }
             )
+            req_prepped = req_session.prepare_request(req)
+
+            if req_prepped.url in self._request_data_cache:
+                # This request has been previously stored in cache.
+                return self._request_data_cache[req_prepped.url]
+
+            res = req_session.send(req_prepped, timeout=10)
         except Exception as err:
             log(str(err), "IEEEXploreQueryBuilder", "error")
             return None
@@ -52,6 +77,8 @@ class IEEEXploreQueryBuilder(QueryBuilder):
 
         log(f"Successful response from {res.url}", "IEEEXploreQueryBuilder")
 
+        # Save the response of this new request in cache.
+        self._request_data_cache[res.url] = res.json()
         return res.json()
 
     def _get_candidate_resources(self, query_args):
@@ -199,6 +226,12 @@ class IEEEXploreQueryBuilder(QueryBuilder):
 
         if summarise_results_data:
             self._summarise_results_data(ress)
+
+        is_dev_env = os.environ.get("FLASK_ENV", "development") == "development"
+        if is_dev_env and PersistentCache.cache_enabled():
+            PersistentCache.save_cache_file(
+                self._REQUEST_DATA_CACHE_FILEPATH, data=self._request_data_cache
+            )
 
         return ress
 
