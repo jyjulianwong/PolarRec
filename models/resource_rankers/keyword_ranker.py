@@ -93,7 +93,7 @@ class KeywordRanker(Ranker):
 
             # Load the pre-trained spaCy pipeline that contains a PoS tagger,
             # a lemmatiser, a parser, and an entity recogniser.
-            nlp = spacy.load("en_core_web_sm")
+            nlp = spacy.load("en_core_web_md")
             # Add the additional TextRank pipe to the end of the pipeline.
             # TextRank uses PoS and dependency data to rank key phrases.
             nlp.add_pipe(
