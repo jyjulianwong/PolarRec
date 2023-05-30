@@ -298,7 +298,7 @@ class KeywordRanker(Ranker):
         log("spaCy pre-trained pipeline download started", "KeywordRanker")
         try:
             subprocess.run(
-                ["spacy download en_core_web_sm"],
+                ["spacy download en_core_web_md"],
                 shell=True,
                 check=True
             )
