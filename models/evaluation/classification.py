@@ -76,11 +76,11 @@ def _get_resource_category_dict(resources):
     return res_cat_dict
 
 
-def get_classif_precision(target_resource, keyword_model):
+def get_classif_accuracy(target_resource, keyword_model):
     """
-    Macro-precision considers candidate resources that match the target's wider
+    Macro-accuracy considers candidate resources that match the target's wider
     subject area as being a correct classification.
-    Micro-precision only considers candidate resources that match the target's
+    Micro-accuracy only considers candidate resources that match the target's
     exact specific subject area as being a correct classification.
     For example, the difference between ``cs`` (computer science in general) and
     ``cs.AI`` (artificial intelligence-specific resources).
@@ -89,7 +89,7 @@ def get_classif_precision(target_resource, keyword_model):
     :type target_resource: Resource
     :param keyword_model: The word embedding model to be used for keywords.
     :type keyword_model: Word2Vec.KeyedVectors
-    :return: The classification precision of the recommendation algorithm.
+    :return: The classification accuracy of the recommendation algorithm.
     :rtype: tuple[float, float]
     """
     macro_tp = 0
@@ -124,7 +124,7 @@ def get_classif_precision(target_resource, keyword_model):
         res_macro_cat_dict[resource] = macro_categories
 
     for ranked_resource in ranked_resources:
-        # Calculate micro-precision.
+        # Calculate micro-accuracy.
         pred_cats = res_micro_cat_dict[ranked_resource]
         true_cats = res_micro_cat_dict[target_resource]
         if pred_cats is None or true_cats is None:
@@ -140,7 +140,7 @@ def get_classif_precision(target_resource, keyword_model):
             # The recommended resource belongs in a different subject category.
             micro_fp += 1
 
-        # Calculate macro-precision.
+        # Calculate macro-accuracy.
         pred_cats = res_macro_cat_dict[ranked_resource]
         true_cats = res_macro_cat_dict[target_resource]
         if pred_cats is None or true_cats is None:
@@ -156,25 +156,25 @@ def get_classif_precision(target_resource, keyword_model):
             # The recommended resource belongs in a different subject category.
             macro_fp += 1
 
-    macro_precision = macro_tp / (macro_tp + macro_fp)
-    micro_precision = micro_tp / (micro_tp + micro_fp)
-    return macro_precision, micro_precision
+    macro_accuracy = macro_tp / (macro_tp + macro_fp)
+    micro_accuracy = micro_tp / (micro_tp + micro_fp)
+    return macro_accuracy, micro_accuracy
 
 
 if __name__ == "__main__":
     sample_resources = sr.load_resources_from_json()[sr.ARXIV_SAMPLE_FILEPATH]
     keyword_model = KeywordRanker.get_model()
 
-    macro_cps: list[float] = []
-    micro_cps: list[float] = []
+    macro_cas: list[float] = []
+    micro_cas: list[float] = []
     for i, resource in enumerate(sample_resources):
-        macro_cp, micro_cp = get_classif_precision(resource, keyword_model)
-        macro_cps.append(macro_cp)
-        micro_cps.append(micro_cp)
-        print(f"Macro-classification precision {i}: {macro_cp}")
-        print(f"Micro-classification precision {i}: {micro_cp}")
+        macro_ca, micro_ca = get_classif_accuracy(resource, keyword_model)
+        macro_cas.append(macro_ca)
+        micro_cas.append(micro_ca)
+        print(f"Macro-classification accuracy {i}: {macro_ca}")
+        print(f"Micro-classification accuracy {i}: {micro_ca}")
 
-    mean_macro_cp = sum(macro_cps) / len(macro_cps)
-    mean_micro_cp = sum(micro_cps) / len(micro_cps)
-    print(f"Mean macro-classification precision: {mean_macro_cp}")
-    print(f"Mean micro-classification precision: {mean_micro_cp}")
+    mean_macro_ca = sum(macro_cas) / len(macro_cas)
+    mean_micro_ca = sum(micro_cas) / len(micro_cas)
+    print(f"Mean macro-classification accuracy: {mean_macro_ca}")
+    print(f"Mean micro-classification accuracy: {mean_micro_ca}")
