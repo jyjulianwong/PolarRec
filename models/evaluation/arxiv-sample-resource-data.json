@@ -12,6 +12,33 @@
     },
     {
         "authors": [
+            "Florian Fischer",
+            "Arthur Fleig",
+            "Markus Klar",
+            "Viktorija Paneva",
+            "J\u00f6rg M\u00fcller"
+        ],
+        "title": "Towards a Deep(er) Understanding of Interaction through Modeling, Simulation, and Optimization",
+        "year": 2023,
+        "month": 2,
+        "abstract": "The traditional user-centered design process can hardly keep up with the ever\nfaster technical development and increasingly diverse user preferences. As a\nsolution, we propose to augment the tried-and-tested approach of conducting\nuser studies with simulation and optimization of the entire human-computer\ninteraction loop. This approach allows to better understand phenomena through\nexplicit modeling, build virtual prototypes through simulation, and improve\ninteraction techniques through optimization. Building predictive user models\nalso supports the creation and validation of HCI theories, and constitutes a\ndecisive step towards new, intelligent, and adaptive user interfaces. We report\nour experience in virtually developing new interaction techniques on the\nexample of acoustic levitation, and present our optimization-based framework\nfor HCI. With this, we strive to gain a better understanding of interaction and\nat the same time feed the discussion on questions such as which tools and\ntutorials are necessary to make virtual prototyping more accessible to\ndifferent audiences.",
+        "url": "http://arxiv.org/abs/2302.11409v1"
+    },
+    {
+        "authors": [
+            "Gwendal Fouch\u00e9",
+            "Ferran Argelaguet",
+            "Emmanuel Faure",
+            "Charles Kervrann"
+        ],
+        "title": "Timeline Design Space for Immersive Exploration of Time-Varying Spatial 3D Data",
+        "year": 2022,
+        "month": 6,
+        "abstract": "Timelines are common visualizations to represent and manipulate temporal\ndata, from historical events storytelling to animation authoring. However,\ntimeline visualizations rarely consider spatio-temporal 3D data (e.g. mesh or\nvolumetric models) directly, which are typically explored using 3D visualizers\nonly displaying one time-step at a time. In this paper, leveraging the\nincreased workspace and 3D interaction capabilities of virtual reality, we\npropose to use timelines for the visualization of 3D temporal data to support\nexploration and analysis. First, we propose a timeline design space for 3D\ntemporal data extending the timeline design space proposed by Brehmer et al.\nThe proposed design space adapts the scale, layout and representation\ndimensions to account for the depth dimension and how 3D temporal data can be\npartitioned and structured. In our approach, an additional dimension is\nintroduced, the support, which further characterizes the 3D dimension of the\nvisualization. To complement the design space and the interaction capabilities\nof VR systems, we discuss the interaction methods required for the efficient\nvisualization of 3D timelines. Then, to evaluate the benefits of 3D timelines,\nwe conducted a formal evaluation with two main objectives: comparing the\nproposed visualization with a traditional visualization method; exploring how\nusers interact with different 3D timeline designs. Our results showed that\ntime-related tasks can be achieved more comfortably using timelines, and more\nefficiently for specific tasks requiring the analysis of the surrounding\ntemporal context. Though the comparison between the different timeline designs\nwere inconclusive, participants reported a clear preference towards the\ntimeline design that did not occupy the vertical space. Finally, we illustrate\nthe use of the 3D timelines to a real use-case on the analysis of biological 3D\ntemporal datasets.",
+        "url": "http://arxiv.org/abs/2206.09910v1"
+    },
+    {
+        "authors": [
             "Ziqi Zhao",
             "Yucheng Shi",
             "Shushan Wu",
@@ -38,6 +65,17 @@
         "month": 5,
         "abstract": "Graph neural networks (GNNs), especially dynamic GNNs, have become a research\nhotspot in spatio-temporal forecasting problems. While many dynamic graph\nconstruction methods have been developed, relatively few of them explore the\ncausal relationship between neighbour nodes. Thus, the resulting models lack\nstrong explainability for the causal relationship between the neighbour nodes\nof the dynamically generated graphs, which can easily lead to a risk in\nsubsequent decisions. Moreover, few of them consider the uncertainty and noise\nof dynamic graphs based on the time series datasets, which are ubiquitous in\nreal-world graph structure networks. In this paper, we propose a novel Dynamic\nDiffusion-Variational Graph Neural Network (DVGNN) for spatio-temporal\nforecasting. For dynamic graph construction, an unsupervised generative model\nis devised. Two layers of graph convolutional network (GCN) are applied to\ncalculate the posterior distribution of the latent node embeddings in the\nencoder stage. Then, a diffusion model is used to infer the dynamic link\nprobability and reconstruct causal graphs in the decoder stage adaptively. The\nnew loss function is derived theoretically, and the reparameterization trick is\nadopted in estimating the probability distribution of the dynamic graphs by\nEvidence Lower Bound during the backpropagation period. After obtaining the\ngenerated graphs, dynamic GCN and temporal attention are applied to predict\nfuture states. Experiments are conducted on four real-world datasets of\ndifferent graph structures in different domains. The results demonstrate that\nthe proposed DVGNN model outperforms state-of-the-art approaches and achieves\noutstanding Root Mean Squared Error result while exhibiting higher robustness.\nAlso, by F1-score and probability distribution analysis, we demonstrate that\nDVGNN better reflects the causal relationship and uncertainty of dynamic\ngraphs.",
         "url": "http://arxiv.org/abs/2305.09703v1"
+    },
+    {
+        "authors": [
+            "Geetanjali Bihani",
+            "Julia Taylor Rayz"
+        ],
+        "title": "Calibration Error Estimation Using Fuzzy Binning",
+        "year": 2023,
+        "month": 4,
+        "abstract": "Neural network-based decisions tend to be overconfident, where their raw\noutcome probabilities do not align with the true decision probabilities.\nCalibration of neural networks is an essential step towards more reliable deep\nlearning frameworks. Prior metrics of calibration error primarily utilize crisp\nbin membership-based measures. This exacerbates skew in model probabilities and\nportrays an incomplete picture of calibration error. In this work, we propose a\nFuzzy Calibration Error metric (FCE) that utilizes a fuzzy binning approach to\ncalculate calibration error. This approach alleviates the impact of probability\nskew and provides a tighter estimate while measuring calibration error. We\ncompare our metric with ECE across different data populations and class\nmemberships. Our results show that FCE offers better calibration error\nestimation, especially in multi-class settings, alleviating the effects of skew\nin model confidence scores on calibration error estimation. We make our code\nand supplementary materials available at: https://github.com/bihani-g/fce",
+        "url": "http://arxiv.org/abs/2305.00543v2"
     },
     {
         "authors": [
@@ -80,5 +118,18 @@
         "month": 5,
         "abstract": "Observations of substructure in protoplanetary disks have largely been\nlimited to the brightest and largest disks, excluding the abundant population\nof compact disks which are likely sites of planet formation. Here, we reanalyze\n~0.1'', 1.33 mm ALMA continuum observations of 12 compact protoplanetary disks\nin the Taurus star-forming region. By fitting visibilities directly, we\nidentify substructures in 6 of the 12 compact disks. We then compare the\nsubstructures identified in the full Taurus sample of 24 disks in single star\nsystems and the ALMA DSHARP survey, differentiating between compact (R_eff,90%\n< 50 au) and extended (R_eff,90% > 50 au) disk sources. We find that\nsubstructures are detected at nearly all radii in both small and large disks.\nTentatively, we find fewer wide gaps in intermediate-sized disks with R_eff,90%\nbetween 30 and 90 au. We perform a series of planet-disk interaction\nsimulations to constrain the sensitivity of our visibility-fitting approach.\nUnder an assumption of planet-disk interaction, we use the gap widths and\ncommon disk parameters to calculate potential planet masses within the Taurus\nsample. We find that the young planet occurrence rate peaks near Neptune\nmasses, similar to the DSHARP sample. For 0.01 $M_J/M_\\odot$ $\\lesssim$\n$M_p/M_*$ $\\lesssim$ 0.1 $M_J/M_\\odot$, the rate is 17.4$\\pm$8.3%; for 0.1\n$M_J/M_\\odot$ $\\lesssim$ $M_p/M_*$ $\\lesssim$ 1 $M_J/M_\\odot$, it is\n27.8$\\pm$8.3%. Both of them are consistent with microlensing surveys. For gas\ngiants more massive than 5 $M_J$, the occurrence rate is 4.2$\\pm$4.2%,\nconsistent with direct imaging surveys.",
         "url": "http://arxiv.org/abs/2305.03862v2"
+    },
+    {
+        "authors": [
+            "Manasvi Lingam",
+            "Amedeo Balbi",
+            "Swadesh M. Mahajan"
+        ],
+        "title": "A Bayesian Analysis of Technological Intelligence in Land and Oceans",
+        "year": 2023,
+        "month": 5,
+        "abstract": "Current research indicates that (sub)surface ocean worlds essentially devoid\nof subaerial landmasses (e.g., continents) are common in the Milky Way, and\nthat these worlds could host habitable conditions, thence raising the\npossibility that life and technological intelligence (TI) may arise in such\naquatic settings. It is known, however, that TI on Earth (i.e., humans) arose\non land. Motivated by these considerations, we present a Bayesian framework to\nassess the prospects for the emergence of TIs in land- and ocean-based habitats\n(LBHs and OBHs). If all factors are equally conducive for TIs to arise in LBHs\nand OBHs, we demonstrate that the evolution of TIs in LBHs (which includes\nhumans) might have very low odds of roughly $1$-in-$10^3$ to $1$-in-$10^4$,\nthus outwardly contradicting the Copernican Principle. Hence, we elucidate\nthree avenues whereby the Copernican Principle can be preserved: (i) the\nemergence rate of TIs is much lower in OBHs, (ii) the habitability interval for\nTIs is much shorter in OBHs, and (iii) only a small fraction of worlds with\nOBHs comprise appropriate conditions for effectuating TIs. We also briefly\ndiscuss methods for empirically falsifying our predictions, and comment on the\nfeasibility of supporting TIs in aerial environments.",
+        "doi": "10.3847/1538-4357/acb6fa",
+        "url": "http://arxiv.org/abs/2305.05989v1"
     }
 ]

@@ -15,32 +15,32 @@ ARXIV_SAMPLE_FILEPATH = "arxiv-sample-resource-data.json"
 ARXIV_SAMPLE_TITLES = [
     # Human-computer interaction
     "Human or Machine: Reflections on Turing-Inspired Testing for the Everyday",
-    # "Towards a Deep(er) Understanding of Interaction through Modeling, Simulation, and Optimization",
-    # "Timeline Design Space for Immersive Exploration of Time-Varying Spatial 3D Data",
+    "Towards a Deep(er) Understanding of Interaction through Modeling, Simulation, and Optimization",
+    "Timeline Design Space for Immersive Exploration of Time-Varying Spatial 3D Data",
     # Machine learning
     "Interpretation of Time-Series Deep Models: A Survey",
     "Dynamic Causal Explanation Based Diffusion-Variational Graph Neural Network for Spatio-temporal Forecasting",
-    # "Calibration Error Estimation Using Fuzzy Binning",
+    "Calibration Error Estimation Using Fuzzy Binning",
     # Astrophysics (Earth and Planetary Astrophysics)
     "Star-Planet Interaction at radio wavelengths in YZ Ceti: Inferring planetary magnetic field",
     "Substructures in Compact Disks of the Taurus Star-forming Region",
-    # "A Bayesian Analysis of Technological Intelligence in Land and Oceans",
+    "A Bayesian Analysis of Technological Intelligence in Land and Oceans",
 ]
 
 IEEE_XPLORE_SAMPLE_FILEPATH = "ieee-xplore-sample-resource-data.json"
 IEEE_XPLORE_SAMPLE_TITLES = [
     # Human-computer interaction
     "Spatial approximation of volumetric images for simplified transmission and display",
-    # "Recent development in stereoscopic display technology",
-    # "Electoronic hologram generation using high quality color and depth information of natural scene",
+    "Recent development in stereoscopic display technology",
+    "Electoronic hologram generation using high quality color and depth information of natural scene",
     # Machine learning
     "Wavelet Basis Function Neural Networks for Sequential Learning",
     "Bayesian Bidirectional Backpropagation Learning",
-    # "A Bagging Long Short-term Memory Network for Financial Transmission Rights Forecasting",
+    "A Bagging Long Short-term Memory Network for Financial Transmission Rights Forecasting",
     # Astrophysics
     "Comparative Study on the Performance of Two Different Planetary Geared Permanent Magnet Planetary Gear Motors",
     "Prediction of DC magnetic fields for magnetic cleanliness on spacecraft",
-    # "Planetary radio occultation technique and inversion method for YH-1 Mars mission",
+    "Planetary radio occultation technique and inversion method for YH-1 Mars mission",
 ]
 
 RES_SET_FILEPATH_DICT = {
