@@ -20,6 +20,34 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class KeywordRanker(Ranker):
     @classmethod
+    def _get_keywords_dupes_removed(cls, keywords, window_size=20):
+        """
+        Remove nearby deep duplicates in a keyword list, e.g. "pixel-wise" and
+        "pixel-wise segmentation" are considered deep duplicates.
+        Only deep duplicates within the "window" are removed; those outside the
+        window remain as is.
+        Assumes the input keywords are sufficiently "clean", i.e. without any
+        unnecessary punctuation, whitespace, or newline characters.
+
+        :param keywords: The list of keywords.
+        :type keywords: list[str]
+        :return: The list of keywords with deep duplicates removed.
+        :rtype: list[str]
+        """
+        result: list[str] = []
+        for i, keyword1 in enumerate(keywords):
+            duplicate = False
+            window_min = max(0, i - math.ceil(window_size / 2))
+            window_max = min(len(keywords), i + math.ceil(window_size / 2))
+            for keyword2 in keywords[window_min:window_max]:
+                if keyword1 != keyword2 and keyword1 in keyword2:
+                    duplicate = True
+                    break
+            if not duplicate:
+                result.append(keyword1)
+        return result
+
+    @classmethod
     def _get_keywords_from_text(
         cls,
         text,
@@ -67,6 +95,7 @@ class KeywordRanker(Ranker):
                 reverse=True
             )
             keywords = [words[i] for i, score in tfidf_zip]
+            keywords = cls._get_keywords_dupes_removed(keywords)
             return keywords
 
         if kw_rank_method == "textrank":
@@ -112,6 +141,7 @@ class KeywordRanker(Ranker):
             keywords = [
                 w for w in keywords if len(w.split(" ")) <= max_phrase_length
             ]
+            keywords = cls._get_keywords_dupes_removed(keywords)
             return keywords
 
     @classmethod
