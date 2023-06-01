@@ -89,17 +89,15 @@ def _get_predef_keywords(resource):
     return predef_keywords
 
 
-def get_kw_extraction_precision(target_resource):
+def get_kw_extraction_accuracy(target_resource):
     """
     :param target_resource: The target sample resource.
     :type target_resource: Resource
-    :return: The keyword extraction precision of the extraction algorithm.
+    :return: The keyword extraction accuracy of the extraction algorithm.
     :rtype: float
     """
-    true_positive = 0
-    true_negative = 0
-    false_positive = 0
-    false_negative = 0
+    hit_count = 0
+    miss_count = 0
 
     predef_keywords = _get_predef_keywords(target_resource)
     if predef_keywords is None:
@@ -109,6 +107,8 @@ def get_kw_extraction_precision(target_resource):
             "error"
         )
         return 0.0
+    # Only consider the top 20 pre-defined keywords.
+    predef_keywords = predef_keywords[:min(len(predef_keywords), 20)]
 
     ranker_keywords = KeywordRanker.get_keywords(resources=[target_resource])
     # Only consider the top 20 keywords extracted by the algorithm.
@@ -121,31 +121,32 @@ def get_kw_extraction_precision(target_resource):
         for predef_keyword in predef_keywords:
             predef_keyword = Resource.get_comparable_str(predef_keyword)
 
-            common_words = list(set(ranker_keyword.split(" ")).intersection(
-                predef_keyword.split(" ")
+            common_words = list(set(ranker_keyword.split()).intersection(
+                predef_keyword.split()
             ))
 
-            if len(common_words) > 0:
+            if len(common_words) > len(predef_keyword.split()) // 2:
                 matched = True
-                true_positive += 1
+                hit_count += 1
                 break
 
         if not matched:
-            false_positive += 1
+            miss_count += 1
 
-    return true_positive / (true_positive + false_positive)
+    return hit_count / (hit_count + miss_count)
 
 
 if __name__ == "__main__":
+    # Use the IEEE Xplore samples because we need pre-defined keyword data.
     sample_resources = sr.load_resources_from_json()[
         sr.IEEE_XPLORE_SAMPLE_FILEPATH
     ]
 
-    keps: list[float] = []
+    keas: list[float] = []
     for i, resource in enumerate(sample_resources):
-        kep = get_kw_extraction_precision(resource)
-        keps.append(get_kw_extraction_precision(resource))
-        print(f"Keyword extraction precision {i}: {kep}")
+        kea = get_kw_extraction_accuracy(resource)
+        keas.append(get_kw_extraction_accuracy(resource))
+        print(f"Keyword extraction accuracy {i}: {kea}")
 
-    mean_kep = sum(keps) / len(keps)
-    print(f"Mean keyword extraction precision: {mean_kep}")
+    mean_kea = sum(keas) / len(keas)
+    print(f"Mean keyword extraction accuracy: {mean_kea}")

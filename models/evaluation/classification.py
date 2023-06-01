@@ -92,10 +92,10 @@ def get_classif_accuracy(target_resource, keyword_model):
     :return: The classification accuracy of the recommendation algorithm.
     :rtype: tuple[float, float]
     """
-    macro_tp = 0
-    micro_tp = 0
-    macro_fp = 0
-    micro_fp = 0
+    macro_hit_count = 0
+    micro_hit_count = 0
+    macro_miss_count = 0
+    micro_miss_count = 0
 
     ranked_resources = get_ranked_resources(
         target_resources=[target_resource],
@@ -135,10 +135,10 @@ def get_classif_accuracy(target_resource, keyword_model):
         common_cats = list(set(pred_cats).intersection(true_cats))
         if len(common_cats) > 0:
             # The recommended resource belongs in the same subject category.
-            micro_tp += 1
+            micro_hit_count += 1
         else:
             # The recommended resource belongs in a different subject category.
-            micro_fp += 1
+            micro_miss_count += 1
 
         # Calculate macro-accuracy.
         pred_cats = res_macro_cat_dict[ranked_resource]
@@ -151,17 +151,18 @@ def get_classif_accuracy(target_resource, keyword_model):
         common_cats = list(set(pred_cats).intersection(true_cats))
         if len(common_cats) > 0:
             # The recommended resource belongs in the same subject category.
-            macro_tp += 1
+            macro_hit_count += 1
         else:
             # The recommended resource belongs in a different subject category.
-            macro_fp += 1
+            macro_miss_count += 1
 
-    macro_accuracy = macro_tp / (macro_tp + macro_fp)
-    micro_accuracy = micro_tp / (micro_tp + micro_fp)
+    macro_accuracy = macro_hit_count / (macro_hit_count + macro_miss_count)
+    micro_accuracy = micro_hit_count / (micro_hit_count + micro_miss_count)
     return macro_accuracy, micro_accuracy
 
 
 if __name__ == "__main__":
+    # Use the ArXiv samples because we need subject area classification data.
     sample_resources = sr.load_resources_from_json()[sr.ARXIV_SAMPLE_FILEPATH]
     keyword_model = KeywordRanker.get_model()
 

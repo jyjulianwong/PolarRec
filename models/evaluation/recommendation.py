@@ -119,19 +119,17 @@ class S2rAdapter:
         return recommended_resources
 
 
-def get_recommend_precision(target_resource, keyword_model):
+def get_recommend_accuracy(target_resource, keyword_model):
     """
     :param target_resource: The target resource.
     :type target_resource: Resource
     :param keyword_model: The word embedding model to be used for keywords.
     :type keyword_model: Word2Vec.KeyedVectors
-    :return: The recommendation precision of the recommendation algorithm.
+    :return: The recommendation accuracy of the recommendation algorithm.
     :rtype: float
     """
-    true_positive = 0
-    true_negative = 0
-    false_positive = 0
-    false_negative = 0
+    hit_count = 0
+    miss_count = 0
 
     y_true = S2rAdapter.get_recommended_resources(
         target_resource=target_resource,
@@ -157,25 +155,26 @@ def get_recommend_precision(target_resource, keyword_model):
     for y_pred_title in y_pred_titles:
         if y_pred_title in y_true_titles:
             # Our predicted resource is in the "gold standard" list.
-            true_positive += 1
+            hit_count += 1
         else:
             # Our predicted resource is not in the "gold standard" list.
-            false_positive += 1
+            miss_count += 1
 
-    return true_positive / (true_positive + false_positive)
+    return hit_count / (hit_count + miss_count)
 
 
 if __name__ == "__main__":
+    # Use the IEEE Xplore samples because we need DOI data.
     sample_resources = sr.load_resources_from_json()[
         sr.IEEE_XPLORE_SAMPLE_FILEPATH
     ]
     keyword_model = KeywordRanker.get_model()
 
-    rps: list[float] = []
+    ras: list[float] = []
     for i, resource in enumerate(sample_resources):
-        rp = get_recommend_precision(resource, keyword_model)
-        rps.append(rp)
-        print(f"Recommendation precision {i}: {rp}")
+        ra = get_recommend_accuracy(resource, keyword_model)
+        ras.append(ra)
+        print(f"Recommendation accuracy {i}: {ra}")
 
-    mean_rp = sum(rps) / len(rps)
-    print(f"Mean recommendation precision: {mean_rp}")
+    mean_ra = sum(ras) / len(ras)
+    print(f"Mean recommendation accuracy: {mean_ra}")
