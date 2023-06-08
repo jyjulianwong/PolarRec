@@ -1,9 +1,8 @@
-import math
 import numpy as np
 import time
 
 
-def get_relation_vector_similarity(rel_vec1, rel_vec2):
+def get_relation_vec_sim(rel_vec1, rel_vec2):
     """
     Calculates the similarity between two relation matrix user vectors.
 
@@ -37,7 +36,7 @@ def get_similarity_matrix(rel_mat):
 
             rel_vec1 = rel_mat[i1]
             rel_vec2 = rel_mat[i2]
-            sim = get_relation_vector_similarity(rel_vec1, rel_vec2)
+            sim = get_relation_vec_sim(rel_vec1, rel_vec2)
             sim_mat[i1][i2] = sim
             sim_mat[i2][i1] = sim
 

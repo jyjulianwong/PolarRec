@@ -3,14 +3,15 @@ Objects and methods for ranking academic resources via Context-based
 Collaborative Filtering (CCF). For the original implementation, see
 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
 """
-import math
 import numpy as np
+import scipy.special as sc
 import time
 
 
-def get_cooccurence_prob(rel_vec1, rel_vec2):
+def get_cooccurrence_prob(rel_vec1, rel_vec2):
     """
     See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
+    Referencing Section III (A).
 
     :param rel_vec1: A user vector from the relation matrix.
     :type rel_vec1: np.ndarray
@@ -19,30 +20,35 @@ def get_cooccurence_prob(rel_vec1, rel_vec2):
     :return: The co-occurrence probability value.
     :rtype: float
     """
+    # Calculate the raw values of the contingency table.
     sum_vec = np.add(rel_vec1, rel_vec2)
     n11 = np.shape(sum_vec[sum_vec == 2])[-1]
     n22 = np.shape(sum_vec[sum_vec == 0])[-1]
     sub_vec = np.subtract(rel_vec1, rel_vec2)
     n12 = np.shape(sub_vec[sub_vec == 1])[-1]
     n21 = np.shape(sub_vec[sub_vec == -1])[-1]
-
+    # Calculate the derivative values from the contingency table.
     r1 = n11 + n12
     r2 = n21 + n22
     c1 = n11 + n21
     c2 = n12 + n22
     n = c1 + c2
 
-    chi_sqd = (abs(n11 * n22 - n12 * n21) - n / 2) ** 2
-    chi_sqd /= max(r1 * r2 * c1 * c2, 1)
+    # Calculate the number of degrees of freedom of the contingency table.
+    v = 1
+    # Calculate the chi-squared value.
+    x = (abs(n11 * n22 - n12 * n21) - n / 2) ** 2 / max(r1 * r2 * c1 * c2, 1)
 
-    prob = (math.e ** -0.5) * (chi_sqd ** 2)
-    prob /= 2 * ((2 * math.pi) ** 0.5)
+    # Calculate the co-occurrence probability,
+    # using the gamma function and regularised upper incomplete gamma function.
+    prob = 1 - (sc.gammaincc(v / 2, x / 2) / sc.gamma(v / 2))
     return prob
 
 
 def get_association_matrix(rel_mat, user_idxs, cooc_prob_ts=0.1):
     """
     See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
+    Referencing Section III (A).
 
     :param rel_mat: The relation matrix.
     :type rel_mat: np.ndarray
@@ -63,17 +69,18 @@ def get_association_matrix(rel_mat, user_idxs, cooc_prob_ts=0.1):
 
             rel_vec1 = rel_mat[i1]
             rel_vec2 = rel_mat[i2]
-            cooc_prob = get_cooccurence_prob(rel_vec1, rel_vec2)
+            cooc_prob = get_cooccurrence_prob(rel_vec1, rel_vec2)
             if cooc_prob > cooc_prob_ts:
                 ass_mat[i1][i2] = 1
 
     return ass_mat
 
 
-def get_association_vector_similarity(ass_vec1, ass_vec2):
+def get_association_vec_sim(ass_vec1, ass_vec2):
     """
     Calculates the similarity between two association matrix user vectors.
     See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
+    Referencing Section III (A).
 
     :param ass_vec1: A user vector from the association matrix.
     :type ass_vec1: np.ndarray
@@ -91,6 +98,7 @@ def get_association_vector_similarity(ass_vec1, ass_vec2):
 def get_similarity_matrix(ass_mat):
     """
     See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
+    Referencing Section III (B).
 
     :param ass_mat: The association matrix.
     :type ass_mat: np.ndarray
@@ -107,7 +115,7 @@ def get_similarity_matrix(ass_mat):
 
             ass_vec1 = ass_mat[i1]
             ass_vec2 = ass_mat[i2]
-            sim = get_association_vector_similarity(ass_vec1, ass_vec2)
+            sim = get_association_vec_sim(ass_vec1, ass_vec2)
             sim_mat[i1][i2] = sim
             sim_mat[i2][i1] = sim
 
@@ -118,6 +126,7 @@ def get_score_matrix(rel_mat, user_idxs, item_idxs, target_user_idxs):
     """
     The indices in ``target_user_idxs`` must be included in ``user_idxs``.
     See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
+    Referencing Section III (C).
 
     :param rel_mat: The relation matrix.
     :type rel_mat: np.ndarray

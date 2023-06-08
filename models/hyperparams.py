@@ -26,10 +26,12 @@ class Hyperparams:
     UNIVERSAL_CF_METHOD = "userbased"  # "userbased", "contextbased"
     # The threshold value above which two resources have significant author co-occurrence.
     # See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
-    AUTHOR_COOC_PROB_TS = 0.4
+    # Referencing Section IV (D).
+    AUTHOR_COOC_PROB_TS = 0.5
     # The threshold value above which two resources have significant citation co-occurrence.
     # See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
-    CITATION_COOC_PROB_TS = 0.4
+    # Referencing Section IV (D).
+    CITATION_COOC_PROB_TS = 0.5
 
     # The keyword extraction and ranking method used.
     KEYWORD_RANK_METHOD = "tfidf"  # "tfidf", "textrank"

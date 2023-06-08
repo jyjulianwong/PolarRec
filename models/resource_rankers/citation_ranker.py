@@ -128,14 +128,16 @@ class CitationRanker(Ranker):
         sim_list = sorted(sim_list, key=lambda x: (x[1], x[0]), reverse=True)
 
         # Assign the ranking position for each Resource object.
-        for i, (res, sim) in enumerate(sim_list):
+        prev_i = len(sim_list) - 1
+        for curr_i, (res, sim) in enumerate(sim_list):
             if sim == 0.0:
                 # In the case where many resources get a 0 similarity score,
                 # they should all receive an equal ranking,
                 # rather than be sorted in alphabetical order.
-                res.citation_based_ranking = len(sim_list)
+                res.citation_based_ranking = prev_i + 1
             else:
-                res.citation_based_ranking = i + 1
+                prev_i = curr_i
+                res.citation_based_ranking = curr_i + 1
 
 
 if __name__ == "__main__":
