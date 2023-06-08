@@ -1,3 +1,7 @@
+"""
+Objects and methods for ranking academic resources via user-based collaborative
+filtering (UCF).
+"""
 import numpy as np
 import time
 
