@@ -113,7 +113,7 @@ class KeywordRanker(Ranker):
                     :rtype: str
                     """
                     for token in span:
-                        if token.pos_ not in ["DET", "PRON"]:
+                        if token.pos_ in ["ADJ", "NOUN"]:
                             break
                         span = span[1:]
                     return span.text
