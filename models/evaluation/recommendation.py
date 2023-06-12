@@ -128,12 +128,14 @@ def get_recommend_accuracy(target_resource, keyword_model):
     :return: The recommendation accuracy of the recommendation algorithm.
     :rtype: float
     """
+    max_compared_results = 30
+
     hit_count = 0
     miss_count = 0
 
     y_true = S2rAdapter.get_recommended_resources(
         target_resource=target_resource,
-        max_results_retd=30
+        max_results_retd=max_compared_results
     )
     _, y_pred = get_recommended_resources(
         target_resources=[target_resource],
@@ -142,12 +144,12 @@ def get_recommend_accuracy(target_resource, keyword_model):
         resource_database_ids=[],
         keyword_model=keyword_model
     )
-    # Only consider the top 30 resources returned by our algorithm.
-    y_pred = y_pred[:min(len(y_pred), 30)]
+    # Only consider the top resources returned by our algorithm.
+    y_pred = y_pred[:min(len(y_pred), max_compared_results)]
 
-    max_ress_compared = min(len(y_true), len(y_pred))
-    y_true = y_true[:max_ress_compared]
-    y_pred = y_pred[:max_ress_compared]
+    max_compared_results = min(len(y_true), len(y_pred))
+    y_true = y_true[:max_compared_results]
+    y_pred = y_pred[:max_compared_results]
 
     y_true_titles = [Resource.get_comparable_str(r.title) for r in y_true]
     y_pred_titles = [Resource.get_comparable_str(r.title) for r in y_pred]
