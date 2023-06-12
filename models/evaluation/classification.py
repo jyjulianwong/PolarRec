@@ -168,7 +168,7 @@ def get_classif_accuracy(target_resource, keyword_model):
 
 if __name__ == "__main__":
     # Run this .py file to calculate the system's classification accuracy.
-    # Use the ArXiv samples because we need subject area classification data.
+    # Use the arXiv samples because we need subject area classification data.
     sample_resources = sr.load_resources_from_json()[sr.ARXIV_SAMPLE_FILEPATH]
     keyword_model = KeywordRanker.get_model()
 

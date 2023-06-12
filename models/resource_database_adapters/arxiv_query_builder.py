@@ -83,7 +83,7 @@ class ArxivQueryBuilder(QueryBuilder):
             search_query.append(f"ti:{self._title.replace(' ', '+').lower()}")
 
         if self._min_date or self._max_date:
-            # TODO: Not supported by ArXiv API.
+            # FIXME: Date-based search queries are not supported by arXiv.
             pass
 
         if self._keywords:
@@ -134,7 +134,7 @@ class ArxivQueryBuilder(QueryBuilder):
             if isinstance(resource_data["author"], list):
                 authors = [data["name"] for data in resource_data["author"]]
             else:
-                # ArXiv changes the return type if there is only one author.
+                # xmltodict changes the return type if there is only one author.
                 # We have to create a singleton list ourselves.
                 authors = [resource_data["author"]["name"]]
 

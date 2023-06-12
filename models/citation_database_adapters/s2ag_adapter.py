@@ -231,7 +231,7 @@ class S2agAdapter(Adapter):
 
         references: list[Resource] = []
         for reference_data in data["references"]:
-            # TODO: Data typically only contains paperId and title.
+            # Currently, API-returned data only contains paperId and title.
             resource_args = {}
             if "authors" in reference_data:
                 resource_args["authors"] = []
