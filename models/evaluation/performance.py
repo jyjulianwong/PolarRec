@@ -5,7 +5,7 @@ usage of the recommendation algorithm.
 import time
 import tracemalloc
 from models.evaluation import sample_resources as sr
-from models.recommend import get_ranked_resources
+from models.recommend import get_recommended_resources
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
 
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     for i, resource in enumerate(sample_resources):
         tracemalloc.start()
         t1 = time.time()
-        _, _ = get_ranked_resources(
+        _, _ = get_recommended_resources(
             target_resources=[resource],
             existing_resources=[],
             resource_filter=ResourceFilter({}),

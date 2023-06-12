@@ -7,7 +7,7 @@ from config import Config
 from models.custom_logger import log, log_extended_line
 from models.persistent_cache import PersistentCache
 from models.evaluation import sample_resources as sr
-from models.recommend import get_ranked_resources
+from models.recommend import get_recommended_resources
 from models.resource import Resource
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
@@ -135,7 +135,7 @@ def get_recommend_accuracy(target_resource, keyword_model):
         target_resource=target_resource,
         max_results_retd=30
     )
-    _, y_pred = get_ranked_resources(
+    _, y_pred = get_recommended_resources(
         target_resources=[target_resource],
         existing_resources=[],
         resource_filter=ResourceFilter({}),

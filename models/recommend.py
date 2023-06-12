@@ -167,7 +167,7 @@ def _get_candidate_mean_rank_dict(
     return cand_mean_rank_dict
 
 
-def get_ranked_resources(
+def get_recommended_resources(
     target_resources,
     existing_resources,
     resource_filter,
@@ -314,8 +314,8 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     print("\nrecommend: Generate a recommendation list for a resource")
 
     t1 = time.time()
-    # TODO: Test existing and citation resources.
-    _, ranked_resources = get_ranked_resources(
+    # TODO: Test existing resources.
+    _, reco_database_ress = get_recommended_resources(
         [target_resource],
         [],
         ResourceFilter({
@@ -325,15 +325,15 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         keyword_model
     )
     t2 = time.time()
-    print(f"recommend: ranked_resources: {len(ranked_resources)}")
-    for i, ranked_res in enumerate(ranked_resources):
-        print(f"{i}: {ranked_res.title}")
-        print(f"\t{ranked_res.authors}")
-        print(f"\t{ranked_res.year}")
-        print(f"\t{ranked_res.doi}")
-        print(f"\t{ranked_res.url}")
-        print(f"\tAuthor-based ranking:   {ranked_res.author_based_ranking}")
-        print(f"\tCitation-based ranking: {ranked_res.citation_based_ranking}")
-        print(f"\tCitation count ranking: {ranked_res.citation_count_ranking}")
-        print(f"\tKeyword-based ranking:  {ranked_res.keyword_based_ranking}")
+    print(f"recommend: ranked_resources: {len(reco_database_ress)}")
+    for i, reco_res in enumerate(reco_database_ress):
+        print(f"{i}: {reco_res.title}")
+        print(f"\t{reco_res.authors}")
+        print(f"\t{reco_res.year}")
+        print(f"\t{reco_res.doi}")
+        print(f"\t{reco_res.url}")
+        print(f"\tAuthor-based ranking:   {reco_res.author_based_ranking}")
+        print(f"\tCitation-based ranking: {reco_res.citation_based_ranking}")
+        print(f"\tCitation count ranking: {reco_res.citation_count_ranking}")
+        print(f"\tKeyword-based ranking:  {reco_res.keyword_based_ranking}")
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")

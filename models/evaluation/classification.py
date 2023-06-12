@@ -7,7 +7,7 @@ import urllib
 import xmltodict
 from models.custom_logger import log
 from models.evaluation import sample_resources as sr
-from models.recommend import get_ranked_resources
+from models.recommend import get_recommended_resources
 from models.resource import Resource
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
@@ -97,7 +97,7 @@ def get_classif_accuracy(target_resource, keyword_model):
     macro_miss_count = 0
     micro_miss_count = 0
 
-    _, ranked_resources = get_ranked_resources(
+    _, reco_database_ress = get_recommended_resources(
         target_resources=[target_resource],
         existing_resources=[],
         resource_filter=ResourceFilter({}),
@@ -105,11 +105,11 @@ def get_classif_accuracy(target_resource, keyword_model):
         keyword_model=keyword_model
     )
     # Only consider the top 10 resources returned by the algorithm.
-    ranked_resources = ranked_resources[:min(len(ranked_resources), 10)]
+    reco_database_ress = reco_database_ress[:min(len(reco_database_ress), 10)]
 
     # Collect micro-categories for resources.
     res_micro_cat_dict = _get_resource_category_dict(
-        ranked_resources + [target_resource]
+        reco_database_ress + [target_resource]
     )
 
     # Derive macro-categories from micro-categories.
@@ -123,9 +123,9 @@ def get_classif_accuracy(target_resource, keyword_model):
         macro_categories = [c.split(".")[0] for c in categories]
         res_macro_cat_dict[resource] = macro_categories
 
-    for ranked_resource in ranked_resources:
+    for reco_resource in reco_database_ress:
         # Calculate micro-accuracy.
-        pred_cats = res_micro_cat_dict[ranked_resource]
+        pred_cats = res_micro_cat_dict[reco_resource]
         true_cats = res_micro_cat_dict[target_resource]
         if pred_cats is None or true_cats is None:
             # A NoneType indicates no category could be found for this resource.
@@ -141,7 +141,7 @@ def get_classif_accuracy(target_resource, keyword_model):
             micro_miss_count += 1
 
         # Calculate macro-accuracy.
-        pred_cats = res_macro_cat_dict[ranked_resource]
+        pred_cats = res_macro_cat_dict[reco_resource]
         true_cats = res_macro_cat_dict[target_resource]
         if pred_cats is None or true_cats is None:
             # A NoneType indicates no category could be found for this resource.

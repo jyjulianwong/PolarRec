@@ -6,7 +6,7 @@ import time
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from models.custom_logger import log
-from models.recommend import get_ranked_resources
+from models.recommend import get_recommended_resources
 from models.resource import Resource
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
@@ -83,7 +83,7 @@ def recommend():
         resource_database_ids = req_data["resource_databases"]
 
     # Retrieve the lists of ranked resources via the recommendation algorithm.
-    ranked_existing_resources, ranked_database_resources = get_ranked_resources(
+    reco_existing_ress, reco_database_ress = get_recommended_resources(
         target_resources=target_resources,
         existing_resources=existing_resources,
         resource_filter=resource_filter,
@@ -96,9 +96,9 @@ def recommend():
         "ranked_existing_resources": [],
         "ranked_database_resources": []
     }
-    for ranked_resource in ranked_existing_resources:
+    for ranked_resource in reco_existing_ress:
         res_data["ranked_existing_resources"].append(ranked_resource.to_dict())
-    for ranked_resource in ranked_database_resources:
+    for ranked_resource in reco_database_ress:
         res_data["ranked_database_resources"].append(ranked_resource.to_dict())
 
     # The end time of processing the request.
