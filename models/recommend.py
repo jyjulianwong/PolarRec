@@ -23,7 +23,7 @@ from typing import List, Type
 # Support for type hinting requires Python 3.5.
 def _get_res_db_query_builders() -> List[Type[QueryBuilder]]:
     """
-    :return: The list of resource databases the recommendation algorithm calls.
+    :return: The list of resource databases the recommender system supports.
     :rtype: list[Type[QueryBuilder]]
     """
     return [ArxivQueryBuilder, IEEEXploreQueryBuilder]
@@ -32,10 +32,10 @@ def _get_res_db_query_builders() -> List[Type[QueryBuilder]]:
 # Support for type hinting requires Python 3.5.
 def _get_cit_db_adapter() -> Type[Adapter]:
     """
-    :return: The citation database the recommendation algorithm calls.
+    :return: The selected citation database the recommender system uses.
     :rtype: Type[Adapter]
     """
-    # TODO: Return a list of adapters instead of a chosen one.
+    # FIXME: Modify this to return a list of adapters instead of a single one.
     return S2agAdapter
 
 
@@ -46,32 +46,35 @@ def _get_candidate_resources(
     query_builder: Type[QueryBuilder]
 ):
     """
-    :param target_keywords: The list of keywords from the target resources.
+    :param target_keywords: The list of keywords from the target resource(s).
     :type target_keywords: list[str]
-    :param target_authors: The list of authors from the target resources.
+    :param target_authors: The list of authors from the target resource(s).
     :type target_authors: list[str]
-    :param query_builder: The resource database to call.
+    :param query_builder: The resource database adapter to query.
     :type query_builder: Type[QueryBuilder]
-    :return: A list of candidate resources based on the target resource.
+    :return: A list of candidate resources based on target data.
     :rtype: list[Resource]
     """
     candidates: list[Resource] = []
 
-    # Query 1: The keyword-based query.
+    # Generate the keyword-based search query.
     if len(target_keywords) > 0:
         keyword_based_query_builder = query_builder()
+        # Only add the top keywords into the query.
         keyword_based_query_builder.add_keywords(target_keywords[:min(
             len(target_keywords), hp.MAX_RES_QUERY_KEYWORDS_USED
         )])
+        # Include results that only contain some of the keywords, not all.
         candidates += keyword_based_query_builder.get_resources(
             hp.MAX_RES_QUERY_RESULTS_RETD,
             must_have_all_fields=False
         )
 
-    # Query 2: The author-based query.
+    # Generate the author-based search query.
     if len(target_authors) > 0:
         author_based_query_builder = query_builder()
         author_based_query_builder.set_authors(target_authors)
+        # Include results that only contain some of the authors, not all.
         candidates += author_based_query_builder.get_resources(
             hp.MAX_RES_QUERY_RESULTS_RETD,
             must_have_all_fields=False
@@ -83,11 +86,12 @@ def _get_candidate_resources(
 def _set_resource_references(resources):
     """
     Searches for and assigns references to resources using the chosen citation
-    database adapters.
+    database adapter(s).
 
     :param resources: The list of resources to collect references for.
     :type resources: list[Resource]
     """
+    # Only process resources that do not have existing reference data.
     ress_with_no_refs: list[Resource] = []
     for resource in resources:
         if resource.references is None:
@@ -97,17 +101,19 @@ def _set_resource_references(resources):
     reference_dict = cit_db_adapter.get_references(ress_with_no_refs)
     for resource, references in reference_dict.items():
         if len(references) > 0:
+            # The citation database adapter has found data for this resource.
             resource.references = references
 
 
 def _set_resource_citation_counts(resources):
     """
     Searches for and assigns citation counts to resources using the chosen
-    citation database adapters.
+    citation database adapter(s).
 
     :param resources: The list of resources to collect citation counts for.
     :type resources: list[Resource]
     """
+    # Only process resources that do not have existing citation count data.
     ress_with_no_cit_counts: list[Resource] = []
     for resource in resources:
         if resource.citation_count is None:
@@ -116,7 +122,8 @@ def _set_resource_citation_counts(resources):
     cit_db_adapter = _get_cit_db_adapter()
     cit_count_dict = cit_db_adapter.get_citation_count(ress_with_no_cit_counts)
     for resource, count in cit_count_dict.items():
-        if count > 0:
+        if count >= 0:
+            # The citation database adapter has found data for this resource.
             resource.citation_count = count
 
 
@@ -128,7 +135,7 @@ def _get_candidate_mean_rank_dict(
 ):
     """
     Ranks candidates using multiple specialised algorithms (Rankers).
-    Uses the mean ranking across all algorithms as the "recommendation score".
+    Uses the mean ranking across all rankers as the "recommendation score".
     Therefore, a smaller value corresponds to a better recommendation, with the
     best possible score being 1.
 
@@ -145,6 +152,7 @@ def _get_candidate_mean_rank_dict(
     """
     # Convert Resource objects to RankableResource objects.
     rankable_cand_ress = [c.to_rankable_resource() for c in candidate_resources]
+    # The collection of resource rankers used to rank the candidates.
     rankers = [AuthorRanker, CitationRanker, CitationCountRanker, KeywordRanker]
     for ranker in rankers:
         # Assign rankings for each type of Ranker.
@@ -155,10 +163,11 @@ def _get_candidate_mean_rank_dict(
             kw_model=keyword_model
         )
 
+    # The mapping of candidates to their weighted mean rankings.
     cand_mean_rank_dict: dict[RankableResource, float] = {}
     for ranked_cand_res in rankable_cand_ress:
-        # Retrieve rankings set by rankers.
-        # Calculate the mean ranking across all rankers.
+        # Retrieve rankings set by resource rankers.
+        # Calculate the weighted mean ranking across all resource rankers.
         mean_rank = 0.25 * ranked_cand_res.author_based_ranking
         mean_rank += 0.25 * ranked_cand_res.citation_based_ranking
         mean_rank += 0.15 * ranked_cand_res.citation_count_ranking
@@ -175,8 +184,9 @@ def get_recommended_resources(
     keyword_model
 ):
     """
-    Calls research database APIs and recommends lists of academic resources
-    based on target resources, sorted according to their scores.
+    The main recommendation algorithm of the recommender system.
+    Queries research and citation databases and recommends lists of academic
+    resources based on target resources, sorted according to their relevance.
     If ``resource_database_ids`` is empty, assumes that all available resource
     databases can be searched through to obtain recommendations.
 
@@ -195,14 +205,16 @@ def get_recommended_resources(
     """
     # Extract keywords from target resources.
     target_keywords = KeywordRanker.get_keywords(resources=target_resources)
-    # Extract the complete list of authors from target resources.
+    # Extract the list of authors from target resources.
     target_authors = []
     for resource in target_resources:
         if resource.authors is not None:
             target_authors += resource.authors
 
-    # Collect candidate resources from resource databases.
+    # Generate keyword- and author-based search queries to resource databases,
+    # and collect candidate resources.
     candidate_resources: list[Resource] = []
+    # Generate the appropriate queries for each supported resource database.
     for query_builder in _get_res_db_query_builders():
         if len(resource_database_ids) > 0:
             # User has specified filters for what databases to use.
@@ -233,35 +245,38 @@ def get_recommended_resources(
     _set_resource_references(candidate_resources + target_resources)
     _set_resource_citation_counts(candidate_resources + target_resources)
 
-    # Assign a recommendation score for every candidate resource.
+    # Assign a weighted mean ranking (the "score") for every candidate resource.
     candidate_mean_rank_dict = _get_candidate_mean_rank_dict(
         candidate_resources=candidate_resources,
         target_resources=target_resources,
         target_keywords=target_keywords,
         keyword_model=keyword_model
     )
-    # Make the mean rank the primary key used for sorting.
+    # Make the weighted mean ranking the primary key used for sorting.
     candidate_mean_rank_dict = [
         (s, c) for c, s in candidate_mean_rank_dict.items()
     ]
     # Sort the list of candidates in order of their scores.
     # Only include existing resources if they appear in the top half of all...
-    # ... the ranked resources, i.e. is genuinely related to the targets.
+    # ... the recommended resources, i.e. are genuinely related to the targets.
     existing_included_th = math.floor(0.5 * len(candidate_mean_rank_dict))
-    ranked_existing_resources = [
+    reco_existing_resources = [
         c for s, c in sorted(candidate_mean_rank_dict)[:existing_included_th] if
         c in existing_resources
     ]
-    ranked_database_resources = [
+    reco_database_resources = [
         c for s, c in sorted(candidate_mean_rank_dict) if
         c not in existing_resources
     ]
 
-    return ranked_existing_resources, ranked_database_resources
+    return reco_existing_resources, reco_database_resources
 
 
 if __name__ == "__main__":
+    # Pre-load the KeywordRanker model.
     keyword_model = KeywordRanker.get_model()
+
+    # Define the example target data to be fed into the recommender system.
     target_data = {
         "authors": ["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
         "title": "SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",
@@ -305,16 +320,17 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     t2 = time.time()
     print("recommend: target_resource.references:")
     if target_resource.references is None:
+        # No references could be found for this target resource.
         print(None)
     else:
         for i, reference in enumerate(target_resource.references):
+            # Preview the title of each reference used in this target resource.
             print(f"\t[{i}]: {reference.title}")
     print(f"recommend: Time taken to execute: {t2 - t1} seconds")
 
-    print("\nrecommend: Generate a recommendation list for a resource")
+    print("\nrecommend: Generate database recommendations for a resource")
 
     t1 = time.time()
-    # TODO: Test existing resources.
     _, reco_database_ress = get_recommended_resources(
         [target_resource],
         [],
@@ -327,6 +343,8 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     t2 = time.time()
     print(f"recommend: ranked_resources: {len(reco_database_ress)}")
     for i, reco_res in enumerate(reco_database_ress):
+        # Preview the information from each recommendation,
+        # in a similar fashion to the Zotero plugin's results view.
         print(f"{i}: {reco_res.title}")
         print(f"\t{reco_res.authors}")
         print(f"\t{reco_res.year}")

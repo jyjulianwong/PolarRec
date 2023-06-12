@@ -35,16 +35,26 @@ class KeywordRanker(Ranker):
         :rtype: list[str]
         """
         result: list[str] = []
+
         for i, keyword1 in enumerate(keywords):
+            # Keep track of whether the current keyword is a "duplicate".
             duplicate = False
+
+            # Define the bounds of the window in which duplicates are removed.
             window_min = max(0, i - math.ceil(window_size / 2))
             window_max = min(len(keywords), i + math.ceil(window_size / 2))
+
+            # Only iterate through keywords within the window.
             for keyword2 in keywords[window_min:window_max]:
                 if keyword1 != keyword2 and keyword1 in keyword2:
+                    # keyword1 is a "deep duplicate" of keyword2.
                     duplicate = True
                     break
+
             if not duplicate:
+                # keyword1 is not a "deep duplicate".
                 result.append(keyword1)
+
         return result
 
     @classmethod
@@ -78,15 +88,18 @@ class KeywordRanker(Ranker):
         text = " ".join(text.split())
 
         if kw_rank_method == "tfidf":
-            # Custom tokenizer used to whitelist some characters like hyphens.
+            # Custom tokeniser is used to whitelist hyphen characters.
             vectorizer = TfidfVectorizer(
                 stop_words=stopwords.words("english"),
                 token_pattern=r"(?u)\b\w[\w-]*\w\b",
                 ngram_range=(min_phrase_length, max_phrase_length),
                 smooth_idf=False
             )
+            # Calculate the TF-IDF scores for every token in the text.
             tfidf_mat = vectorizer.fit_transform([text])
+            # Extract the tokens recognised by the vectoriser.
             words = vectorizer.get_feature_names_out()
+            # Sort all tokens into a zip by their TF-IDF scores in desc order.
             tdidf_coo = tfidf_mat.tocoo()
             tfidf_zip = zip(tdidf_coo.col, tdidf_coo.data)
             tfidf_zip = sorted(
@@ -94,7 +107,9 @@ class KeywordRanker(Ranker):
                 key=lambda x: (x[1], x[0]),
                 reverse=True
             )
+            # Extract the sorted tokens as a list.
             keywords = [words[i] for i, score in tfidf_zip]
+            # Remove deep-duplicate keywords without affecting sorting order.
             keywords = cls._get_keywords_dupes_removed(keywords)
             return keywords
 
@@ -104,16 +119,19 @@ class KeywordRanker(Ranker):
             @spacy.registry.misc("articles_scrubber")
             def articles_scrubber():
                 """
+                :return: A "scrubber" that filters tokens by their PoS.
                 :rtype: function
                 """
 
                 def scrubber_func(span):
                     """
                     :type span: spacy.util.Span
+                    :return: The text with tokens of certain PoS's removed.
                     :rtype: str
                     """
                     for token in span:
                         if token.pos_ in ["ADJ", "NOUN"]:
+                            # Only include adjectives and nouns in text.
                             break
                         span = span[1:]
                     return span.text
@@ -141,6 +159,7 @@ class KeywordRanker(Ranker):
             keywords = [
                 w for w in keywords if len(w.split(" ")) <= max_phrase_length
             ]
+            # Remove deep-duplicate keywords without affecting sorting order.
             keywords = cls._get_keywords_dupes_removed(keywords)
             return keywords
 
@@ -156,15 +175,21 @@ class KeywordRanker(Ranker):
         :return: The embedding vector for a phrase, calculated with vector mean.
         :rtype: tuple[(None | np.ndarray), list[str]]
         """
+        # The list of word embedding vectors for each word in the phrase.
         word_vecs = []
+        # The list of out-of-vocabulary words.
         oovs = []
+
         for word in phrase.split(" "):
             if word in model.key_to_index:
+                # Retrieve the word embedding vector for the particular word.
                 word_vecs.append(model.get_vector(word))
             else:
+                # The word does not exist in the word embedding model.
                 oovs.append(word)
 
         if len(oovs) == 0:
+            # Calculate the mean of all the word embedding vectors.
             word_vecs = np.array(word_vecs)
             phrase_vector = np.mean(word_vecs, axis=0)
             return phrase_vector, list(set(oovs))
@@ -186,11 +211,14 @@ class KeywordRanker(Ranker):
         :return: The cosine-based similarity of two phrases or n-grams.
         :rtype: tuple[(None | float), list[str]]
         """
+        # Generate phrase embedding vectors for the two phrases.
         vec1, oovs1 = cls._get_phrase_embedding_vector(model, p1)
         vec2, oovs2 = cls._get_phrase_embedding_vector(model, p2)
         if vec1 is None or vec2 is None:
+            # Phrase embedding vectors could not be calculated for p1 or p2.
             return None, list(set(oovs1 + oovs2))
 
+        # Calculate the cosine similarity of the two phrase embedding vectors.
         num = np.dot(vec1, vec2)
         den = np.linalg.norm(vec1) * np.linalg.norm(vec2)
         # Set minimum denominator to avoid division-by-zero.
@@ -228,36 +256,49 @@ class KeywordRanker(Ranker):
         :rtype: float
         """
         if len(l1) == 0 or len(l2) == 0:
+            # No need to compare if one of the lists are empty.
             return 0.0
 
+        # The list of target keywords compared.
         p1s = []
+        # The list of candidate keywords compared.
         p2s = []
+        # The list of the weights for each targ.-cand. keyword pair.
         weights = []
+        # The list of phrase similarities for each targ.-cand. keyword pair.
         psims = []
+        # The list of weighted similarities for each targ.-cand. keyword pair.
         wsims = []
+        # The list of out-of-vocabulary words.
         oovs = []
+
         for i1, p1 in enumerate(l1):
             if p1 in l2:
                 # Both lists contain this exact phrase. The similarity is 1.0.
                 i2 = l2.index(p1)
                 p1s.append(p1)
                 p2s.append(p1)
-                # TODO: Remove hard-coded lambda parameter.
+                # Set 0.2 as the neg. exponential dist. lambda parameter.
                 # Calculate weight using the negative exponential distribution.
                 w1 = 0.2 * math.e ** (-0.2 * i1)
                 w2 = 0.2 * math.e ** (-0.2 * i2)
                 weights.append(w1 * w2)
+                # Their phrase similarity is 1.0.
                 psims.append(1.0)
                 continue
 
+            # Keep track of the list indices for every p2.
             p2_i2_dict: dict[str, int] = {}
+            # Keep track of the phrase similarities for every p1-p2 pair.
             p2_psim_dict: dict[str, float] = {}
             for i2, p2 in enumerate(l2):
-                # Collect similarity scores for every p1-p2 pair.
+                # Collect phrase similarity scores for every p1-p2 pair.
                 psim, some_oovs = cls._get_phrase_similarity(model, p1, p2)
                 if psim is not None:
+                    # A phrase similarity was successfully calculated.
                     p2_i2_dict[p2] = i2
                     p2_psim_dict[p2] = psim
+                # Collect a list of all the OOVs for every p1-p2 pair.
                 oovs += some_oovs
 
             if len(p2_psim_dict) == 0:
@@ -267,11 +308,14 @@ class KeywordRanker(Ranker):
             # Find the phrase from l2 that is most similar to p1.
             p2_psim_list = [(s, p) for p, s in p2_psim_dict.items()]
             p2_psim_list = sorted(p2_psim_list, reverse=True)
+            # The p2 that is most similar to p1.
             p2 = p2_psim_list[0][1]
+            # The index of the p2 that is most similar to p1.
             i2 = p2_i2_dict[p2]
+            # The phrase similarity of p1 and p2.
             psim = p2_psim_list[0][0]
 
-            # TODO: Remove hard-coded lambda parameter.
+            # Set 0.2 as the neg. exponential dist. lambda parameter.
             # Calculate weight using the negative exponential distribution.
             w1 = 0.2 * math.e ** (-0.2 * i1)
             w2 = 0.2 * math.e ** (-0.2 * i2)
@@ -402,6 +446,7 @@ class KeywordRanker(Ranker):
 
         target_keywords = cls.get_keywords(target_resources, kw_rank_method)
 
+        # Collect the keyword list similarities for every target-candidate pair.
         sim_dict: dict[RankableResource, float] = {}
         for candidate_resource in rankable_resources:
             candidate_keywords = cls.get_keywords(
@@ -410,15 +455,18 @@ class KeywordRanker(Ranker):
             )
             similarity = cls._get_keyword_list_similarity(
                 model,
+                # Limit the number of keywords used for this comparison.
                 target_keywords[:min(
                     len(target_keywords), hp.MAX_SIM_COMPAR_KEYWORDS_USED
                 )],
+                # Limit the number of keywords used for this comparison.
                 candidate_keywords[:min(
                     len(candidate_keywords), hp.MAX_SIM_COMPAR_KEYWORDS_USED
                 )]
             )
             sim_dict[candidate_resource] = similarity
 
+        # Sort the candidates by their keyword list similarity in desc. order.
         sorted_ress = [(s, c) for c, s in sim_dict.items()]
         sorted_ress = sorted(sorted_ress, reverse=True)
         sorted_ress = [c for s, c in sorted_ress]
@@ -429,6 +477,7 @@ class KeywordRanker(Ranker):
 
 
 if __name__ == '__main__':
+    # Define the example abstracts used for testing.
     abstract1 = """The 'computable' numbers may be described briefly as the real
 numbers whose expressions as a decimal are calculable by finite means. Although 
 the subject of this paper is ostensibly the computable numbers. It is almost 

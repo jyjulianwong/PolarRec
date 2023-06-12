@@ -190,7 +190,7 @@ class Resource:
         :rtype: RankableResource
         """
         args = self.to_dict()
-        # TODO: References are ignored due to dictionary type conversion.
+        # FIXME: References are currently ignored due to dict type conversion.
         if "references" in args:
             args.pop("references")
         return RankableResource(args)
@@ -219,6 +219,8 @@ class RankableResource(Resource):
 
 
 if __name__ == "__main__":
+    print("\nResource: Verify the correctness of the to_dict method")
+
     resource_dict1 = {
         "authors": ["Y. Lecun", "L. Bottou", "Y. Bengio", "P. Haffner"],
         "title": "Gradient-based learning applied to document recognition",
@@ -229,14 +231,20 @@ if __name__ == "__main__":
     }
     resource = Resource(resource_dict1)
     resource_dict2 = resource.to_dict()
-    print(f"dict1 == dict2: {resource_dict1 == resource_dict2}")
+    print(f"Resource: dict1 == dict2: {resource_dict1 == resource_dict2}")
+
+    print("\nResource: Verify the correctness of the instantiation method")
 
     res_obj1 = Resource(resource_dict1)
     res_obj2 = Resource(resource_dict1)
-    print(f"res_obj1 == res_obj1: {res_obj1 == res_obj1}")
-    print(f"res_obj1 == res_obj2: {res_obj1 == res_obj2}")
+    print(f"Resource: res_obj1 == res_obj1: {res_obj1 == res_obj1}")
+    print(f"Resource: res_obj1 == res_obj2: {res_obj1 == res_obj2}")
+
+    print("\nResource: Verify the correctness of the hashcode method")
 
     some_dict = {}
     some_dict[res_obj1] = 1
     some_dict[res_obj2] = 2
-    print(f"some_dict: {some_dict}")
+    # res_obj1 and res_obj2 should be the same object.
+    # The dict should store only one key, with the value being 2.
+    print(f"Resource: some_dict: {some_dict}")

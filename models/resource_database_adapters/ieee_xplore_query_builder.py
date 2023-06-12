@@ -19,6 +19,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         Config.APP_ROOT_DIR,
         "ieee-xplore-query-builder-cache.json"
     )
+    # Create a variable to store the cached data that is in the JSON file.
     _request_data_cache = {}
 
     @classmethod
@@ -34,6 +35,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         self._title = ""
         self._keywords = []
 
+        # Only load the cached data from the JSON file if in development env.
         is_dev_env = os.environ.get("FLASK_ENV", "development") == "development"
         if is_dev_env and PersistentCache.cache_enabled():
             self._request_data_cache = PersistentCache.load_cache_file(
@@ -48,6 +50,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         :rtype: None | dict
         """
         try:
+            # Create a Session object to store all the current API request.
             req_session = requests.Session()
             req = requests.Request(
                 "GET",
@@ -58,12 +61,14 @@ class IEEEXploreQueryBuilder(QueryBuilder):
                     "Content-Type": "application/json"
                 }
             )
+            # Prepare the request to preview the generated URL.
             req_prepped = req_session.prepare_request(req)
 
             if req_prepped.url in self._request_data_cache:
                 # This request has been previously stored in cache.
                 return self._request_data_cache[req_prepped.url]
 
+            # Send a new request to the API.
             res = req_session.send(req_prepped, timeout=10)
         except Exception as err:
             log(str(err), "IEEEXploreQueryBuilder", "error")
@@ -90,8 +95,10 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         """
         res = self._get_request_data(query_args)
         if res is None:
+            # This should not happen.
             return []
         if res["total_records"] == 0:
+            # No results were returned for this particular query.
             return []
 
         # Transform response data into Resource objects.
@@ -108,7 +115,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
                 "url": resource_data["html_url"]
             }
 
-            # Set optional fields.
+            # Set optional fields that are not necessarily returned every time.
             if "content_type" in resource_data:
                 if resource_data["content_type"] == "Conferences":
                     if "publication_title" in resource_data:
@@ -124,7 +131,9 @@ class IEEEXploreQueryBuilder(QueryBuilder):
             if "doi" in resource_data:
                 resource_args["doi"] = resource_data["doi"]
 
+            # Add the result as a Resource object.
             resources.append(Resource(resource_args))
+
         return resources
 
     def set_authors(self, authors):
@@ -171,6 +180,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
 
         ress: list[Resource] = []
 
+        # Additional engineering to handle queries with multiple authors.
         if len(self._authors) == 0:
             # The query does not contain authors.
             ress = self._get_candidate_resources(self._query_args)
@@ -193,14 +203,14 @@ class IEEEXploreQueryBuilder(QueryBuilder):
                 self._query_args["max_records"] = 100
                 cand_ress += self._get_candidate_resources(self._query_args)
 
-            # No need to remove candidates if only some authors are required.
             if not must_have_all_fields:
+                # No need to remove candidates if only some authors are required.
                 # Shuffle the candidates. Otherwise,
                 # the first few authors will occupy the whole list.
                 random.shuffle(cand_ress)
                 ress = cand_ress[:min(len(cand_ress), max_resources_returned)]
             else:
-                # Remove candidates that do not contain all the desired authors.
+                # Remove candidates that do not contain all the required authors.
                 for resource in cand_ress:
                     # NoneType check.
                     if resource.authors is None:
@@ -227,6 +237,7 @@ class IEEEXploreQueryBuilder(QueryBuilder):
         if summarise_results_data:
             self._summarise_results_data(ress)
 
+        # Only save the data to cache if in development env.
         is_dev_env = os.environ.get("FLASK_ENV", "development") == "development"
         if is_dev_env and PersistentCache.cache_enabled():
             PersistentCache.save_cache_file(
@@ -237,7 +248,8 @@ class IEEEXploreQueryBuilder(QueryBuilder):
 
 
 if __name__ == '__main__':
-    # Test for queries involving one author.
+    print("\nIEEEXploreQueryBuilder: Execute a query with one author")
+
     sample_query_builder = IEEEXploreQueryBuilder()
     sample_query_builder.add_keyword("convolutional")
     sample_query_builder.add_keyword("deep learning")
@@ -254,7 +266,8 @@ if __name__ == '__main__':
         print(f"\t{resource.url}")
     print(f"IEEEXploreQueryBuilder: get_resources: len: {len(resources)}")
 
-    # Test for queries involving multiple authors.
+    print("\nIEEEXploreQueryBuilder: Execute a query with multiple authors")
+
     sample_query_builder = IEEEXploreQueryBuilder()
     sample_query_builder.set_authors(["Kai Gao", "Carly Donahue"])
     resources = sample_query_builder.get_resources(10)

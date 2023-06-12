@@ -105,6 +105,7 @@ class CitationRanker(Ranker):
             )
             sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
 
+        # Split the citing resources into targets and candidates.
         citing_idx_pairs = citing_res_idx_dict.items()
         targ_citing_idx_pairs = [
             (r, i) for r, i in citing_idx_pairs if r in target_resources
@@ -181,8 +182,8 @@ if __name__ == "__main__":
         print(f"\t[{i.citation_based_ranking}]: {i.title}")
     print(f"citation_ranker: Time taken to execute: {t2 - t1} seconds")
 
-    print("\ncitation_ranker: Similarity matrix for real example with CCF...")
-    print("... where the SegNet paper is the only common cited paper")
+    print("\ncitation_ranker: Generate the matrices for a real example...")
+    print("... with CCF, where the SegNet paper is the only common cited paper")
 
     target_data1 = {
         "authors": [],

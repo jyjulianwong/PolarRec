@@ -104,6 +104,7 @@ class AuthorRanker(Ranker):
             )
             sim_mat = ccf.get_similarity_matrix(ass_mat=ass_mat)
 
+        # Split the resources into targets and candidates.
         res_idx_pairs = resource_idx_dict.items()
         targ_res_idx_pairs = [
             (r, i) for r, i in res_idx_pairs if r in target_resources
@@ -140,6 +141,10 @@ class AuthorRanker(Ranker):
 
 
 if __name__ == "__main__":
+    print("\nauthor_ranker: Rank resources from abstract example")
+
+    # Recreate the example from the paper that introduced this algorithm:
+    # https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056
     i1 = RankableResource({"title": "i1"})
     i2 = RankableResource({"title": "i2"})
     i3 = RankableResource({"title": "i3"})

@@ -29,6 +29,9 @@ class ResourceFilter:
 
     def _get_author_last_name(self, author_name):
         """
+        A helper function that extracts an author's last name from their full
+        names for different name formats.
+
         :param author_name: The author's name.
         :type author_name: str
         :return: The author's last name.
@@ -105,12 +108,14 @@ class ResourceFilter:
                     remove = True
 
             if not remove:
+                # The candidate passes all the filter requirements.
                 filtered_ress.append(resource)
 
         return filtered_ress
 
 
 if __name__ == "__main__":
+    # Instantiate example objects for testing.
     author_list1 = ["A", "B", "C"]
     author_list2 = ["C", "D", "E"]
 

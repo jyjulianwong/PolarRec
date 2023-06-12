@@ -8,7 +8,7 @@ import time
 
 def get_relation_vec_sim(rel_vec1, rel_vec2):
     """
-    Calculates the similarity between two relation matrix user vectors.
+    Calculates the cosine similarity between two relation matrix user vectors.
 
     :param rel_vec1: A user vector from the relation matrix.
     :type rel_vec1: np.ndarray
@@ -27,11 +27,13 @@ def get_similarity_matrix(rel_mat):
     """
     :param rel_mat: The relation matrix.
     :type rel_mat: np.ndarray
-    :return: The similarity between every pair of citing papers.
+    :return: A matrix with the similarities between every pair of users.
     :rtype: np.ndarray
     """
     sim_mat = np.zeros((rel_mat.shape[0], rel_mat.shape[0]))
 
+    # The matrix is symmetrical along the diagonal.
+    # Only necessary to iterate through half the matrix.
     for i1 in range(sim_mat.shape[0]):
         for i2 in range(i1, sim_mat.shape[1]):
             if i1 == i2:
@@ -59,13 +61,13 @@ def get_score_matrix(rel_mat, user_idxs, item_idxs, target_user_idxs):
     :type item_idxs: list[int]
     :param target_user_idxs: The list of users whose scores will be calculated.
     :type target_user_idxs: list[int]
-    :return: The scores between each user and item pair.
+    :return: The utility scores for each user and item pair.
     :rtype: np.ndarray
     """
     sim_mat = get_similarity_matrix(rel_mat)
 
-    # TODO: Assumes user_idxs is a contiguous list of indices starting from 0.
-    # TODO: Assumes item_idxs is a contiguous list of indices starting from 0.
+    # FIXME: Assumes user_idxs is a contiguous list of indices starting from 0.
+    # FIXME: Assumes item_idxs is a contiguous list of indices starting from 0.
     score_mat = np.zeros((len(user_idxs), len(item_idxs)))
     for i0 in target_user_idxs:
         for j in item_idxs:

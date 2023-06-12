@@ -8,7 +8,7 @@ from models.resource import Resource
 
 class QueryBuilder:
     """
-    Builds and sends queries for a resource database.
+    Builds and sends search queries to a resource database.
     """
 
     @classmethod
@@ -24,8 +24,9 @@ class QueryBuilder:
 
     def _get_translated_url_str(self, url_str):
         """
-        Replaces special characters that would be unwanted in a URL string, such
-        as particular German characters that commonly appear in authors' names.
+        A helper function that replaces special characters that would be
+        unwanted in a URL string, such as particular German characters that
+        commonly appear in authors' names.
 
         :param url_str: The original URL string
         :type url_str: str
@@ -41,13 +42,16 @@ class QueryBuilder:
         # Replace all German-specific characters with correct translations.
         result = url_str.translate(german_special_char_dict)
         # Replace accented characters with non-accented equivalents.
-        # Ignore all other characters that cannot be translated, e.g. Kanji.
         result = unicodedata.normalize("NFKD", result)
+        # Ignore all other characters that cannot be translated, e.g. Kanji.
         result = result.encode("ascii", "ignore").decode("ascii")
         return result
 
     def _get_author_last_name(self, author_name):
         """
+        A helper function that extracts an author's last name from their full
+        names for different name formats.
+
         :param author_name: The author's name.
         :type author_name: str
         :return: The author's last name.
@@ -58,14 +62,14 @@ class QueryBuilder:
 
     def _get_joined_author_name(self, author_name, join_char, flipped=False):
         """
-        Joins the first and last names of authors' names appropriately for use
-        in database queries and in URLs.
+        A helper function that joins the first and last names of authors' names
+        appropriately for use in database queries and in URLs.
 
         :param author_name: The author's name.
         :type author_name: str
         :param join_char: The character used to join first and last names.
         :type join_char: str
-        :param flipped: Flip the last names and first names around.
+        :param flipped: Whether to flip the last names and first names around.
         :type flipped: bool
         :return: The URL-friendly string representing the author's name.
         :rtype: str
@@ -77,17 +81,22 @@ class QueryBuilder:
             formatted_name = f"{author_last_name}{join_char}{author_first_name}"
         else:
             formatted_name = f"{author_first_name}{join_char}{author_last_name}"
+
         if "." in author_first_name:
             # Do not include first names that have been shortened.
-            # This is usually not supported by resource database adapters.
+            # This is usually not supported by database search interfaces.
             formatted_name = author_last_name
+
+        # Convert the string into a lowercase, non-punctuated string.
         formatted_name = Resource.get_comparable_str(formatted_name)
         formatted_name = formatted_name.replace(" ", "+")
+
         return formatted_name
 
     def _summarise_results_data(self, resources):
         """
-        Prints a summary of the results returned by the query.
+        A helper function that prints a summary of the results returned by the
+        resource database search query.
         Analyses the percentage of data fields returned by the query.
 
         :param resources: The resources returned by the query.
@@ -154,8 +163,14 @@ class QueryBuilder:
         summarise_results_data=False
     ):
         """
-        Sends a GET request to the database's API and returns the response.
+        Sends an HTTP request to the database's API and returns the response.
 
+        :param max_resources_returned: The maximum number of results to return.
+        :type max_resources_returned: int
+        :param must_have_all_fields: Whether to filter results that do not meet all query requirements.
+        :type must_have_all_fields: bool
+        :param summarise_results_data: whether to print a summary of results.
+        :type summarise_results_data: bool
         :return: The list of resources returned by the query.
         :rtype: list[Resource]
         """

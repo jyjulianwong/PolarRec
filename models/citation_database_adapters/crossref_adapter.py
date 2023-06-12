@@ -19,7 +19,7 @@ class CrossrefAdapter(Adapter):
         """
         :param resource: The target resource.
         :type resource: Resource
-        :return: The query component of the request URL string.
+        :return: The query component of the API request URL.
         :rtype: str
         """
         # Use the resource's title and search for it.
@@ -36,7 +36,7 @@ class CrossrefAdapter(Adapter):
         """
         :param resource: The target resource.
         :type resource: Resource
-        :return: The full request URL string.
+        :return: The full API request URL with query parameters.
         :rtype: str
         """
         param_str = cls._get_query_str(resource)
@@ -46,7 +46,7 @@ class CrossrefAdapter(Adapter):
 
     @classmethod
     def get_citation_count(cls, resources):
-        # TODO: Not an efficient implementation.
+        # FIXME: Not an efficient implementation.
         cit_count_dict: dict[Resource, int] = {}
 
         for resource in resources:
@@ -75,7 +75,7 @@ class CrossrefAdapter(Adapter):
 
     @classmethod
     def get_references(cls, resources):
-        # TODO: Not supported by the Crossref API.
+        # FIXME: Reference data is not supported by the Crossref API.
         ref_list_dict = {}
 
         for resource in resources:

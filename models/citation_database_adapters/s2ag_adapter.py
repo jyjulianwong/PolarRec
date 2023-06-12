@@ -31,6 +31,7 @@ class S2agAdapter(Adapter):
         Config.APP_ROOT_DIR,
         "s2ag-adapter-cache.json"
     )
+    # Create a variable to store the cached data that is in the JSON file.
     _request_data_cache = {}
 
     @classmethod
@@ -38,7 +39,7 @@ class S2agAdapter(Adapter):
         """
         :param resource: The target resource.
         :type resource: Resource
-        :return: The query component of the request URL string.
+        :return: The query component of the API request URL.
         :rtype: str
         """
         # Use the resource's title and search for it.
@@ -62,7 +63,7 @@ class S2agAdapter(Adapter):
         """
         :param resource: The target resource.
         :type resource: Resource
-        :return: The full request URL string.
+        :return: The full API request URL with query parameters.
         :rtype: str
         """
         param_str = cls._get_query_str(resource)
@@ -73,6 +74,10 @@ class S2agAdapter(Adapter):
 
     @classmethod
     def _get_req_headers(cls):
+        """
+        :return: The API request headers.
+        :rtype: dict
+        """
         return {
             "User-Agent": f"PolarRec ({cls._APP_URL}; mailto:{cls._APP_MAILTO})",
             "Content-Type": "application/json",
@@ -81,11 +86,20 @@ class S2agAdapter(Adapter):
 
     @classmethod
     def _add_req_data_cache_entry(cls, resource, data):
+        """
+        :param resource: The target resource.
+        :type resource: Resource
+        :param data: The API response data associated with the target resource.
+        :type data: dict
+        """
         cls._request_data_cache[resource.title] = data
 
     @classmethod
     async def _get_req_data_async_task(cls, resource, session):
         """
+        Returns the API response data for a single resource, asynchronously as
+        a sub-task as part of a larger concurrent process.
+
         :param resource: The target resources.
         :type resource: Resource
         :param session: The AIOHTTP client session.
@@ -125,6 +139,8 @@ class S2agAdapter(Adapter):
     @classmethod
     async def _get_req_data_async_batch(cls, resources):
         """
+        Returns the API response data for a multiple resources concurrently.
+
         :param resources: The target resources.
         :type resources: list[Resource]
         :return: The API response data for each resource.
@@ -275,6 +291,7 @@ class S2agAdapter(Adapter):
 
 
 if __name__ == "__main__":
+    # Define the example target resources for testing.
     target_data1 = {
         "authors": ["Vijay Badrinarayanan", "Alex Kendall", "Roberto Cipolla"],
         "title": "SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation",

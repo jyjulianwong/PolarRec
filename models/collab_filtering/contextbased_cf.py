@@ -1,6 +1,6 @@
 """
-Objects and methods for ranking academic resources via Context-based
-Collaborative Filtering (CCF). For the original implementation, see
+Objects and methods for ranking academic resources via context-based
+collaborative filtering (CCF). For the original implementation, see
 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
 """
 import numpy as np
@@ -40,6 +40,7 @@ def get_cooccurrence_prob(rel_vec1, rel_vec2):
     x = (abs(n11 * n22 - n12 * n21) - n / 2) ** 2 / max(r1 * r2 * c1 * c2, 1)
 
     # Calculate the co-occurrence probability,
+    # equal to the CDF of the chi-squared distribution,
     # using the gamma function and regularised upper incomplete gamma function.
     prob = 1 - (sc.gammaincc(v / 2, x / 2) / sc.gamma(v / 2))
     return prob
@@ -59,7 +60,7 @@ def get_association_matrix(rel_mat, user_idxs, cooc_prob_ts=0.1):
     :return: The association matrix, where each row is a user vector.
     :rtype: np.ndarray
     """
-    # TODO: Assumes user_idxs is a contiguous list of indices starting from 0.
+    # FIXME: Assumes user_idxs is a contiguous list of indices starting from 0.
     ass_mat = np.zeros((len(user_idxs), len(user_idxs)))
 
     for i1 in user_idxs:
@@ -78,7 +79,8 @@ def get_association_matrix(rel_mat, user_idxs, cooc_prob_ts=0.1):
 
 def get_association_vec_sim(ass_vec1, ass_vec2):
     """
-    Calculates the similarity between two association matrix user vectors.
+    Calculates the cosine similarity between two association matrix user
+    vectors.
     See https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7279056.
     Referencing Section III (A).
 
@@ -102,7 +104,7 @@ def get_similarity_matrix(ass_mat):
 
     :param ass_mat: The association matrix.
     :type ass_mat: np.ndarray
-    :return: The similarity between every pair of citing papers.
+    :return: A matrix with the similarities between every pair of users.
     :rtype: np.ndarray
     """
     sim_mat = np.zeros(ass_mat.shape)
@@ -136,14 +138,14 @@ def get_score_matrix(rel_mat, user_idxs, item_idxs, target_user_idxs):
     :type item_idxs: list[int]
     :param target_user_idxs: The list of users whose scores will be calculated.
     :type target_user_idxs: list[int]
-    :return: The scores between each user and item pair.
+    :return: The utility scores for each user and item pair.
     :rtype: np.ndarray
     """
     ass_mat = get_association_matrix(rel_mat, user_idxs)
     sim_mat = get_similarity_matrix(ass_mat)
 
-    # TODO: Assumes user_idxs is a contiguous list of indices starting from 0.
-    # TODO: Assumes item_idxs is a contiguous list of indices starting from 0.
+    # FIXME: Assumes user_idxs is a contiguous list of indices starting from 0.
+    # FIXME: Assumes item_idxs is a contiguous list of indices starting from 0.
     score_mat = np.zeros((len(user_idxs), len(item_idxs)))
     for i0 in target_user_idxs:
         for j in item_idxs:

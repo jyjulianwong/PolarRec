@@ -20,6 +20,7 @@ def _get_request_data(resource):
     :return: The JSON data returned by the API.
     :rtype: None | dict
     """
+    # A simplfied version of the code used in IEEEXploreQueryBuilder.
     try:
         res = requests.get(
             "https://ieeexploreapi.ieee.org/api/v1/search/articles",
@@ -61,9 +62,12 @@ def _get_predef_keywords(resource):
     :return: The mapping between resources and their pre-defined keywords.
     :rtype: None | list[str]
     """
+    # Load the pre-defined keywords (if any) from persistent cache.
     keyword_cache = PersistentCache.load_cache_file(KEYWORD_CACHE_FILEPATH)
 
     if resource.title in keyword_cache:
+        # This resource had been previously saved into cache.
+        # No need to send a new API request and extract keyword data.
         return keyword_cache[resource.title]
 
     res = _get_request_data(resource)
@@ -75,6 +79,7 @@ def _get_predef_keywords(resource):
 
     resource_data = res["articles"][0]
     if "index_terms" not in resource_data:
+        # There are no pre-defined keywords provided for this record.
         return None
 
     predef_keywords = []
@@ -82,8 +87,10 @@ def _get_predef_keywords(resource):
         predef_keywords += kw_data["terms"]
     # Remove duplicates but preserve ordering.
     predef_keywords = list(dict.fromkeys(predef_keywords))
+    # Save the pre-defined keywords into cache in a global variable.
     keyword_cache[resource.title] = predef_keywords
 
+    # Save the pre-defined keywords into persistent cache.
     PersistentCache.save_cache_file(KEYWORD_CACHE_FILEPATH, keyword_cache)
 
     return predef_keywords
@@ -115,17 +122,23 @@ def get_kw_extraction_accuracy(target_resource):
     ranker_keywords = ranker_keywords[:min(len(ranker_keywords), 20)]
 
     for ranker_keyword in ranker_keywords:
+        # Transform the keyword into a lowercase and non-punctuated string.
+        # Otherwise, case sensitiveness and punctuation can affect comparison.
         ranker_keyword = Resource.get_comparable_str(ranker_keyword)
 
         matched = False
         for predef_keyword in predef_keywords:
+            # Transform the keyword into a lowercase and non-punctuated string.
             predef_keyword = Resource.get_comparable_str(predef_keyword)
 
+            # Get the overlapping words between the two key phrases.
             common_words = list(set(ranker_keyword.split()).intersection(
                 predef_keyword.split()
             ))
 
             if len(common_words) > len(predef_keyword.split()) // 2:
+                # More than half of the two key phrases overlap in words.
+                # This is considered a "match".
                 matched = True
                 hit_count += 1
                 break
@@ -137,6 +150,7 @@ def get_kw_extraction_accuracy(target_resource):
 
 
 if __name__ == "__main__":
+    # Run this .py file to calculate the system's keyword extraction accuracy.
     # Use the IEEE Xplore samples because we need pre-defined keyword data.
     sample_resources = sr.load_resources_from_json()[
         sr.IEEE_XPLORE_SAMPLE_FILEPATH

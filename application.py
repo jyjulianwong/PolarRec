@@ -1,5 +1,5 @@
 """
-The entry point to the API.
+The entry point to the web API application.
 """
 import os
 import time
@@ -11,9 +11,11 @@ from models.resource import Resource
 from models.resource_filter import ResourceFilter
 from models.resource_rankers.keyword_ranker import KeywordRanker
 
+# Start-up routine of the application.
 application = Flask(__name__)
 CORS(application)
 with application.app_context():
+    # Pre-load all necessary keyword-related models during start-up.
     keyword_model = KeywordRanker.get_model()
     log("KeywordRanker model successfully loaded", "application")
 
@@ -21,7 +23,7 @@ with application.app_context():
 @application.route("/", methods=["GET"])
 def root():
     """
-    :return: The root page of the API.
+    :return: The (empty) root page of the API.
     :rtype: Response
     """
     return ""
@@ -44,17 +46,18 @@ def favicon():
 def recommend():
     """
     Takes POST requests of target academic resources and related metadata, and
-    returns recommendations.
+    returns recommendations as JSON data.
     Requires ``"content-type": "application/json"`` to be set in the request
     header.
-    See README.md for an example of a request body.
+    See README.md for examples of an API request body and response body.
 
-    :return: A list of recommended academic resources, in the form of a JSON.
+    :return: Lists of recommended academic resources, in the form of JSON data.
     :rtype: Response
     """
+    # Assume the pre-loaded KeywordRanker model is available within app context.
     global keyword_model
 
-    # The start time of processing the request.
+    # Record the start time of processing the request.
     t1 = time.time()
 
     # Convert the request payload as JSON-like data.
@@ -101,12 +104,13 @@ def recommend():
     for ranked_resource in reco_database_ress:
         res_data["ranked_database_resources"].append(ranked_resource.to_dict())
 
-    # The end time of processing the request.
+    # Record the end time of processing the request.
     t2 = time.time()
 
     # Add the processing time to the data returned by the API.
     res_data["processing_time"] = t2 - t1
 
+    # Return the data in JSON format.
     return jsonify(res_data)
 
 

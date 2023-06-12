@@ -20,9 +20,12 @@ def _get_resource_category_dict(resources):
     :return: The mapping between resources and their subject categories.
     :rtype: dict[Resource, None | list[str]]
     """
+    # The mapping between resources and their subject categories.
     res_cat_dict: dict[Resource, list[str]] = {}
 
     for resource in resources:
+        # A simplified version of the code used in ArxivQueryBuilder,
+        # and the QueryBuilder interface.
         query_args = {
             "search_query": f"ti:{resource.title.replace(' ', '+')}",
             "start": 0,
@@ -52,7 +55,6 @@ def _get_resource_category_dict(resources):
         if isinstance(res["feed"]["entry"], list):
             resource_data = res["feed"]["entry"][0]
         else:
-            # ArXiv changes the return type if there is only one entry.
             resource_data = res["feed"]["entry"]
 
         if not isinstance(resource_data, dict):
@@ -64,12 +66,15 @@ def _get_resource_category_dict(resources):
             res_cat_dict[resource] = None
             continue
 
+        # Extract the subject category from the API response data.
         if "category" in resource_data:
             if isinstance(resource_data["category"], list):
+                # The resource has been assigned multiple subject categories.
                 res_cat_dict[resource] = []
                 for category_data in resource_data["category"]:
                     res_cat_dict[resource].append(category_data["@term"])
             else:
+                # There is a single subject category for this resource.
                 res_cat_dict[resource] = [resource_data["category"]["@term"]]
             continue
 
@@ -162,6 +167,7 @@ def get_classif_accuracy(target_resource, keyword_model):
 
 
 if __name__ == "__main__":
+    # Run this .py file to calculate the system's classification accuracy.
     # Use the ArXiv samples because we need subject area classification data.
     sample_resources = sr.load_resources_from_json()[sr.ARXIV_SAMPLE_FILEPATH]
     keyword_model = KeywordRanker.get_model()

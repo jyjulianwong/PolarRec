@@ -11,7 +11,10 @@ from models.resource_database_adapters.arxiv_query_builder import \
 from models.resource_database_adapters.ieee_xplore_query_builder import \
     IEEEXploreQueryBuilder
 
+# The data filepath for arXiv database samples.
+# Data for sample resources are stored here.
 ARXIV_SAMPLE_FILEPATH = "arxiv-sample-resource-data.json"
+# The titles of the sample resources used from the arXiv database.
 ARXIV_SAMPLE_TITLES = [
     # Human-computer interaction
     "Human or Machine: Reflections on Turing-Inspired Testing for the Everyday",
@@ -27,7 +30,10 @@ ARXIV_SAMPLE_TITLES = [
     "A Bayesian Analysis of Technological Intelligence in Land and Oceans",
 ]
 
+# The data filepath for IEEE Xplore database samples.
+# Data for sample resources are stored here.
 IEEE_XPLORE_SAMPLE_FILEPATH = "ieee-xplore-sample-resource-data.json"
+# The titles of the sample resources used from the IEEE Xplore database.
 IEEE_XPLORE_SAMPLE_TITLES = [
     # Human-computer interaction
     "Spatial approximation of volumetric images for simplified transmission and display",
@@ -43,12 +49,14 @@ IEEE_XPLORE_SAMPLE_TITLES = [
     "Planetary radio occultation technique and inversion method for YH-1 Mars mission",
 ]
 
-RES_SET_FILEPATH_DICT = {
+# The mapping between data filepaths and titles of the resources they store.
+FILEPATH_TO_TITLES_DICT = {
     ARXIV_SAMPLE_FILEPATH: ARXIV_SAMPLE_TITLES,
     IEEE_XPLORE_SAMPLE_FILEPATH: IEEE_XPLORE_SAMPLE_TITLES
 }
 
-RES_SET_ADAPTER_DICT = {
+# The mapping between data filepaths and the adapters used to extract the data.
+FILEPATH_TO_ADAPTER_DICT = {
     ARXIV_SAMPLE_FILEPATH: ArxivQueryBuilder(),
     IEEE_XPLORE_SAMPLE_FILEPATH: IEEEXploreQueryBuilder()
 }
@@ -63,21 +71,28 @@ def save_resources_as_json():
         # This should only be run in a development environment.
         sys.exit(-1)
 
-    for filepath, titles in RES_SET_FILEPATH_DICT.items():
+    for filepath, titles in FILEPATH_TO_TITLES_DICT.items():
         resources: list[Resource] = []
         for title in titles:
-            query_builder = RES_SET_ADAPTER_DICT[filepath]
+            # Get the appropriate adapter object that should be used.
+            query_builder = FILEPATH_TO_ADAPTER_DICT[filepath]
+            # Use the title of the sample resource as the search query.
             query_builder.set_title(Resource.get_comparable_str(title))
+            # Execute the search query.
             result_resources = query_builder.get_resources(5)
             for resource in result_resources:
+                # Transform the results' titles into a comparable string.
                 result_comp_title = Resource.get_comparable_str(resource.title)
                 target_comp_title = Resource.get_comparable_str(title)
                 if result_comp_title == target_comp_title:
-                    # A sample resource has been found.
+                    # The correct sample resource has been found.
                     resources.append(resource)
 
+        # Transform the Resource object into its JSON-like data representation.
         data_list = [resource.to_dict() for resource in resources]
+        # Transform the JSON data into a singular JSON string.
         json_list = json.dumps(data_list, indent=4)
+        # Write the JSON data to a persistent local file.
         with open(filepath, "w+", encoding="utf-8") as file_object:
             file_object.write(json_list)
 
@@ -86,39 +101,44 @@ def load_resources_from_json():
     """
     Loads the sample resources from a local JSON file, if present.
 
-    :return: The list of saved resources.
+    :return: A mapping between data filepaths and the resources they store.
     :rtype: dict[str, list[Resource]]
     """
     if os.environ.get("FLASK_ENV", "development") != "development":
         # This should only be run in a development environment.
         sys.exit(-1)
 
-    res_set_dict: dict[str, list[Resource]] = {}
-    for filepath in RES_SET_FILEPATH_DICT:
+    # A mapping between data filepaths and the resources they store.
+    filepath_to_resource_dict: dict[str, list[Resource]] = {}
+    for filepath in FILEPATH_TO_TITLES_DICT:
+        # The list of resources this data file stores.
         ress: list[Resource] = []
 
+        # Check if the persistent data file exists on the local machine.
         if not os.path.isfile(filepath):
             log(
                 f"{filepath} is not a valid filepath",
                 "sample_resources",
                 "error"
             )
-            res_set_dict[filepath] = []
+            filepath_to_resource_dict[filepath] = []
             continue
 
+        # Read JSON data from the persistent data file.
         with open(filepath, "r", encoding="utf-8") as file_object:
             json_list = json.load(file_object)
             for json_data in json_list:
+                # Instantiate Resource objects from the JSON data.
                 ress.append(Resource(json_data))
-            res_set_dict[filepath] = ress
+            filepath_to_resource_dict[filepath] = ress
 
-    return res_set_dict
+    return filepath_to_resource_dict
 
 
 if __name__ == "__main__":
     # Uncomment the next line to recollect all the sample resources.
     # save_resources_as_json()
-    res_set_dict = load_resources_from_json()
-    for filepath, resources in res_set_dict.items():
+    filepath_to_resource_dict = load_resources_from_json()
+    for filepath, resources in filepath_to_resource_dict.items():
         print(f"Relative file path: {filepath}")
         print(f"\tNumber of sample resources: {len(resources)}")

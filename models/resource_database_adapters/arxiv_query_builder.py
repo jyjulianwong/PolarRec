@@ -29,13 +29,18 @@ class ArxivQueryBuilder(QueryBuilder):
         :return: The JSON data returned by the API request.
         :rtype: None | dict
         """
+        # Generate the URL string with query parameters.
         url = self._API_URL_BASE + "?" + "&".join(
             [f"{key}={val}" for key, val in query_args.items()]
         )
+        # Replace any special characters and make the string URL-friendly.
         url = self._get_translated_url_str(url)
         try:
+            # Send a HTTP request to the API.
             res = urllib.request.urlopen(url)
+            # Decode the response from bytes to string data.
             res = res.read().decode("utf-8")
+            # Decode the response from XML to JSON-like format.
             res = xmltodict.parse(res)
         except Exception as err:
             log(str(err), "ArxivQueryBuilder", "error")
@@ -66,6 +71,7 @@ class ArxivQueryBuilder(QueryBuilder):
         must_have_all_fields=True,
         summarise_results_data=False
     ):
+        # The "search_query" query parameters to be passed onto the API.
         search_query = []
 
         if self._authors:
@@ -92,6 +98,7 @@ class ArxivQueryBuilder(QueryBuilder):
                     f"all:%22{keyword.replace(' ', '+').lower()}%22"
                 )
 
+        # Generate the URL query parameters as a dict.
         query_op = "AND" if must_have_all_fields else "OR"
         query_args = {
             "search_query": f"+{query_op}+".join(search_query),
@@ -99,15 +106,19 @@ class ArxivQueryBuilder(QueryBuilder):
             "max_results": max_resources_returned
         }
 
+        # Send the API request and decode the response.
         res = self._get_request_data(query_args)
         if res is None:
+            # This should not happen.
             return []
         if res["feed"]["opensearch:totalResults"]["#text"] == "0":
+            # No results were returned for this particular query.
             return []
 
+        # Extract the list of results returned.
         resource_data_list = res["feed"]["entry"]
         if not isinstance(res["feed"]["entry"], list):
-            # ArXiv changes the return type if there is only one entry.
+            # xmltodict changes the return type if there is only one entry.
             resource_data_list = [res["feed"]["entry"]]
 
         resources: list[Resource] = []
@@ -140,12 +151,13 @@ class ArxivQueryBuilder(QueryBuilder):
                 "url": resource_data["id"]
             }
 
-            # Set optional fields.
+            # Set optional fields that are not necessarily returned every time.
             if "doi" in resource_data:
                 resource_args["doi"] = resource_data["doi"]
             elif "arxiv:doi" in resource_data:
                 resource_args["doi"] = resource_data["arxiv:doi"]["#text"]
 
+            # Add the result as a Resource object.
             resources.append(Resource(resource_args))
 
         if summarise_results_data:

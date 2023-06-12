@@ -13,9 +13,12 @@ class CitationCountRanker(Ranker):
         target_resources,
         **kwargs
     ):
+        # The list of pairs of the resource's citation counts and the resource.
+        # Have the citation count be the first element for sorting purposes.
         cit_count_list: list[tuple[int, RankableResource]] = []
         for resource in rankable_resources:
             if resource.citation_count is None:
+                # Set the citation count as 0 if data is not available.
                 cit_count_list.append((0, resource))
             else:
                 cit_count_list.append((resource.citation_count, resource))

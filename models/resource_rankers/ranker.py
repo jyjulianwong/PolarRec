@@ -17,8 +17,9 @@ class Ranker:
         **kwargs
     ):
         """
-        Ranks candidate resources from best to worst with some specialised
-        algorithm, and returns them as a sorted list.
+        Ranks candidate resources from best to worst, in descending order of
+        relevance, with some specialised algorithm, and returns them as a
+        sorted list.
 
         :param rankable_resources: The list of resources to rank.
         :type rankable_resources: list[RankableResource]
