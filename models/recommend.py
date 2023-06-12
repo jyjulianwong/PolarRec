@@ -190,8 +190,8 @@ def get_ranked_resources(
     :type resource_database_ids: list[str]
     :param keyword_model: The word embedding model to be used for keywords.
     :type keyword_model: Word2Vec.KeyedVectors
-    :return: Lists of ranked recommended academic resources.
-    :rtype: dict[str, list[RankableResource]]
+    :return: Two lists of existing and database-extracted recommendations.
+    :rtype: tuple[list[RankableResource], list[RankableResource]]
     """
     # Extract keywords from target resources.
     target_keywords = KeywordRanker.get_keywords(resources=target_resources)
@@ -257,11 +257,7 @@ def get_ranked_resources(
         c not in existing_resources
     ]
 
-    return {
-        "ranked_existing_resources": ranked_existing_resources,
-        "ranked_database_resources": ranked_database_resources,
-        "ranked_citation_resources": []
-    }
+    return ranked_existing_resources, ranked_database_resources
 
 
 if __name__ == "__main__":
@@ -318,7 +314,8 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
     print("\nrecommend: Generate a recommendation list for a resource")
 
     t1 = time.time()
-    ranked_resources = get_ranked_resources(
+    # TODO: Test existing and citation resources.
+    _, ranked_resources = get_ranked_resources(
         [target_resource],
         [],
         ResourceFilter({
@@ -328,8 +325,6 @@ http://mi.eng.cam.ac.uk/projects/segnet/.""",
         keyword_model
     )
     t2 = time.time()
-    # TODO: Test existing and citation resources.
-    ranked_resources = ranked_resources["ranked_database_resources"]
     print(f"recommend: ranked_resources: {len(ranked_resources)}")
     for i, ranked_res in enumerate(ranked_resources):
         print(f"{i}: {ranked_res.title}")

@@ -18,13 +18,13 @@ if __name__ == "__main__":
     for i, resource in enumerate(sample_resources):
         tracemalloc.start()
         t1 = time.time()
-        ranked_resources = get_ranked_resources(
+        _, _ = get_ranked_resources(
             target_resources=[resource],
             existing_resources=[],
             resource_filter=ResourceFilter({}),
             resource_database_ids=[],
             keyword_model=keyword_model
-        )["ranked_database_resources"]
+        )
         t2 = time.time()
         peak_mem_size = tracemalloc.get_traced_memory()[1]
         tracemalloc.stop()

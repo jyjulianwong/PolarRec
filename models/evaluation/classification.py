@@ -97,13 +97,13 @@ def get_classif_accuracy(target_resource, keyword_model):
     macro_miss_count = 0
     micro_miss_count = 0
 
-    ranked_resources = get_ranked_resources(
+    _, ranked_resources = get_ranked_resources(
         target_resources=[target_resource],
         existing_resources=[],
         resource_filter=ResourceFilter({}),
         resource_database_ids=[],
         keyword_model=keyword_model
-    )["ranked_database_resources"]
+    )
     # Only consider the top 10 resources returned by the algorithm.
     ranked_resources = ranked_resources[:min(len(ranked_resources), 10)]
 

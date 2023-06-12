@@ -83,7 +83,7 @@ def recommend():
         resource_database_ids = req_data["resource_databases"]
 
     # Retrieve the lists of ranked resources via the recommendation algorithm.
-    ranked_resources = get_ranked_resources(
+    ranked_existing_resources, ranked_database_resources = get_ranked_resources(
         target_resources=target_resources,
         existing_resources=existing_resources,
         resource_filter=resource_filter,
@@ -94,12 +94,11 @@ def recommend():
     # Convert each ranked resource into JSON-like data.
     res_data = {
         "ranked_existing_resources": [],
-        "ranked_database_resources": [],
-        "ranked_citation_resources": []  # TODO: Populate.
+        "ranked_database_resources": []
     }
-    for ranked_resource in ranked_resources["ranked_existing_resources"]:
+    for ranked_resource in ranked_existing_resources:
         res_data["ranked_existing_resources"].append(ranked_resource.to_dict())
-    for ranked_resource in ranked_resources["ranked_database_resources"]:
+    for ranked_resource in ranked_database_resources:
         res_data["ranked_database_resources"].append(ranked_resource.to_dict())
 
     # The end time of processing the request.

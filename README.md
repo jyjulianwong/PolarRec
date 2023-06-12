@@ -143,25 +143,6 @@ The following is an example of the body of the response received from a POST req
             "citation_count_ranking": 5,
             "keyword_based_ranking": 2
         }
-    ],
-    "ranked_citation_resources": [
-        {
-            "authors": ["R. Girshick","J. Donahue","T. Darrell","J. Malik"],
-            "conference_name": "2014 IEEE Conference on Computer Vision...",
-            "conference_location": "Columbus, OH, USA",
-            "title": "Rich Feature Hierarchies for Accurate Object...",
-            "year": 2014,
-            "month": 6,
-            "abstract": "Object detection performance, as measured on...",
-            "doi": "10.1109/CVPR.2014.81",
-            "url": "https://ieeexplore.ieee.org/document/6909475",
-            "references": [{...}, {...}, ...],
-            "citation_count": 42,
-            "author_based_ranking": 1,
-            "citation_based_ranking": 3,
-            "citation_count_ranking": 5,
-            "keyword_based_ranking": 2
-        }
     ]
 }
 ```

@@ -135,13 +135,13 @@ def get_recommend_accuracy(target_resource, keyword_model):
         target_resource=target_resource,
         max_results_retd=30
     )
-    y_pred = get_ranked_resources(
+    _, y_pred = get_ranked_resources(
         target_resources=[target_resource],
         existing_resources=[],
         resource_filter=ResourceFilter({}),
         resource_database_ids=[],
         keyword_model=keyword_model
-    )["ranked_database_resources"]
+    )
     # Only consider the top 30 resources returned by our algorithm.
     y_pred = y_pred[:min(len(y_pred), 30)]
 
