@@ -13,7 +13,10 @@ from models.resource_database_adapters.ieee_xplore_query_builder import \
 
 # The data filepath for arXiv database samples.
 # Data for sample resources are stored here.
-ARXIV_SAMPLE_FILEPATH = "arxiv-sample-resource-data.json"
+ARXIV_SAMPLE_FILEPATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "arxiv-sample-resource-data.json"
+)
 # The titles of the sample resources used from the arXiv database.
 ARXIV_SAMPLE_TITLES = [
     # Human-computer interaction
@@ -32,7 +35,10 @@ ARXIV_SAMPLE_TITLES = [
 
 # The data filepath for IEEE Xplore database samples.
 # Data for sample resources are stored here.
-IEEE_XPLORE_SAMPLE_FILEPATH = "ieee-xplore-sample-resource-data.json"
+IEEE_XPLORE_SAMPLE_FILEPATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "ieee-xplore-sample-resource-data.json"
+)
 # The titles of the sample resources used from the IEEE Xplore database.
 IEEE_XPLORE_SAMPLE_TITLES = [
     # Human-computer interaction
@@ -140,5 +146,5 @@ if __name__ == "__main__":
     # save_resources_as_json()
     filepath_to_resource_dict = load_resources_from_json()
     for filepath, resources in filepath_to_resource_dict.items():
-        print(f"Relative file path: {filepath}")
+        print(f"Absolute file path: {filepath}")
         print(f"\tNumber of sample resources: {len(resources)}")
