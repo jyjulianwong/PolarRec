@@ -11,7 +11,7 @@ from models.resource_rankers.keyword_ranker import KeywordRanker
 if __name__ == "__main__":
     # Execute the following command on a Bash command line terminal,
     # at the root directory of the code repository:
-    # python3 -m cProfile -o models/evaluation/performance-profiler.prof models/evaluation/performance_profiler.py && snakeviz performance-profiler.prof
+    # python3 -m cProfile -o models/evaluation/performance-profiler.prof models/evaluation/performance_profiler.py && snakeviz models/evaluation/performance-profiler.prof
 
     # Load the sample resources used for evaluation.
     sample_resources = sr.load_resources_from_json()[
