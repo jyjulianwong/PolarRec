@@ -605,8 +605,8 @@ SegNet and a web demo at this http URL."""
     print("\nkeyword_ranker: Compare keyword lists that are near-identical")
     similarity = KeywordRanker._get_keyword_list_similarity(
         model,
-        ["python", "jumble", "easy", "difficult", "answer", "xylophone"],
-        ["python", "jumble", "easy", "difficult", "answer", "piano"],
+        ["man", "woman", "school", "food", "house"],
+        ["man", "woman", "school", "food", "home" ],
         show_oovs=True,
         show_kw_sim_mat=True
     )
@@ -615,8 +615,8 @@ SegNet and a web demo at this http URL."""
     print("\nkeyword_ranker: Compare keyword lists that are similar")
     similarity = KeywordRanker._get_keyword_list_similarity(
         model,
-        ["python", "jumble", "easy", "difficult", "answer", "xylophone"],
-        ["java", "scramble", "simple", "hard", "response", "piano"],
+        ["man", "woman", "school",    "food", "house"],
+        ["boy", "girl",  "education", "cook", "home" ],
         show_oovs=True,
         show_kw_sim_mat=True
     )
