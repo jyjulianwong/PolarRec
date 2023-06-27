@@ -49,7 +49,7 @@ By default, the server should be accessible at `http://127.0.0.1:5000`. For exam
 
 # The web API
 
-The publicly deployed web API is accessible at `http://polarrec-env.eba-nzautmta.eu-west-2.elasticbeanstalk.com`. To access the recommendation service, POST requests should be sent to `http://polarrec-env.eba-nzautmta.eu-west-2.elasticbeanstalk.com/recommend`. Academic resources are sent and received in JSON format.
+The publicly deployed web API is accessible at `http://polarrec-20230627133606-env.eba-g5p2qwqn.eu-west-2.elasticbeanstalk.com`. To access the recommendation service, POST requests should be sent to `http://polarrec-20230627133606-env.eba-g5p2qwqn.eu-west-2.elasticbeanstalk.com/recommend`. Academic resources are sent and received in JSON format.
 
 The headers of the POST request should be set as follows.
 ```json
