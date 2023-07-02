@@ -8,6 +8,8 @@ class Config:
     """
     Constants and methods for retrieving environment variables.
     """
+    # The semantic version number of the web API application.
+    APP_SEMVER = "0.1.0"
     # The absolute root directory of the application on its local machine.
     APP_ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     # The secret API key for IEEE Xplore.

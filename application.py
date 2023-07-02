@@ -3,6 +3,7 @@ The entry point to the web API application.
 """
 import os
 import time
+from config import Config
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from models.custom_logger import log
@@ -27,6 +28,15 @@ def root():
     :rtype: Response
     """
     return ""
+
+
+@application.route("/version", methods=["GET"])
+def version():
+    """
+    :return: The current semantic version number of the web API application.
+    :rtype: Response
+    """
+    return Config.APP_SEMVER
 
 
 @application.route("/favicon.ico", methods=["GET"])
