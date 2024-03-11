@@ -2,7 +2,9 @@
 
 # Deprecated
 
-As of 2024-02-23, the PolarRec web API is no longer publicly available as it is in the process of being migrated and is no longer being hosted on Amazon Web Services. Developers can continue to test the PolarRec web API and the PolarRec Zotero Plugin on their local machines by cloning this repository and building the solution as documented here. This documentation will be updated once the PolarRec web API is publicly available again.
+![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?logo=google-cloud&logoColor=white)
+
+As of 2024-03-11, the PolarRec web API is in the process of being migrated to Google Cloud and is no longer being hosted on Amazon Web Services. Developers can continue to test the PolarRec web API and the PolarRec Zotero Plugin on their local machines by cloning this repository and building the solution as documented here. This documentation will be updated once the PolarRec web API is publicly available again.
 
 # PolarRec
 
@@ -53,7 +55,9 @@ By default, the server should be accessible at `http://127.0.0.1:5000`. For exam
 
 # The web API
 
-The publicly deployed web API is accessible at `http://polarrec-20230627133606-env.eba-g5p2qwqn.eu-west-2.elasticbeanstalk.com`. To access the recommendation service, POST requests should be sent to `http://polarrec-20230627133606-env.eba-g5p2qwqn.eu-west-2.elasticbeanstalk.com/recommend`. Academic resources are sent and received in JSON format.
+![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?logo=google-cloud&logoColor=white)
+
+The publicly deployed web API is accessible at `http://34.73.167.164:8080`. To access the recommendation service, POST requests should be sent to `http://34.73.167.164:8080/recommend`. Academic resources are sent and received in JSON format.
 
 The headers of the POST request should be set as follows.
 ```json
