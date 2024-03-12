@@ -1,0 +1,18 @@
+steps:
+  - id: update-source-code
+    name: "gcr.io/cloud-builders/gcloud"
+    env:
+      - "PROJECT_ID=$PROJECT_ID"
+    script: |
+      #!/bin/bash
+      cd /home/julianwong2000/PolarRec
+      git checkout main
+      git pull
+
+  - id: build-and-deploy
+    name: "gcr.io/cloud-builders/gcloud"
+    env:
+      - "PROJECT_ID=$PROJECT_ID"
+    script: |
+      #!/bin/bash
+      sudo systemctl restart PolarRec.service
