@@ -1,0 +1,27 @@
+steps:
+  - id: ssh-and-run-deploy
+    name: "gcr.io/cloud-builders/gcloud"
+    env:
+      - "PROJECT_ID=$PROJECT_ID"
+    script: |
+      #!/bin/bash
+      read -r -d '' SCRIPT << EOF
+      if [ ! -d /var/www/github_jyjulianwong_polarrec ]; then
+        # Clone the Cloud Source Repository if it does not already exist.
+        cd /var/www
+        gcloud source repos clone github_jyjulianwong_polarrec --project=jyw-polarrec-p
+        # Override default file permissions so that scripts can be executed.
+        sudo chmod -R 755 /var/www/github_jyjulianwong_polarrec/gcloud
+      
+        cd /var/www/github_jyjulianwong_polarrec
+        python3 -m venv venv
+      fi
+      # Run the deployment script from the source code.
+      /var/www/github_jyjulianwong_polarrec/gcloud/deploy.sh
+      EOF
+      
+      gcloud compute ssh \
+        --tunnel-through-iap \
+        cloudbuild.gserviceaccount.com@jyw-polarrec-p-cin-usea1b-server \
+        --zone=us-east1-b \
+        --command="${SCRIPT}"
